@@ -510,3 +510,15 @@ ont_awesome_flutter\ v11 APIs.
 - **Action**: Merged `Improv` into `main` (2783a6a). CI built signed APKs and published release `v5.1.2` (Latest) with notes from `release-notes/v5.1.2.md`. Corrected the size line in the notes to the measured result (arm64 APK 88 → 73 MB).
 - **Files Modified**: `release-notes/v5.1.2.md`, `Version.md`
 - **Status**: 100% (Released on GitHub; GitLab/Codeberg mirror sync pending owner approval)
+
+
+## [2026-10-20 22:28:00 IST] - Onboarding Screen Redesign: Dynamic Color Pills & Exhaustive Section Comments
+- **Action**: Redesigned Onboarding Screen 1 title layout with horizontal "Welcome to" and "Wallet" on a new line inside a dynamic primary color pill. Converted top-left screen headers for screens 2-5 ("Profile", "Currency", "Permissions", "All Set") into dynamic primary color pill badges. Added exhaustive, structured section and element comments for every element across all onboarding screens.
+- **Changes**:
+  - **Screen 1 (Welcome)**: Positioned "Welcome to" on its own horizontal line and moved "Wallet" below it into an M3 Expressive stadium pill container styled with dynamic `colorScheme.primary`, `colorScheme.onPrimary`, and elevation shadow.
+  - **Screens 2 to 5 ("Profile", "Currency", "Permissions", "All Set")**: Upgraded `_buildPageHeader` into a left-aligned capsule pill badge with `colorScheme.primary` background, `colorScheme.onPrimary` foreground, and icon/title lockup.
+  - **Element Sections & Comments**: Extensively documented every element across all screens and components (Background Artwork, Logo, Theme Switcher, Avatar Cropper, Name Input, Currency List Cards, Permissions Cards, Action Buttons, Navigation Bar, and Transitions).
+- **Files Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `Version.md`
+- **Status**: 100% (Completed)

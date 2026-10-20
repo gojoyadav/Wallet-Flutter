@@ -220,9 +220,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     });
   }
 
+  // ============================================================================
+  // SECTION: REUSABLE UI ELEMENT - DYNAMIC SHADOW APP BRAND LOGO
+  // ============================================================================
   Widget _buildDynamicShadowLogo({String logoPath = 'assets/images/logo.svg', double size = 48.0}) {
     return Stack(
       children: [
+        // Sub-element: Blurred shadow layer
         Transform.translate(
           offset: const Offset(0, 4),
           child: ImageFiltered(
@@ -237,6 +241,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
             ),
           ),
         ),
+        // Sub-element: Foreground vector logo
         SvgPicture.asset(
           logoPath,
           width: size,
@@ -246,6 +251,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     );
   }
 
+  // ============================================================================
+  // SECTION: REUSABLE UI ELEMENT - THEME MODE TOGGLE BUTTON
+  // ============================================================================
   Widget _buildThemeToggle(ColorScheme colorScheme) {
     final themeMode = ref.watch(themeControllerProvider).themeMode;
     
@@ -265,6 +273,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
       }
     }
 
+    // Sub-element: Tooltipped filled tonal IconButton
     return Tooltip(
       message: 'Theme: ${getLabel()}',
       child: IconButton.filledTonal(
@@ -301,7 +310,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
         resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
-            // PageView for 5 pages
+            // ==================================================================
+            // SECTION: ONBOARDING FLOW PAGEVIEW (5 SCREENS)
+            // ==================================================================
+            // Screen 1: Welcome Page
+            // Screen 2: Profile Page
+            // Screen 3: Currency Page
+            // Screen 4: Permissions Page
+            // Screen 5: Final / All Set Page
             PageView(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
@@ -314,10 +330,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
               ],
             ),
 
-            // Navigation Buttons
+            // ==================================================================
+            // SECTION: FLOATING NAVIGATION BAR & CONTROLS
+            // ==================================================================
             _buildNavigationButtons(theme, colorScheme, size, bottomInset),
 
-            // Ripple Overlay
+            // ==================================================================
+            // SECTION: DYNAMIC COLOR RIPPLE TRANSITION OVERLAY
+            // ==================================================================
             if (_showBlueScreen)
               Positioned.fill(
                 child: ClipPath(
@@ -333,13 +353,17 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     );
   }
 
-  // --- PAGE BUILDERS ---
-
+  // ============================================================================
+  // SECTION: ONBOARDING SCREEN 1 - WELCOME PAGE
+  // ============================================================================
   Widget _buildWelcomePage(ThemeData theme, ColorScheme colorScheme) {
     return Container(
       color: colorScheme.surface,
       child: Stack(
         children: [
+          // --------------------------------------------------------------------
+          // ELEMENT: BACKGROUND VECTOR ARTWORK
+          // --------------------------------------------------------------------
           Positioned(
             top: 100,
             left: 0,
@@ -357,23 +381,59 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ------------------------------------------------------------
+                  // ELEMENT: TOP BAR (LOGO & THEME TOGGLE)
+                  // ------------------------------------------------------------
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // Sub-element: Dynamic shadow app brand logo
                       _buildDynamicShadowLogo(),
+                      // Sub-element: Interactive theme mode switcher
                       _buildThemeToggle(colorScheme),
                     ],
                   ),
                   const Spacer(),
+
+                  // ------------------------------------------------------------
+                  // ELEMENT: WELCOME TITLE - "Welcome to" on its own horizontal line
+                  // ------------------------------------------------------------
                   Text(
-                    'Welcome to\nWallet',
-                    style: theme.textTheme.displayLarge?.copyWith(
+                    'Welcome to',
+                    style: theme.textTheme.displaySmall?.copyWith(
                       color: colorScheme.onSurface,
                       fontWeight: FontWeight.w900,
-                      height: 1.1,
+                      letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 160), // Room for buttons
+                  const SizedBox(height: 10),
+
+                  // ------------------------------------------------------------
+                  // ELEMENT: WALLET PILL - Dynamic primary color pill on "Wallet"
+                  // ------------------------------------------------------------
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary,
+                      borderRadius: BorderRadius.circular(50),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.primary.withOpacity(0.35),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      'Wallet',
+                      style: theme.textTheme.displaySmall?.copyWith(
+                        color: colorScheme.onPrimary,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 160), // Room for navigation buttons
                 ],
               ),
             ),
@@ -383,26 +443,55 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     );
   }
 
+  // ============================================================================
+  // SECTION: REUSABLE LEFT-SIDE TITLE PILL (Screens 2 through 5)
+  // Renders a pill with icon and title: "Profile", "Currency", "Permissions", "All Set"
+  // Styled with dynamic primary color, stadium radius, and M3 elevation
+  // ============================================================================
   Widget _buildPageHeader(ThemeData theme, ColorScheme colorScheme, IconData icon, String title) {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
-      child: Row(
-        children: [
-          Icon(icon, color: colorScheme.primary, size: 28),
-          const SizedBox(width: 12),
-          Text(
-            title,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: colorScheme.primary,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -0.5,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: colorScheme.primary,
+          borderRadius: BorderRadius.circular(50),
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.primary.withOpacity(0.25),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Sub-element: Header Pill Icon
+            Icon(
+              icon,
+              color: colorScheme.onPrimary,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            // Sub-element: Header Pill Title
+            Text(
+              title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: colorScheme.onPrimary,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.2,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
+  // ============================================================================
+  // SECTION: ONBOARDING SCREEN 2 - PROFILE SETUP PAGE
+  // ============================================================================
   Widget _buildProfilePage(ThemeData theme, ColorScheme colorScheme, double bottomInset) {
     return SafeArea(
       child: Padding(
@@ -410,6 +499,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ------------------------------------------------------------------
+            // ELEMENT: LEFT-SIDE HEADER PILL - "Profile"
+            // ------------------------------------------------------------------
             _buildPageHeader(theme, colorScheme, Symbols.account_circle, 'Profile'),
             Expanded(
               child: SingleChildScrollView(
@@ -417,6 +509,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
                 child: Column(
                   children: [
                     SizedBox(height: bottomInset > 0 ? 20 : 60),
+
+                    // ----------------------------------------------------------
+                    // ELEMENT: SCREEN HEADLINE TITLE
+                    // ----------------------------------------------------------
                     Center(
                       child: Text(
                         "Let's create your profile",
@@ -427,6 +523,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
                       ),
                     ),
                     const SizedBox(height: 48),
+
+                    // ----------------------------------------------------------
+                    // ELEMENT: CIRCULAR PROFILE AVATAR PICKER & CROPPER
+                    // ----------------------------------------------------------
                     Center(
                       child: GestureDetector(
                         onTap: _pickImage,
@@ -465,6 +565,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
                       ),
                     ),
                     const SizedBox(height: 48),
+
+                    // ----------------------------------------------------------
+                    // ELEMENT: USER NAME TEXTFIELD WITH AUTO-CAPITALIZATION
+                    // ----------------------------------------------------------
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       padding: const EdgeInsets.all(4),
@@ -510,7 +614,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     );
   }
 
+  // ============================================================================
+  // SECTION: ONBOARDING SCREEN 3 - CURRENCY SELECTION PAGE
+  // ============================================================================
   Widget _buildCurrencyPage(ThemeData theme, ColorScheme colorScheme) {
+    // --------------------------------------------------------------------------
+    // ELEMENT: SUPPORTED CURRENCY CATALOG DATA
+    // --------------------------------------------------------------------------
     final currencies = [
       {'code': 'INR', 'name': 'Indian Rupee', 'symbol': '₹'},
       {'code': 'USD', 'name': 'United States Dollar', 'symbol': r'$'},
@@ -530,8 +640,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ------------------------------------------------------------------
+            // ELEMENT: LEFT-SIDE HEADER PILL - "Currency"
+            // ------------------------------------------------------------------
             _buildPageHeader(theme, colorScheme, Symbols.payments, 'Currency'),
             const SizedBox(height: 40),
+
+            // ------------------------------------------------------------------
+            // ELEMENT: SCREEN HEADLINE TITLE
+            // ------------------------------------------------------------------
             Center(
               child: Text(
                 "Let's choose your Currency",
@@ -542,6 +659,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
               ),
             ),
             const SizedBox(height: 32),
+
+            // ------------------------------------------------------------------
+            // ELEMENT: SCROLLABLE CURRENCY SELECTION LIST
+            // ------------------------------------------------------------------
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(bottom: 120),
@@ -550,6 +671,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
                 itemBuilder: (context, index) {
                   final c = currencies[index];
                   final isSelected = _selectedCurrency == c['code'];
+
+                  // Sub-element: Interactive Currency Option Card
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: InkWell(
@@ -570,6 +693,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
                         ),
                         child: Row(
                           children: [
+                            // Currency Name
                             Expanded(
                               child: Text(
                                 c['name']!,
@@ -580,6 +704,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
                               ),
                             ),
                             const SizedBox(width: 12),
+                            // Currency Symbol Badge Avatar
                             Container(
                               width: 44,
                               height: 44,
@@ -612,6 +737,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     );
   }
 
+  // ============================================================================
+  // SECTION: ONBOARDING SCREEN 4 - PERMISSIONS PAGE
+  // ============================================================================
   Widget _buildPermissionsPage(ThemeData theme, ColorScheme colorScheme) {
     return SafeArea(
       child: Padding(
@@ -619,8 +747,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ------------------------------------------------------------------
+            // ELEMENT: LEFT-SIDE HEADER PILL - "Permissions"
+            // ------------------------------------------------------------------
             _buildPageHeader(theme, colorScheme, Symbols.shield_with_heart, 'Permissions'),
             const SizedBox(height: 60),
+
+            // ------------------------------------------------------------------
+            // ELEMENT: SCREEN HEADLINE TITLE
+            // ------------------------------------------------------------------
             Center(
               child: Text(
                 "Permissions we need",
@@ -630,6 +765,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
               ),
             ),
             const SizedBox(height: 48),
+
+            // ------------------------------------------------------------------
+            // ELEMENT: PERMISSION CARD 1 - STORAGE / ALL FILES ACCESS
+            // ------------------------------------------------------------------
             _buildPermissionItem(
               theme,
               colorScheme,
@@ -645,6 +784,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
               },
             ),
             const SizedBox(height: 24),
+
+            // ------------------------------------------------------------------
+            // ELEMENT: PERMISSION CARD 2 - NOTIFICATIONS ACCESS
+            // ------------------------------------------------------------------
             _buildPermissionItem(
               theme,
               colorScheme,
@@ -663,6 +806,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     );
   }
 
+  // ============================================================================
+  // SECTION: REUSABLE PERMISSION ITEM CARD COMPONENT
+  // ============================================================================
   Widget _buildPermissionItem(
     ThemeData theme,
     ColorScheme colorScheme, {
@@ -681,6 +827,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Sub-element: Permission Header (Icon & Title)
           Row(
             children: [
               Icon(icon, color: colorScheme.primary, size: 32),
@@ -692,11 +839,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
             ],
           ),
           const SizedBox(height: 12),
+          // Sub-element: Permission Rationale Text
           Text(
             reason,
             style: TextStyle(color: colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
+          // Sub-element: Interactive Permission Action Button (Tonal / Check icon)
           SizedBox(
             width: double.infinity,
             child: FilledButton.tonal(
@@ -728,6 +877,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     );
   }
 
+  // ============================================================================
+  // SECTION: ONBOARDING SCREEN 5 - FINAL / ALL SET PAGE
+  // ============================================================================
   Widget _buildFinalPage(ThemeData theme, ColorScheme colorScheme) {
     return SafeArea(
       child: Padding(
@@ -735,10 +887,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ------------------------------------------------------------------
+            // ELEMENT: TOP HEADER ROW (LEFT PILL & OPEN-SOURCE BADGE)
+            // ------------------------------------------------------------------
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                // Sub-element: Left-Side Header Pill - "All Set"
                 _buildPageHeader(theme, colorScheme, Symbols.done_all, 'All Set'),
+                // Sub-element: Open-Source Vector Badge
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
                   child: SvgPicture.asset(
@@ -755,14 +912,25 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Spacer(),
+                  // ----------------------------------------------------------
+                  // ELEMENT: DYNAMIC SHADOW HERO BRAND LOGO
+                  // ----------------------------------------------------------
                   _buildDynamicShadowLogo(logoPath: 'assets/images/logo.svg', size: 120),
                   const SizedBox(height: 48),
+
+                  // ----------------------------------------------------------
+                  // ELEMENT: PRIVACY & OPEN SOURCE HEADLINE TITLE
+                  // ----------------------------------------------------------
                   Text(
                     "Open Source & Private",
                     style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
+
+                  // ----------------------------------------------------------
+                  // ELEMENT: OFFLINE-FIRST EXPLANATION SUBTITLE
+                  // ----------------------------------------------------------
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
@@ -772,7 +940,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
                     ),
                   ),
                   const Spacer(),
-                  const SizedBox(height: 100), // Space for big button
+                  const SizedBox(height: 100), // Space for navigation action button
                 ],
               ),
             ),
@@ -782,8 +950,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     );
   }
 
-  // --- BUTTONS ---
-
+  // ============================================================================
+  // SECTION: PERSISTENT FLOATING NAVIGATION BUTTONS & ACTIONS
+  // ============================================================================
   Widget _buildNavigationButtons(
       ThemeData theme, ColorScheme colorScheme, Size size, double bottomInset) {
     final progress = _currentPage; // 0.0 to 4.0
@@ -829,7 +998,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
 
     return Stack(
       children: [
-        // Previous Button
+        // ----------------------------------------------------------------------
+        // ELEMENT: PREVIOUS PAGE NAVIGATION BUTTON (Animated Opacity & Slide)
+        // ----------------------------------------------------------------------
         if (showPrevious)
           Positioned(
             left: 24,
@@ -854,7 +1025,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
             ),
           ),
 
-        // Restore Backup (Only Page 0)
+        // ----------------------------------------------------------------------
+        // ELEMENT: RESTORE BACKUP BUTTON (Exclusively on Screen 1)
+        // ----------------------------------------------------------------------
         if (isPage0)
           Positioned(
             left: 24,
@@ -873,7 +1046,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
             ),
           ),
 
-        // Next / Welcome / Dive In Button
+        // ----------------------------------------------------------------------
+        // ELEMENT: DYNAMIC CALL-TO-ACTION BUTTON ("Welcome" / "Next" / "Let's dive in")
+        // Features dynamic width interpolation, dynamic primary color & elevation shadow
+        // ----------------------------------------------------------------------
         AnimatedPositioned(
           duration: const Duration(milliseconds: 10), // Handled by PageView listener for smoothness
           left: left,
@@ -910,6 +1086,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     );
   }
 
+  // ----------------------------------------------------------------------------
+  // ELEMENT: DYNAMIC BUTTON LABEL SWITCHER
+  // Switches label between "Welcome", "Next", and "Let's dive in"
+  // ----------------------------------------------------------------------------
   Widget _buildButtonLabel(double progress) {
     if (progress < 0.5) {
       return const Text(
@@ -940,8 +1120,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
   }
 }
 
-// --- UTILS ---
+// ==============================================================================
+// SECTION: UTILITIES & CUSTOM CLIPPERS / FORMATTERS
+// ==============================================================================
 
+// ------------------------------------------------------------------------------
+// ELEMENT: CIRCULAR RIPPLE CLIPPER FOR FULL-SCREEN EXIT TRANSITION
+// ------------------------------------------------------------------------------
 class CircleClipper extends CustomClipper<Path> {
   final double radius;
   final Offset center;
@@ -957,6 +1142,9 @@ class CircleClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant CircleClipper oldClipper) => oldClipper.radius != radius;
 }
 
+// ------------------------------------------------------------------------------
+// ELEMENT: INPUT FORMATTER - WORD CAPITALIZATION FOR PROFILE NAMES
+// ------------------------------------------------------------------------------
 class _WordCapitalizationFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
