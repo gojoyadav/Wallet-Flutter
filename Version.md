@@ -1440,3 +1440,43 @@ ont_awesome_flutter\ v11 APIs.
     - `wallet-arm-v7a.apk` (32-bit ARMv7a) & `.sha256`
     - `wallet-x86_64.apk` (64-bit x86 architecture) & `.sha256`
 - **Status**: 100% (Completed & Published Live)
+
+
+## [2026-11-10 01:55:00 IST] - Onboarding Screen Wireframe Redesign & OldS Legacy Modularization
+- **Action**: Completely archived previous onboarding implementation to `lib/features/auth/pages/legacy_onboarding_page.dart` (`LegacyOnboardingPage`), redesigned `lib/features/auth/pages/onboarding_page.dart` to strictly reflect the 11 uploaded wireframe SVGs in exact 412x917 viewport coordinates without padding, extracted 7 vector hero icons, centered ambient rotating "Move" shapes on their axis, and wired stateful gating and transitions.
+- **Changes**:
+  - **Modularization**: Archived OldS to `lib/features/auth/pages/legacy_onboarding_page.dart`, ensuring all legacy methods and clipper logic are safely preserved.
+  - **Layout Engine**: Eliminated arbitrary `Column`/`Spacer` padding and implemented responsive proportional scaling (`_pos(x, y, w, h)`) based on the 412x917 SVG wireframe coordinate system.
+  - **Ambient "Move" Shapes Motion**:
+    - Normalized `shape_sunny.svg`, `shape_bun.svg`, and `shape_soft_boom.svg` with centered viewBoxes for rotation around center axis.
+    - Added continuous axis rotation via `_ambientRotationController` (Sunny clockwise, Bun counter-clockwise, Soft Boom clockwise).
+    - Seamlessly interpolated coordinates and dimensions across pages:
+      - Screen 1: Sunny at mid-right (size 82.2), Bun at mid-left (size 76.0), Soft Boom at bottom (size 367.2).
+      - Screens 2-7: Sunny pinned at top-right (size 287.3), Bun pinned at upper-mid left (size 210.0), Soft Boom pinned at bottom (size 694.8).
+      - Screen 8: Sunny smoothly translates behind the central wallet logo (size 376.4), while Bun and Soft Boom smoothly fade out.
+    - Color binding: Dynamic secondary color when dynamic color is ON, and `#457B9D` fallback when OFF.
+  - **Screen 1 (Welcome to Wallet)**: Integrated OldS dynamic shadow app logo (top-left), theme toggle (top-right), `welcome.svg` with hero dynamic color filter, "Welcome to" headline, "Wallet" sub-pill, and "Welcome" button.
+  - **Screen 2 (Restore Backup)**: Top-right "Skip" pill, download drive tray icon (`onboarding_backup_icon.svg`), "Restore" headline, "Backup" sub-pill, and "Choose file" action.
+  - **Alternate View (Backup Complete)**: Automatically triggered upon successful backup restoration; displays drive tray with green checkmark badge (`onboarding_backup_complete_icon.svg`), "Restore" headline, "Complete" sub-pill, and "Let’s Dive in" button.
+  - **Screen 3 (Personalise: Photo)**: Circular photo frame with `onboarding_photo_icon.svg`, "Choose file" action using `ImagePicker` and `ImageCropper` with 1:1 aspect ratio, dynamically replacing the icon with the cropped photo.
+  - **Screen 4 (Personalise: Name)**: ID badge icon (`onboarding_name_icon.svg`), text field container with `_WordCapitalizationFormatter`, "we need a name, surely you have one" subtitle, OldS Previous button with arrow, and Next button with arrow (gated: disabled and grey until name is typed).
+  - **Screen 5 (Choose Currency)**: Multi-currency coin cluster (`onboarding_currency_icon.svg`), scrollable currency catalog from OldS, and transparent safe area housing fixed Previous and Next navigation buttons with the list scrolling in the background.
+  - **Screen 6 (Permissions we want)**: Security shield with heart (`onboarding_permissions_icon.svg`), "Permissions we want" headline, and OldS permissions container for All Files Access and Notifications with interactive toggle requests.
+  - **Screen 7 (Let's set the Colours)**: 3-ring color wheel (`onboarding_colour_icon.svg`), Dynamic Color switch connected to Monet / `themeControllerProvider`, and color schemes container displaying Material 3 scheme variants when dynamic color is ON, or the 6 fixed swatches from `Testing Colours.svg` (`#E7702B`, `#F1FAEE`, `#A8DADC`, `#457B9D`, `#1D3557`, `#0C1A2F`) when OFF.
+  - **Screen 8 (You're all set)**: Open Source Initiative badge at top-right, central rotating Sunny behind the wallet logo, "You’re all set" headline, privacy body text, and full-width "Let’s Dive in" button triggering OldS circular reveal ripple exit animation.
+  - **Assets Extracted**:
+    - `assets/images/onboarding_backup_icon.svg`
+    - `assets/images/onboarding_photo_icon.svg`
+    - `assets/images/onboarding_name_icon.svg`
+    - `assets/images/onboarding_currency_icon.svg`
+    - `assets/images/onboarding_permissions_icon.svg`
+    - `assets/images/onboarding_colour_icon.svg`
+    - `assets/images/onboarding_backup_complete_icon.svg`
+- **Files Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `lib/features/auth/pages/legacy_onboarding_page.dart`
+  - `assets/images/shape_sunny.svg`
+  - `assets/images/shape_bun.svg`
+  - `assets/images/shape_soft_boom.svg`
+  - `Version.md`
+- **Status**: 100% (Completed)
