@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +9,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:ui';
+
 import '../../../core/theme/personalization_provider.dart';
 import '../../../core/theme/theme_provider.dart';
 import '../../../core/services/file_service.dart';
@@ -21,7 +22,8 @@ class OnboardingPage extends ConsumerStatefulWidget {
   ConsumerState<OnboardingPage> createState() => _OnboardingPageState();
 }
 
-class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTickerProviderStateMixin {
+class _OnboardingPageState extends ConsumerState<OnboardingPage>
+    with TickerProviderStateMixin {
   late PageController _pageController;
   double _currentPage = 0;
 
@@ -35,8 +37,24 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
   Offset _rippleOffset = Offset.zero;
   late AnimationController _rippleController;
 
+  // Ambient continuous rotation for "Move" background shapes
+  late AnimationController _ambientRotationController;
+
+  // Alternate restore success state
+  bool _isRestoreComplete = false;
+
   bool _storagePermissionGranted = false;
   bool _notificationPermissionGranted = false;
+
+  // Palette from Media 0 (Testing Colours.svg)
+  static const List<Color> fixedPalette = [
+    Color(0xFFE7702B), // Vivid Orange / Terracotta Accent
+    Color(0xFFF1FAEE), // Honeydew / Mint Cream
+    Color(0xFFA8DADC), // Soft Celadon / Pale Cyan
+    Color(0xFF457B9D), // Steel Blue
+    Color(0xFF1D3557), // Prussian Navy
+    Color(0xFF0C1A2F), // Midnight Abyss Navy
+  ];
 
   @override
   void initState() {
@@ -55,20 +73,27 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
       vsync: this,
       duration: const Duration(milliseconds: 800),
     )..addListener(() {
-      if (mounted) {
-        setState(() {
-          _rippleRadius = _rippleController.value * MediaQuery.of(context).size.longestSide * 1.5;
-        });
-      }
-    });
+        if (mounted) {
+          setState(() {
+            _rippleRadius = _rippleController.value *
+                MediaQuery.of(context).size.longestSide *
+                1.5;
+          });
+        }
+      });
+
+    _ambientRotationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 28),
+    )..repeat();
   }
 
   Future<void> _checkPermissions() async {
-    final storageStatus = Platform.isAndroid 
-        ? await Permission.manageExternalStorage.status 
+    final storageStatus = Platform.isAndroid
+        ? await Permission.manageExternalStorage.status
         : await Permission.storage.status;
     final notificationStatus = await Permission.notification.status;
-    
+
     if (mounted) {
       setState(() {
         _storagePermissionGranted = storageStatus.isGranted;
@@ -83,6 +108,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     _nameController.dispose();
     _focusNode.dispose();
     _rippleController.dispose();
+    _ambientRotationController.dispose();
     super.dispose();
   }
 
@@ -124,31 +150,42 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     }
   }
 
-  bool _canGoNext(double progress) {
-    if (progress >= 0.5 && progress < 1.5) {
-      return _nameController.text.trim().isNotEmpty;
-    }
-    if (progress >= 1.5 && progress < 2.5) {
-      return _selectedCurrency != null;
-    }
-    return true;
+  void _goToPage(int page) {
+    _pageController.animateToPage(
+      page,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOutCubic,
+    );
   }
 
   void _nextPage() {
-    if (!_canGoNext(_currentPage)) {
-      String message = '';
-      if (_currentPage >= 0.5 && _currentPage < 1.5) message = 'Please enter your name';
-      if (_currentPage >= 1.5 && _currentPage < 2.5) message = 'Please select a currency';
-      
-      if (message.isNotEmpty) {
+    // Screen 4 requires name
+    if (_currentPage >= 2.5 && _currentPage < 3.5) {
+      if (_nameController.text.trim().isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message), duration: const Duration(seconds: 1)),
+          const SnackBar(
+            content: Text('Please enter your name'),
+            duration: Duration(seconds: 1),
+          ),
         );
+        return;
       }
-      return;
     }
 
-    if (_currentPage < 4) {
+    // Screen 5 requires currency
+    if (_currentPage >= 3.5 && _currentPage < 4.5) {
+      if (_selectedCurrency == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select a currency'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+        return;
+      }
+    }
+
+    if (_currentPage < 7) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 600),
         curve: Curves.easeInOutCubic,
@@ -174,7 +211,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     }
 
     ref.read(personalizationProvider.notifier).completeOnboarding(
-          name: _nameController.text,
+          name: _nameController.text.trim().isEmpty ? 'User' : _nameController.text.trim(),
           currency: _selectedCurrency ?? 'USD',
           photo: finalPhotoPath,
         );
@@ -184,21 +221,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     try {
       final success = await ref.read(backupServiceProvider).restoreBackup();
       if (success && mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            title: const Text('Restore Successful'),
-            content: const Text(
-                'Your data and settings have been restored. The app will now restart to apply changes.'),
-            actions: [
-              FilledButton(
-                onPressed: () => Restart.restartApp(),
-                child: const Text('Restart App'),
-              ),
-            ],
-          ),
-        );
+        setState(() {
+          _isRestoreComplete = true;
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -214,229 +239,229 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
       _rippleOffset = details.globalPosition;
       _showBlueScreen = true;
     });
-    
+
     _rippleController.forward().then((_) {
-      _finishOnboarding();
+      if (_isRestoreComplete) {
+        Restart.restartApp();
+      } else {
+        _finishOnboarding();
+      }
     });
   }
 
   // ============================================================================
-  // SECTION: REUSABLE UI ELEMENT - DYNAMIC SHADOW APP BRAND LOGO
+  // SECTION: REUSABLE UI ELEMENTS (LOGO & THEME TOGGLE)
   // ============================================================================
   Widget _buildDynamicShadowLogo({String logoPath = 'assets/images/logo.svg', double size = 48.0}) {
-    return Stack(
-      children: [
-        // Sub-element: Blurred shadow layer
-        Transform.translate(
-          offset: const Offset(0, 4),
-          child: ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-            child: Opacity(
-              opacity: 0.4,
-              child: SvgPicture.asset(
-                logoPath,
-                width: size,
-                height: size,
-              ),
-            ),
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.transparent,
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.35),
+            blurRadius: 16,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
           ),
-        ),
-        // Sub-element: Foreground vector logo
-        SvgPicture.asset(
+        ],
+      ),
+      child: ClipOval(
+        child: SvgPicture.asset(
           logoPath,
           width: size,
           height: size,
-        ),
-      ],
-    );
-  }
-
-  // ============================================================================
-  // SECTION: REUSABLE UI ELEMENT - THEME MODE TOGGLE BUTTON
-  // ============================================================================
-  Widget _buildThemeToggle(ColorScheme colorScheme) {
-    final themeMode = ref.watch(themeControllerProvider).themeMode;
-    
-    IconData getIcon() {
-      switch (themeMode) {
-        case ThemeMode.system: return Symbols.settings_brightness;
-        case ThemeMode.light: return Symbols.light_mode;
-        case ThemeMode.dark: return Symbols.dark_mode;
-      }
-    }
-
-    String getLabel() {
-      switch (themeMode) {
-        case ThemeMode.system: return 'System';
-        case ThemeMode.light: return 'Light';
-        case ThemeMode.dark: return 'Dark';
-      }
-    }
-
-    // Sub-element: Tooltipped filled tonal IconButton
-    return Tooltip(
-      message: 'Theme: ${getLabel()}',
-      child: IconButton.filledTonal(
-        onPressed: () {
-          final nextMode = themeMode == ThemeMode.system 
-              ? ThemeMode.light 
-              : themeMode == ThemeMode.light 
-                  ? ThemeMode.dark 
-                  : ThemeMode.system;
-          ref.read(themeControllerProvider.notifier).setThemeMode(nextMode);
-        },
-        icon: Icon(
-          getIcon(),
-          size: 24,
-        ),
-        style: IconButton.styleFrom(
-          backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
-          foregroundColor: colorScheme.primary,
+          fit: BoxFit.contain,
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final size = MediaQuery.of(context).size;
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+  Widget _buildThemeToggle(ColorScheme colorScheme) {
+    final themeMode = ref.watch(themeControllerProvider).themeMode;
+    final isDark = themeMode == ThemeMode.dark;
 
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Stack(
-          children: [
-            // ==================================================================
-            // SECTION: ONBOARDING FLOW PAGEVIEW (5 SCREENS)
-            // ==================================================================
-            // Screen 1: Welcome Page
-            // Screen 2: Profile Page
-            // Screen 3: Currency Page
-            // Screen 4: Permissions Page
-            // Screen 5: Final / All Set Page
-            PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _buildWelcomePage(theme, colorScheme),
-                _buildProfilePage(theme, colorScheme, bottomInset),
-                _buildCurrencyPage(theme, colorScheme),
-                _buildPermissionsPage(theme, colorScheme),
-                _buildFinalPage(theme, colorScheme),
-              ],
-            ),
+    return IconButton(
+      onPressed: () {
+        ref.read(themeControllerProvider.notifier).setThemeMode(
+              isDark ? ThemeMode.light : ThemeMode.dark,
+            );
+      },
+      icon: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: Icon(
+          isDark ? Symbols.dark_mode_rounded : Symbols.light_mode_rounded,
+          key: ValueKey(isDark),
+          color: colorScheme.onSurface,
+          size: 26,
+        ),
+      ),
+      tooltip: isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme',
+    );
+  }
 
-            // ==================================================================
-            // SECTION: FLOATING NAVIGATION BAR & CONTROLS
-            // ==================================================================
-            _buildNavigationButtons(theme, colorScheme, size, bottomInset),
+  Widget _buildSkipPill(VoidCallback onTap) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return OutlinedButton(
+      onPressed: onTap,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: colorScheme.onSurface,
+        side: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.4)),
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+      ),
+      child: const Text('Skip', style: TextStyle(fontWeight: FontWeight.w600)),
+    );
+  }
 
-            // ==================================================================
-            // SECTION: DYNAMIC COLOR RIPPLE TRANSITION OVERLAY
-            // ==================================================================
-            if (_showBlueScreen)
-              Positioned.fill(
-                child: ClipPath(
-                  clipper: CircleClipper(_rippleRadius, _rippleOffset),
-                  child: Container(
-                    color: colorScheme.primary,
+  // ============================================================================
+  // SECTION: AMBIENT "MOVE" SHAPES BACKGROUND LAYER
+  // Continuously rotating on their axis; coordinates interpolate across screens
+  // ============================================================================
+  Widget _buildAmbientMoveShapes(ThemeData theme, ColorScheme colorScheme, Size size) {
+    final themeState = ref.watch(themeControllerProvider);
+    final isDynamic = themeState.useMaterialYou;
+    final shapeColor = isDynamic
+        ? colorScheme.secondary.withOpacity(0.38)
+        : const Color(0xFF457B9D).withOpacity(0.45);
+
+    final progress = _currentPage.clamp(0.0, 7.0);
+
+    // 1. SUNNY INTERPOLATION:
+    // Page 0 (Screen 1): x ≈ 0.86, y ≈ 0.62, size ≈ 75
+    // Pages 1-6 (Screens 2-7): x ≈ 0.80, y ≈ -0.92, size ≈ 140
+    // Page 7 (Screen 8): x ≈ 0.0, y ≈ -0.42, size ≈ 220 (behind wallet)
+    Alignment sunnyAlign;
+    double sunnySize;
+    if (progress <= 1.0) {
+      sunnyAlign = Alignment.lerp(
+        const Alignment(0.86, 0.40),
+        const Alignment(0.80, -0.92),
+        progress,
+      )!;
+      sunnySize = lerpDouble(75.0, 140.0, progress)!;
+    } else if (progress <= 6.0) {
+      sunnyAlign = const Alignment(0.80, -0.92);
+      sunnySize = 140.0;
+    } else {
+      final p67 = (progress - 6.0).clamp(0.0, 1.0);
+      sunnyAlign = Alignment.lerp(
+        const Alignment(0.80, -0.92),
+        const Alignment(0.0, -0.42),
+        p67,
+      )!;
+      sunnySize = lerpDouble(140.0, 220.0, p67)!;
+    }
+
+    // 2. BUN INTERPOLATION:
+    // Page 0 (Screen 1): x ≈ -0.80, y ≈ 0.52, size ≈ 80
+    // Pages 1-6 (Screens 2-7): x ≈ -1.15, y ≈ 0.0, size ≈ 180
+    // Page 7 (Screen 8): Fades out (opacity 0)
+    Alignment bunAlign;
+    double bunSize;
+    double bunOpacity;
+    if (progress <= 1.0) {
+      bunAlign = Alignment.lerp(
+        const Alignment(-0.80, 0.52),
+        const Alignment(-1.15, 0.0),
+        progress,
+      )!;
+      bunSize = lerpDouble(80.0, 180.0, progress)!;
+      bunOpacity = 1.0;
+    } else if (progress <= 6.0) {
+      bunAlign = const Alignment(-1.15, 0.0);
+      bunSize = 180.0;
+      bunOpacity = 1.0;
+    } else {
+      final p67 = (progress - 6.0).clamp(0.0, 1.0);
+      bunAlign = const Alignment(-1.15, 0.0);
+      bunSize = 180.0;
+      bunOpacity = 1.0 - p67;
+    }
+
+    // 3. SOFT BOOM INTERPOLATION:
+    // Page 0 (Screen 1 / BackGround): bottom-left base (x ≈ -0.70, y ≈ 1.25), size ≈ 320
+    // Pages 1-6 (Screens 2-7): bottom-center base (x ≈ 0.0, y ≈ 1.30), size ≈ 450
+    // Page 7 (Screen 8): Fades out (opacity 0)
+    Alignment boomAlign;
+    double boomSize;
+    double boomOpacity;
+    if (progress <= 1.0) {
+      boomAlign = Alignment.lerp(
+        const Alignment(-0.70, 1.25),
+        const Alignment(0.0, 1.30),
+        progress,
+      )!;
+      boomSize = lerpDouble(320.0, 450.0, progress)!;
+      boomOpacity = 1.0;
+    } else if (progress <= 6.0) {
+      boomAlign = const Alignment(0.0, 1.30);
+      boomSize = 450.0;
+      boomOpacity = 1.0;
+    } else {
+      final p67 = (progress - 6.0).clamp(0.0, 1.0);
+      boomAlign = const Alignment(0.0, 1.30);
+      boomSize = 450.0;
+      boomOpacity = 1.0 - p67;
+    }
+
+    return IgnorePointer(
+      child: Stack(
+        children: [
+          // ------------------------------------------------------------------
+          // SOFT BOOM (Bottom Petal Cluster)
+          // ------------------------------------------------------------------
+          if (boomOpacity > 0.01)
+            Align(
+              alignment: boomAlign,
+              child: Opacity(
+                opacity: boomOpacity * 0.75,
+                child: RotationTransition(
+                  turns: _ambientRotationController,
+                  child: SvgPicture.asset(
+                    'assets/images/shape_soft_boom.svg',
+                    width: boomSize,
+                    height: boomSize,
+                    colorFilter: ColorFilter.mode(shapeColor, BlendMode.srcIn),
                   ),
                 ),
               ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ============================================================================
-  // SECTION: ONBOARDING SCREEN 1 - WELCOME PAGE
-  // ============================================================================
-  Widget _buildWelcomePage(ThemeData theme, ColorScheme colorScheme) {
-    return Container(
-      color: colorScheme.surface,
-      child: Stack(
-        children: [
-          // --------------------------------------------------------------------
-          // ELEMENT: BACKGROUND VECTOR ARTWORK
-          // --------------------------------------------------------------------
-          Positioned(
-            top: 100,
-            left: 0,
-            right: 0,
-            child: SvgPicture.asset(
-              'assets/images/welcome.svg',
-              fit: BoxFit.contain,
-              height: 400,
-              colorFilter: ColorFilter.mode(colorScheme.primary, BlendMode.srcIn),
             ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ------------------------------------------------------------
-                  // ELEMENT: TOP BAR (LOGO & THEME TOGGLE)
-                  // ------------------------------------------------------------
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Sub-element: Dynamic shadow app brand logo
-                      _buildDynamicShadowLogo(),
-                      // Sub-element: Interactive theme mode switcher
-                      _buildThemeToggle(colorScheme),
-                    ],
-                  ),
-                  const Spacer(),
 
-                  // ------------------------------------------------------------
-                  // ELEMENT: WELCOME TITLE - "Welcome to" on its own horizontal line
-                  // ------------------------------------------------------------
-                  Text(
-                    'Welcome to',
-                    maxLines: 1,
-                    softWrap: false,
-                    style: theme.textTheme.displaySmall?.copyWith(
-                      color: colorScheme.onSurface,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -0.5,
-                    ),
+          // ------------------------------------------------------------------
+          // BUN (Left Ambient Blob)
+          // ------------------------------------------------------------------
+          if (bunOpacity > 0.01)
+            Align(
+              alignment: bunAlign,
+              child: Opacity(
+                opacity: bunOpacity * 0.60,
+                child: RotationTransition(
+                  turns: ReverseAnimation(_ambientRotationController),
+                  child: SvgPicture.asset(
+                    'assets/images/shape_bun.svg',
+                    width: bunSize,
+                    height: bunSize,
+                    colorFilter: ColorFilter.mode(shapeColor, BlendMode.srcIn),
                   ),
-                  const SizedBox(height: 10),
+                ),
+              ),
+            ),
 
-                  // ------------------------------------------------------------
-                  // ELEMENT: WALLET PILL - Dynamic primary color pill on "Wallet"
-                  // ------------------------------------------------------------
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary,
-                      borderRadius: BorderRadius.circular(50),
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorScheme.primary.withOpacity(0.35),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      'Wallet',
-                      style: theme.textTheme.displaySmall?.copyWith(
-                        color: colorScheme.onPrimary,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 160), // Room for navigation buttons
-                ],
+          // ------------------------------------------------------------------
+          // SUNNY (Right / Sunburst Star)
+          // ------------------------------------------------------------------
+          Align(
+            alignment: sunnyAlign,
+            child: RotationTransition(
+              turns: _ambientRotationController,
+              child: SvgPicture.asset(
+                'assets/images/shape_sunny.svg',
+                width: sunnySize,
+                height: sunnySize,
+                colorFilter: ColorFilter.mode(shapeColor, BlendMode.srcIn),
               ),
             ),
           ),
@@ -446,170 +471,162 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
   }
 
   // ============================================================================
-  // SECTION: REUSABLE LEFT-SIDE TITLE PILL (Screens 2 through 5)
-  // Renders a pill with icon and title: "Profile", "Currency", "Permissions", "All Set"
-  // Styled with dynamic primary color, stadium radius, and M3 elevation
+  // ROOT BUILD METHOD
   // ============================================================================
-  Widget _buildPageHeader(ThemeData theme, ColorScheme colorScheme, IconData icon, String title) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: colorScheme.primary,
-          borderRadius: BorderRadius.circular(50),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.primary.withOpacity(0.25),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final size = MediaQuery.of(context).size;
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
+    if (_isRestoreComplete) {
+      return Scaffold(
+        body: Stack(
+          children: [
+            _buildAmbientMoveShapes(theme, colorScheme, size),
+            _buildBackupCompletePage(theme, colorScheme),
+            if (_showBlueScreen)
+              Positioned.fill(
+                child: ClipPath(
+                  clipper: CircleClipper(_rippleRadius, _rippleOffset),
+                  child: Container(color: colorScheme.primary),
+                ),
+              ),
           ],
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Sub-element: Header Pill Icon
-            Icon(
-              icon,
-              color: colorScheme.onPrimary,
-              size: 20,
-            ),
-            const SizedBox(width: 8),
-            // Sub-element: Header Pill Title
-            Text(
-              title,
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: colorScheme.onPrimary,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.2,
+      );
+    }
+
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        children: [
+          // --------------------------------------------------------------------
+          // ELEMENT: CONTINUOUS ROTATING & INTERPOLATING AMBIENT VECTOR SHAPES
+          // --------------------------------------------------------------------
+          _buildAmbientMoveShapes(theme, colorScheme, size),
+
+          // --------------------------------------------------------------------
+          // ELEMENT: 8-SCREEN PROGRESSIVE ONBOARDING PAGEVIEW
+          // --------------------------------------------------------------------
+          PageView(
+            controller: _pageController,
+            physics: const BouncingScrollPhysics(),
+            children: [
+              _buildWelcomePage(theme, colorScheme),
+              _buildRestoreBackupPage(theme, colorScheme),
+              _buildAddPhotoPage(theme, colorScheme),
+              _buildAddNamePage(theme, colorScheme, bottomInset),
+              _buildCurrencyPage(theme, colorScheme),
+              _buildPermissionsPage(theme, colorScheme),
+              _buildColorsPage(theme, colorScheme),
+              _buildAllSetPage(theme, colorScheme),
+            ],
+          ),
+
+          // --------------------------------------------------------------------
+          // ELEMENT: CIRCULAR REVEAL RIPPLE EXIT TRANSITION
+          // --------------------------------------------------------------------
+          if (_showBlueScreen)
+            Positioned.fill(
+              child: ClipPath(
+                clipper: CircleClipper(_rippleRadius, _rippleOffset),
+                child: Container(color: colorScheme.primary),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
 
   // ============================================================================
-  // SECTION: ONBOARDING SCREEN 2 - PROFILE SETUP PAGE
+  // SCREEN 1: WELCOME
   // ============================================================================
-  Widget _buildProfilePage(ThemeData theme, ColorScheme colorScheme, double bottomInset) {
+  Widget _buildWelcomePage(ThemeData theme, ColorScheme colorScheme) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ------------------------------------------------------------------
-            // ELEMENT: LEFT-SIDE HEADER PILL - "Profile"
-            // ------------------------------------------------------------------
-            _buildPageHeader(theme, colorScheme, Symbols.account_circle, 'Profile'),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
+            // Top Bar: OldS Logo and Theme Toggle
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildDynamicShadowLogo(),
+                _buildThemeToggle(colorScheme),
+              ],
+            ),
+            const Spacer(),
+
+            // Center Artwork: OldS welcome.svg
+            Center(
+              child: SvgPicture.asset(
+                'assets/images/welcome.svg',
+                fit: BoxFit.contain,
+                height: 310,
+                colorFilter: ColorFilter.mode(colorScheme.primary, BlendMode.srcIn),
+              ),
+            ),
+            const Spacer(),
+
+            // Welcome Text & Pill
+            Text(
+              'Welcome to',
+              maxLines: 1,
+              softWrap: false,
+              style: theme.textTheme.displaySmall?.copyWith(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              decoration: BoxDecoration(
+                color: colorScheme.primary,
+                borderRadius: BorderRadius.circular(50),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.primary.withOpacity(0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Text(
+                'Wallet',
+                style: theme.textTheme.displaySmall?.copyWith(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Bottom Welcome Action Button
+            SizedBox(
+              width: double.infinity,
+              height: 60,
+              child: FilledButton(
+                onPressed: _nextPage,
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: bottomInset > 0 ? 20 : 60),
-
-                    // ----------------------------------------------------------
-                    // ELEMENT: SCREEN HEADLINE TITLE
-                    // ----------------------------------------------------------
-                    Center(
-                      child: Text(
-                        "Let's create your profile",
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: 48),
-
-                    // ----------------------------------------------------------
-                    // ELEMENT: CIRCULAR PROFILE AVATAR PICKER & CROPPER
-                    // ----------------------------------------------------------
-                    Center(
-                      child: GestureDetector(
-                        onTap: _pickImage,
-                        child: Container(
-                          width: 140,
-                          height: 140,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: colorScheme.surfaceContainerHighest,
-                            image: _imagePath != null
-                                ? DecorationImage(
-                                    image: FileImage(File(_imagePath!)),
-                                    fit: BoxFit.cover,
-                                  )
-                                : null,
-                            border: Border.all(
-                              color: colorScheme.primary.withOpacity(0.2),
-                              width: 3,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: _imagePath == null
-                              ? Icon(
-                                  Symbols.add_a_photo,
-                                  size: 48,
-                                  color: colorScheme.primary,
-                                )
-                              : null,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 48),
-
-                    // ----------------------------------------------------------
-                    // ELEMENT: USER NAME TEXTFIELD WITH AUTO-CAPITALIZATION
-                    // ----------------------------------------------------------
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: _focusNode.hasFocus
-                              ? colorScheme.primary
-                              : Colors.transparent,
-                          width: 2,
-                        ),
-                      ),
-                      child: TextField(
-                        controller: _nameController,
-                        focusNode: _focusNode,
-                        textCapitalization: TextCapitalization.words,
-                        inputFormatters: [
-                          _WordCapitalizationFormatter(),
-                        ],
-                        onChanged: (_) => setState(() {}),
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                        decoration: InputDecoration(
-                          hintText: 'Your name',
-                          prefixIcon: const Icon(Symbols.person),
-                          filled: true,
-                          fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        onTap: () => setState(() {}),
-                      ),
-                    ),
-                    SizedBox(height: bottomInset > 0 ? 350 : 100),
+                    Text('Welcome', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    SizedBox(width: 8),
+                    Icon(Symbols.arrow_forward_rounded),
                   ],
                 ),
               ),
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -617,12 +634,349 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
   }
 
   // ============================================================================
-  // SECTION: ONBOARDING SCREEN 3 - CURRENCY SELECTION PAGE
+  // SCREEN 2: RESTORE BACKUP
+  // ============================================================================
+  Widget _buildRestoreBackupPage(ThemeData theme, ColorScheme colorScheme) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        child: Column(
+          children: [
+            // Top Bar with Skip
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: _previousPage,
+                  icon: const Icon(Symbols.arrow_back_rounded),
+                ),
+                _buildSkipPill(() => _goToPage(2)),
+              ],
+            ),
+            const Spacer(),
+
+            // Hero: Drive / Download Tray Icon
+            Container(
+              width: 130,
+              height: 130,
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer.withOpacity(0.35),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Symbols.settings_backup_restore_rounded,
+                size: 72,
+                color: colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 28),
+
+            Text(
+              'Restore',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Text(
+                'Backup',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.primary,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Have an existing wallet backup? Choose file to restore your entire database seamlessly.',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const Spacer(),
+
+            // Action Button: Choose file
+            SizedBox(
+              width: double.infinity,
+              height: 60,
+              child: FilledButton.icon(
+                onPressed: _restoreBackup,
+                icon: const Icon(Symbols.upload_file_rounded),
+                label: const Text('Choose file', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================================
+  // SCREEN 3: PERSONALISE - ADD PHOTO
+  // ============================================================================
+  Widget _buildAddPhotoPage(ThemeData theme, ColorScheme colorScheme) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: _previousPage,
+                  icon: const Icon(Symbols.arrow_back_rounded),
+                ),
+                _buildSkipPill(() => _goToPage(3)),
+              ],
+            ),
+            const Spacer(),
+
+            // Avatar Hero Circle
+            GestureDetector(
+              onTap: _pickImage,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: colorScheme.surfaceContainerHighest,
+                  border: Border.all(color: colorScheme.primary, width: 3),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.primary.withOpacity(0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: _imagePath != null
+                    ? ClipOval(
+                        child: Image.file(
+                          File(_imagePath!),
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Icon(
+                        Symbols.account_circle_rounded,
+                        size: 96,
+                        color: colorScheme.primary,
+                      ),
+              ),
+            ),
+            const SizedBox(height: 28),
+
+            Text(
+              'Let’s Personalise',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'and make it personal',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Text(
+                'Add Photo',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.primary,
+                ),
+              ),
+            ),
+            const Spacer(),
+
+            // Action Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 60,
+                    child: OutlinedButton.icon(
+                      onPressed: _pickImage,
+                      icon: const Icon(Symbols.photo_camera_rounded),
+                      label: Text(
+                        _imagePath == null ? 'Choose file' : 'Change file',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                SizedBox(
+                  height: 60,
+                  width: 90,
+                  child: FilledButton(
+                    onPressed: _nextPage,
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    ),
+                    child: const Icon(Symbols.arrow_forward_rounded),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================================
+  // SCREEN 4: PERSONALISE - ADD NAME
+  // ============================================================================
+  Widget _buildAddNamePage(ThemeData theme, ColorScheme colorScheme, double bottomInset) {
+    final hasName = _nameController.text.trim().isNotEmpty;
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: _previousPage,
+                  icon: const Icon(Symbols.arrow_back_rounded),
+                ),
+                const SizedBox(width: 48),
+              ],
+            ),
+            const Spacer(),
+
+            // Hero: ID Card Badge Icon
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.3)),
+              ),
+              child: Icon(
+                Symbols.badge_rounded,
+                size: 64,
+                color: colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 28),
+
+            Text(
+              'Let’s Personalise',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'we need a name, surely you have one',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Name Input Field
+            TextFormField(
+              controller: _nameController,
+              focusNode: _focusNode,
+              textCapitalization: TextCapitalization.words,
+              inputFormatters: [_WordCapitalizationFormatter()],
+              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              decoration: InputDecoration(
+                labelText: 'Add Name',
+                hintText: 'Enter your name',
+                prefixIcon: const Icon(Symbols.person_rounded),
+                filled: true,
+                fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
+                ),
+              ),
+              onChanged: (_) => setState(() {}),
+            ),
+            const Spacer(),
+
+            // Navigation Buttons (Next is grey/disabled if name empty)
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 60,
+                    child: OutlinedButton.icon(
+                      onPressed: _previousPage,
+                      icon: const Icon(Symbols.arrow_back_rounded),
+                      label: const Text('Previous', style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SizedBox(
+                    height: 60,
+                    child: FilledButton.icon(
+                      onPressed: hasName ? _nextPage : null,
+                      icon: const Icon(Symbols.arrow_forward_rounded),
+                      label: const Text('Next', style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: FilledButton.styleFrom(
+                        disabledBackgroundColor: colorScheme.surfaceContainerHighest,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================================
+  // SCREEN 5: CHOOSE CURRENCY
   // ============================================================================
   Widget _buildCurrencyPage(ThemeData theme, ColorScheme colorScheme) {
-    // --------------------------------------------------------------------------
-    // ELEMENT: SUPPORTED CURRENCY CATALOG DATA
-    // --------------------------------------------------------------------------
     final currencies = [
       {'code': 'INR', 'name': 'Indian Rupee', 'symbol': '₹'},
       {'code': 'USD', 'name': 'United States Dollar', 'symbol': r'$'},
@@ -637,180 +991,290 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     ];
 
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ------------------------------------------------------------------
-            // ELEMENT: LEFT-SIDE HEADER PILL - "Currency"
-            // ------------------------------------------------------------------
-            _buildPageHeader(theme, colorScheme, Symbols.payments, 'Currency'),
-            const SizedBox(height: 40),
-
-            // ------------------------------------------------------------------
-            // ELEMENT: SCREEN HEADLINE TITLE
-            // ------------------------------------------------------------------
-            Center(
-              child: Text(
-                "Let's choose your Currency",
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: _previousPage,
+                      icon: const Icon(Symbols.arrow_back_rounded),
+                    ),
+                    const SizedBox(width: 48),
+                  ],
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 32),
+                const SizedBox(height: 12),
 
-            // ------------------------------------------------------------------
-            // ELEMENT: SCROLLABLE CURRENCY SELECTION LIST
-            // ------------------------------------------------------------------
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(bottom: 120),
-                physics: const BouncingScrollPhysics(),
-                itemCount: currencies.length,
-                itemBuilder: (context, index) {
-                  final c = currencies[index];
-                  final isSelected = _selectedCurrency == c['code'];
+                // Hero: Currency cluster icon
+                Container(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer.withOpacity(0.35),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Symbols.currency_exchange_rounded,
+                    size: 48,
+                    color: colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 16),
 
-                  // Sub-element: Interactive Currency Option Card
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
-                    child: InkWell(
-                      onTap: () => setState(() => _selectedCurrency = c['code']),
-                      borderRadius: BorderRadius.circular(20),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                        decoration: BoxDecoration(
-                          color: isSelected 
-                              ? colorScheme.primaryContainer 
-                              : colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                Text(
+                  'Choose Currency',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Scrollable currency list
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: currencies.length,
+                    itemBuilder: (context, index) {
+                      final c = currencies[index];
+                      final isSelected = _selectedCurrency == c['code'];
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: InkWell(
+                          onTap: () => setState(() => _selectedCurrency = c['code']),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: isSelected ? colorScheme.primary : Colors.transparent,
-                            width: 2,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            // Currency Name
-                            Expanded(
-                              child: Text(
-                                c['name']!,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                ),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? colorScheme.primaryContainer
+                                  : colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: isSelected ? colorScheme.primary : Colors.transparent,
+                                width: 2,
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            // Currency Symbol Badge Avatar
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isSelected ? colorScheme.primary : colorScheme.surfaceContainerHighest,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  c['symbol']!,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    c['name']!,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: isSelected ? colorScheme.primary : colorScheme.surfaceContainerHighest,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      c['symbol']!,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Transparent fixed safe-area bottom navigation bar
+          Positioned(
+            left: 24,
+            right: 24,
+            bottom: 16,
+            child: Container(
+              color: Colors.transparent, // Safe area has no color per user mandate
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 60,
+                      child: OutlinedButton.icon(
+                        onPressed: _previousPage,
+                        icon: const Icon(Symbols.arrow_back_rounded),
+                        label: const Text('Previous', style: TextStyle(fontWeight: FontWeight.bold)),
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: theme.scaffoldBackgroundColor.withOpacity(0.85),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         ),
                       ),
                     ),
-                  );
-                },
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 60,
+                      child: FilledButton.icon(
+                        onPressed: _selectedCurrency != null ? _nextPage : null,
+                        icon: const Icon(Symbols.arrow_forward_rounded),
+                        label: const Text('Next', style: TextStyle(fontWeight: FontWeight.bold)),
+                        style: FilledButton.styleFrom(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   // ============================================================================
-  // SECTION: ONBOARDING SCREEN 4 - PERMISSIONS PAGE
+  // SCREEN 6: PERMISSIONS WE WANT
   // ============================================================================
   Widget _buildPermissionsPage(ThemeData theme, ColorScheme colorScheme) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ------------------------------------------------------------------
-            // ELEMENT: LEFT-SIDE HEADER PILL - "Permissions"
-            // ------------------------------------------------------------------
-            _buildPageHeader(theme, colorScheme, Symbols.shield_with_heart, 'Permissions'),
-            const SizedBox(height: 60),
-
-            // ------------------------------------------------------------------
-            // ELEMENT: SCREEN HEADLINE TITLE
-            // ------------------------------------------------------------------
-            Center(
-              child: Text(
-                "Permissions we need",
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: _previousPage,
+                  icon: const Icon(Symbols.arrow_back_rounded),
                 ),
+                _buildSkipPill(_nextPage),
+              ],
+            ),
+            const Spacer(),
+
+            // Hero: Shield with Heart Icon
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer.withOpacity(0.35),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Symbols.shield_with_heart,
+                size: 56,
+                color: colorScheme.primary,
               ),
             ),
-            const SizedBox(height: 48),
+            const SizedBox(height: 20),
 
-            // ------------------------------------------------------------------
-            // ELEMENT: PERMISSION CARD 1 - STORAGE / ALL FILES ACCESS
-            // ------------------------------------------------------------------
-            _buildPermissionItem(
-              theme,
-              colorScheme,
-              icon: Symbols.folder_open,
-              title: "All Files Access",
-              reason: "Required to create and restore backups of your financial data safely.",
-              isGranted: _storagePermissionGranted,
-              onTap: () async {
-                final status = Platform.isAndroid
-                    ? await Permission.manageExternalStorage.request()
-                    : await Permission.storage.request();
-                setState(() => _storagePermissionGranted = status.isGranted);
-              },
+            Text(
+              'Permissions we want',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+              ),
             ),
             const SizedBox(height: 24),
 
-            // ------------------------------------------------------------------
-            // ELEMENT: PERMISSION CARD 2 - NOTIFICATIONS ACCESS
-            // ------------------------------------------------------------------
-            _buildPermissionItem(
-              theme,
-              colorScheme,
-              icon: Symbols.notifications,
-              title: "Notifications",
-              reason: "Get reminders for your upcoming bills and recurring transactions.",
-              isGranted: _notificationPermissionGranted,
-              onTap: () async {
-                final status = await Permission.notification.request();
-                setState(() => _notificationPermissionGranted = status.isGranted);
-              },
+            // Card container housing permissions
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest.withOpacity(0.35),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+              ),
+              child: Column(
+                children: [
+                  _buildPermissionItem(
+                    theme,
+                    colorScheme,
+                    icon: Symbols.folder_open,
+                    title: 'All Files Access',
+                    reason: 'Required to create and restore backups safely.',
+                    isGranted: _storagePermissionGranted,
+                    onTap: () async {
+                      final status = Platform.isAndroid
+                          ? await Permission.manageExternalStorage.request()
+                          : await Permission.storage.request();
+                      setState(() => _storagePermissionGranted = status.isGranted);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _buildPermissionItem(
+                    theme,
+                    colorScheme,
+                    icon: Symbols.notifications,
+                    title: 'Notifications',
+                    reason: 'Get reminders for bills and recurring transactions.',
+                    isGranted: _notificationPermissionGranted,
+                    onTap: () async {
+                      final status = await Permission.notification.request();
+                      setState(() => _notificationPermissionGranted = status.isGranted);
+                    },
+                  ),
+                ],
+              ),
             ),
+            const Spacer(),
+
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 60,
+                    child: OutlinedButton.icon(
+                      onPressed: _previousPage,
+                      icon: const Icon(Symbols.arrow_back_rounded),
+                      label: const Text('Previous', style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SizedBox(
+                    height: 60,
+                    child: FilledButton.icon(
+                      onPressed: _nextPage,
+                      icon: const Icon(Symbols.arrow_forward_rounded),
+                      label: const Text('Skip', style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: FilledButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
 
-  // ============================================================================
-  // SECTION: REUSABLE PERMISSION ITEM CARD COMPONENT
-  // ============================================================================
   Widget _buildPermissionItem(
     ThemeData theme,
     ColorScheme colorScheme, {
@@ -820,176 +1284,220 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
     required bool isGranted,
     required VoidCallback onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Sub-element: Permission Header (Icon & Title)
-          Row(
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(icon, color: colorScheme.primary, size: 28),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: colorScheme.primary, size: 32),
-              const SizedBox(width: 16),
-              Text(
-                title,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 2),
+              Text(reason, style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant)),
             ],
           ),
-          const SizedBox(height: 12),
-          // Sub-element: Permission Rationale Text
-          Text(
-            reason,
-            style: TextStyle(color: colorScheme.onSurfaceVariant),
-          ),
-          const SizedBox(height: 16),
-          // Sub-element: Interactive Permission Action Button (Tonal / Check icon)
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.tonal(
-              onPressed: isGranted ? null : onTap,
-              style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                disabledBackgroundColor: colorScheme.surfaceContainerHighest,
-              ),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: isGranted
-                    ? Icon(
-                        Symbols.check,
-                        key: const ValueKey('granted'),
-                        color: colorScheme.primary,
-                        size: 28,
-                      )
-                    : const Text(
-                        "Allow Permission",
-                        key: ValueKey('not_granted'),
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 8),
+        IconButton.filledTonal(
+          onPressed: isGranted ? null : onTap,
+          icon: Icon(isGranted ? Symbols.check : Symbols.add),
+        ),
+      ],
     );
   }
 
   // ============================================================================
-  // SECTION: ONBOARDING SCREEN 5 - FINAL / ALL SET PAGE
+  // SCREEN 7: LET'S SET THE COLOURS
   // ============================================================================
-  Widget _buildFinalPage(ThemeData theme, ColorScheme colorScheme) {
+  Widget _buildColorsPage(ThemeData theme, ColorScheme colorScheme) {
+    final themeState = ref.watch(themeControllerProvider);
+    final useDynamic = themeState.useMaterialYou;
+
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ------------------------------------------------------------------
-            // ELEMENT: TOP HEADER ROW (LEFT PILL & OPEN-SOURCE BADGE)
-            // ------------------------------------------------------------------
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Sub-element: Left-Side Header Pill - "All Set"
-                _buildPageHeader(theme, colorScheme, Symbols.done_all, 'All Set'),
-                // Sub-element: Open-Source Vector Badge
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: SvgPicture.asset(
-                    'assets/images/open-source.svg',
-                    height: 28,
-                    colorFilter: ColorFilter.mode(colorScheme.primary, BlendMode.srcIn),
+                IconButton(
+                  onPressed: _previousPage,
+                  icon: const Icon(Symbols.arrow_back_rounded),
+                ),
+                _buildSkipPill(_nextPage),
+              ],
+            ),
+            const Spacer(),
+
+            // Hero: Triple ring palette icon
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer.withOpacity(0.35),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Symbols.palette_rounded,
+                size: 56,
+                color: colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            Text(
+              'Let’s set the Colours',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Dynamic Color Toggle Card
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.3)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Symbols.auto_awesome_rounded, color: colorScheme.primary),
+                      const SizedBox(width: 14),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Dynamic Colour', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text('Match your device wallpaper', style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Switch(
+                    value: useDynamic,
+                    onChanged: (val) {
+                      ref.read(themeControllerProvider.notifier).setUseMaterialYou(val);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Color Schemes Box: Shows fixed swatches when dynamic color is OFF
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    useDynamic ? 'Material You Harmonization' : 'Color Schemes (Fixed Palettes)',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 14),
+                  if (!useDynamic)
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: fixedPalette.map((c) {
+                        final isSelected = themeState.customColor?.value == c.value;
+                        return GestureDetector(
+                          onTap: () {
+                            ref.read(themeControllerProvider.notifier).setCustomColor(c);
+                          },
+                          child: Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: c,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected ? colorScheme.onSurface : Colors.transparent,
+                                width: 3,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.15),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: isSelected
+                                ? Icon(
+                                    Symbols.check,
+                                    size: 22,
+                                    color: c.computeLuminance() > 0.5 ? Colors.black : Colors.white,
+                                  )
+                                : null,
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  else
+                    Row(
+                      children: [
+                        Icon(Symbols.wallpaper_rounded, color: colorScheme.primary, size: 22),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Using dynamic Monet tones derived from your system theme.',
+                            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+            const Spacer(),
+
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 60,
+                    child: OutlinedButton.icon(
+                      onPressed: _previousPage,
+                      icon: const Icon(Symbols.arrow_back_rounded),
+                      label: const Text('Previous', style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SizedBox(
+                    height: 60,
+                    child: FilledButton.icon(
+                      onPressed: _nextPage,
+                      icon: const Icon(Symbols.arrow_forward_rounded),
+                      label: const Text('Next', style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: FilledButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 24),
-                    // ----------------------------------------------------------
-                    // ELEMENT: DYNAMIC SHADOW HERO BRAND LOGO
-                    // ----------------------------------------------------------
-                    _buildDynamicShadowLogo(logoPath: 'assets/images/logo.svg', size: 100),
-                    const SizedBox(height: 28),
-
-                    // ----------------------------------------------------------
-                    // ELEMENT: PRIVACY & OPEN SOURCE HEADLINE TITLE
-                    // ----------------------------------------------------------
-                    Text(
-                      "Open Source & Private",
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.3,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-
-                    // ----------------------------------------------------------
-                    // ELEMENT: OFFLINE-FIRST EXPLANATION SUBTITLE
-                    // ----------------------------------------------------------
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        "Wallet is fully open source and works completely offline. Your financial data never leaves your device.",
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                          height: 1.4,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-
-                    // ----------------------------------------------------------
-                    // ELEMENT: CORE VALUE HIGHLIGHT CARDS (Extending Screen 5)
-                    // ----------------------------------------------------------
-                    _buildValueHighlightCard(
-                      theme,
-                      colorScheme,
-                      icon: Symbols.shield_lock_rounded,
-                      title: "100% Offline & Private",
-                      description: "Powered by Isar embedded database with zero telemetry, trackers, or cloud dependencies.",
-                    ),
-                    const SizedBox(height: 12),
-                    _buildValueHighlightCard(
-                      theme,
-                      colorScheme,
-                      icon: Symbols.settings_backup_restore_rounded,
-                      title: "Encrypted Local Backups",
-                      description: "Safely export and restore all accounts, transactions, and categories anytime on your terms.",
-                    ),
-                    const SizedBox(height: 12),
-                    _buildValueHighlightCard(
-                      theme,
-                      colorScheme,
-                      icon: Symbols.auto_awesome_rounded,
-                      title: "Material 3 Expressive",
-                      description: "Fluid spring animations, Atelier dynamic color harmonies, and tactile haptic response.",
-                    ),
-                    const SizedBox(height: 12),
-                    _buildValueHighlightCard(
-                      theme,
-                      colorScheme,
-                      icon: Symbols.code_rounded,
-                      title: "Pure Open Source",
-                      description: "Transparent, community-driven codebase with no paid paywalls or hidden subscriptions.",
-                    ),
-
-                    const SizedBox(height: 140), // Space for floating "Let's dive in" action button
-                  ],
-                ),
-              ),
-            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -997,28 +1505,285 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
   }
 
   // ============================================================================
-  // SECTION: REUSABLE VALUE HIGHLIGHT CARD COMPONENT (Screen 5)
+  // SCREEN 8: YOU'RE ALL SET
   // ============================================================================
-  Widget _buildValueHighlightCard(
+  Widget _buildAllSetPage(ThemeData theme, ColorScheme colorScheme) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        child: Column(
+          children: [
+            // Top Bar: Open Source Badge on the right
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: _previousPage,
+                  icon: const Icon(Symbols.arrow_back_rounded),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF61A76A).withOpacity(0.18),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFF61A76A), width: 1.5),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Symbols.code_rounded, size: 16, color: Color(0xFF2E7D32)),
+                      SizedBox(width: 6),
+                      Text(
+                        'Open Source',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2E7D32),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+
+                    // Central Hero Brand Logo (Sunny rotates behind it)
+                    _buildDynamicShadowLogo(logoPath: 'assets/images/logo.svg', size: 110),
+                    const SizedBox(height: 24),
+
+                    Text(
+                      'You’re all set',
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Wallet is fully open source and works offline. Your data never leaves your device.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+
+                    // 4 Value Highlight Cards
+                    _buildValueCard(
+                      theme,
+                      colorScheme,
+                      icon: Symbols.shield_lock_rounded,
+                      title: '100% Offline & Private',
+                      desc: 'Powered by embedded Isar storage with zero external tracking.',
+                    ),
+                    const SizedBox(height: 10),
+                    _buildValueCard(
+                      theme,
+                      colorScheme,
+                      icon: Symbols.settings_backup_restore_rounded,
+                      title: 'Encrypted Local Backups',
+                      desc: 'Export and restore all accounts, transactions, and categories anytime.',
+                    ),
+                    const SizedBox(height: 10),
+                    _buildValueCard(
+                      theme,
+                      colorScheme,
+                      icon: Symbols.auto_awesome_rounded,
+                      title: 'Material 3 Expressive',
+                      desc: 'Fluid physics animations, ambient vectors, and dynamic palettes.',
+                    ),
+                    const SizedBox(height: 10),
+                    _buildValueCard(
+                      theme,
+                      colorScheme,
+                      icon: Symbols.code_rounded,
+                      title: 'Pure Open Source',
+                      desc: 'Transparent codebase free of ads, subscriptions, or paywalls.',
+                    ),
+                    const SizedBox(height: 100),
+                  ],
+                ),
+              ),
+            ),
+
+            // Bottom Primary Action: "Let’s Dive in"
+            GestureDetector(
+              onTapUp: _startRippleAnimation,
+              child: Container(
+                width: double.infinity,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.primary.withOpacity(0.35),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Text(
+                    'Let’s Dive in',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============================================================================
+  // ALTERNATE STATE: BACKUP COMPLETE
+  // ============================================================================
+  Widget _buildBackupCompletePage(ThemeData theme, ColorScheme colorScheme) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        child: Column(
+          children: [
+            const Spacer(),
+
+            // Drive Icon with Verified Green Checkmark
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 140,
+                  height: 140,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer.withOpacity(0.4),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Symbols.settings_backup_restore_rounded,
+                    size: 80,
+                    color: colorScheme.primary,
+                  ),
+                ),
+                Positioned(
+                  right: -4,
+                  bottom: -4,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF61A76A),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Symbols.check_rounded,
+                      size: 32,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+
+            Text(
+              'Restore',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF61A76A).withOpacity(0.2),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: const Text(
+                'Complete',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2E7D32),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Your financial data and preferences have been restored. Tap below to launch your refreshed dashboard.',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const Spacer(),
+
+            // Primary Button: "Let’s Dive in"
+            GestureDetector(
+              onTapUp: _startRippleAnimation,
+              child: Container(
+                width: double.infinity,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.primary.withOpacity(0.35),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Text(
+                    'Let’s Dive in',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildValueCard(
     ThemeData theme,
     ColorScheme colorScheme, {
     required IconData icon,
     required String title,
-    required String description,
+    required String desc,
   }) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withOpacity(0.35),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withOpacity(0.2),
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(10),
@@ -1026,32 +1791,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
               color: colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(
-              icon,
-              size: 22,
-              color: colorScheme.onPrimaryContainer,
-            ),
+            child: Icon(icon, size: 22, color: colorScheme.onPrimaryContainer),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    height: 1.3,
-                  ),
-                ),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const SizedBox(height: 2),
+                Text(desc, style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant)),
               ],
             ),
           ),
@@ -1059,184 +1808,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
       ),
     );
   }
-
-  // ============================================================================
-  // SECTION: PERSISTENT FLOATING NAVIGATION BUTTONS & ACTIONS
-  // ============================================================================
-  Widget _buildNavigationButtons(
-      ThemeData theme, ColorScheme colorScheme, Size size, double bottomInset) {
-    final progress = _currentPage; // 0.0 to 4.0
-    
-    // Page 0 (Welcome) logic
-    final isPage0 = progress < 0.5;
-    final isLastPage = progress > 3.5;
-    
-    // Transition from Welcome to Next (Page 0 -> 1)
-    final p01 = (progress).clamp(0.0, 1.0);
-    
-    // Welcome/DiveIn button properties
-    final double width;
-    final double left;
-    final double borderRadius;
-    final double bottom = (bottomInset > 0 && progress >= 0.5) ? bottomInset + 20 : 48;
-    
-    if (progress <= 1.0) {
-      // Transition from Page 0 to Page 1
-      width = lerpDouble(size.width - 48, 120.0, p01)!;
-      left = lerpDouble(24.0, size.width - 120 - 24.0, p01)!;
-      borderRadius = 24.0;
-    } else if (progress <= 3.0) {
-      // Static "Next" position for Page 1, 2, 3
-      width = 120.0;
-      left = size.width - 120 - 24.0;
-      borderRadius = 24.0;
-    } else {
-      // Transition from Page 3 to Page 4
-      final p34 = (progress - 3.0).clamp(0.0, 1.0);
-      width = lerpDouble(120.0, size.width - 48, p34)!;
-      left = lerpDouble(size.width - 120 - 24.0, 24.0, p34)!;
-      borderRadius = 24.0;
-    }
-
-    // Previous button visibility and position
-    final showPrevious = progress >= 0.9 && progress <= 3.5;
-    final prevOpacity = (progress >= 0.9 && progress <= 1.0) 
-        ? (progress - 0.9) * 10 
-        : (progress > 3.0 && progress <= 3.1) 
-            ? (3.1 - progress) * 10
-            : 1.0;
-
-    return Stack(
-      children: [
-        // ----------------------------------------------------------------------
-        // ELEMENT: PREVIOUS PAGE NAVIGATION BUTTON (Animated Opacity & Slide)
-        // ----------------------------------------------------------------------
-        if (showPrevious)
-          Positioned(
-            left: 24,
-            bottom: bottom,
-            child: Opacity(
-              opacity: prevOpacity.clamp(0.0, 1.0),
-              child: OutlinedButton(
-                onPressed: _previousPage,
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(120, 64),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                  side: BorderSide(color: colorScheme.primary, width: 2),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Symbols.arrow_back, color: colorScheme.primary),
-                    const SizedBox(width: 8),
-                    const Text("Previous", style: TextStyle(fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-        // ----------------------------------------------------------------------
-        // ELEMENT: RESTORE BACKUP BUTTON (Exclusively on Screen 1)
-        // ----------------------------------------------------------------------
-        if (isPage0)
-          Positioned(
-            left: 24,
-            right: 24,
-            bottom: 128,
-            child: TextButton.icon(
-              onPressed: _restoreBackup,
-              icon: const Icon(Symbols.settings_backup_restore),
-              label: const Text("Restore Backup", style: TextStyle(fontWeight: FontWeight.bold)),
-              style: TextButton.styleFrom(
-                minimumSize: const Size(double.infinity, 56),
-                backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
-                foregroundColor: colorScheme.onSurface,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              ),
-            ),
-          ),
-
-        // ----------------------------------------------------------------------
-        // ELEMENT: DYNAMIC CALL-TO-ACTION BUTTON ("Welcome" / "Next" / "Let's dive in")
-        // Features dynamic width interpolation, dynamic primary color & elevation shadow
-        // ----------------------------------------------------------------------
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 10), // Handled by PageView listener for smoothness
-          left: left,
-          bottom: bottom,
-          child: GestureDetector(
-            onTapUp: isLastPage ? _startRippleAnimation : null,
-            onTap: isLastPage ? null : _nextPage,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              width: width,
-              height: 64,
-              decoration: BoxDecoration(
-                color: _canGoNext(progress) ? colorScheme.primary : Colors.grey[400],
-                borderRadius: BorderRadius.circular(borderRadius),
-                boxShadow: [
-                  if (_canGoNext(progress))
-                    BoxShadow(
-                      color: colorScheme.primary.withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                ],
-              ),
-              child: Center(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: _buildButtonLabel(progress),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // ----------------------------------------------------------------------------
-  // ELEMENT: DYNAMIC BUTTON LABEL SWITCHER
-  // Switches label between "Welcome", "Next", and "Let's dive in"
-  // ----------------------------------------------------------------------------
-  Widget _buildButtonLabel(double progress) {
-    if (progress < 0.5) {
-      return const Text(
-        'Welcome',
-        key: ValueKey('welcome'),
-        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-      );
-    } else if (progress < 3.5) {
-      return const Row(
-        key: ValueKey('next'),
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Next',
-            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(width: 8),
-          Icon(Symbols.arrow_forward, color: Colors.white),
-        ],
-      );
-    } else {
-      return const Text(
-        'Let\'s dive in',
-        key: ValueKey('divein'),
-        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-      );
-    }
-  }
 }
 
 // ==============================================================================
-// SECTION: UTILITIES & CUSTOM CLIPPERS / FORMATTERS
+// UTILITIES & CUSTOM CLIPPERS / FORMATTERS
 // ==============================================================================
-
-// ------------------------------------------------------------------------------
-// ELEMENT: CIRCULAR RIPPLE CLIPPER FOR FULL-SCREEN EXIT TRANSITION
-// ------------------------------------------------------------------------------
 class CircleClipper extends CustomClipper<Path> {
   final double radius;
   final Offset center;
@@ -1252,9 +1828,6 @@ class CircleClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant CircleClipper oldClipper) => oldClipper.radius != radius;
 }
 
-// ------------------------------------------------------------------------------
-// ELEMENT: INPUT FORMATTER - WORD CAPITALIZATION FOR PROFILE NAMES
-// ------------------------------------------------------------------------------
 class _WordCapitalizationFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
@@ -1269,7 +1842,7 @@ class _WordCapitalizationFormatter extends TextInputFormatter {
     }).toList();
 
     final String newText = capitalizedWords.join(' ');
-    
+
     return newValue.copyWith(
       text: newText,
       selection: newValue.selection,

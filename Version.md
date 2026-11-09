@@ -1391,3 +1391,25 @@ ont_awesome_flutter\ v11 APIs.
   - `release-notes/v6.0.0.md`
   - `Version.md`
 - **Status**: 100% (Completed)
+
+
+## [2026-11-10 00:40:00 IST] - Onboarding 8-Screen Material 3 Expressive Implementation
+- **Action**: Fully implemented the redesigned 8-screen progressive onboarding architecture and alternate Backup Complete state in `lib/features/auth/pages/onboarding_page.dart` using Material 3 Expressive motion choreography, continuous ambient rotation on axis for `Sunny`, `Bun`, and `Soft Boom` shapes, real-time position/scale state interpolation across `PageView`, dynamic/fixed color harmonizing (`#457B9D` fallback and Media 0 palettes), photo cropper integration, live name validation gating the Next button, transparent safe-area currency selector, security permissions container, and circular reveal ripple exit transition.
+- **Changes**:
+  - **Ambient Motion Choreography**: Added `_ambientRotationController` (continuous 28s loop) driving `Sunny - Move` (clockwise), `Bun - Move` (counter-clockwise), and `Soft boom - Move` (clockwise) with smooth `Alignment` and size interpolation across the 8 screens.
+  - **Screen 1 (Welcome)**: Preserved top-left dynamic brand logo and top-right theme toggle, integrated center `assets/images/welcome.svg` with primary color filter, single-line "Welcome to" title, and dynamic primary "Wallet" pill with M3 elevation.
+  - **Screen 2 (Restore Backup)**: Added dedicated restore screen with download drive icon, "Restore" header, "Backup" pill, top-right "Skip" navigation, and "Choose file" action. Restoring backup instantly transitions to the alternate "Backup Complete" success view.
+  - **Screen 3 (Personalise: Photo)**: Split into dedicated avatar selection screen with circular placeholder, cropped file preview via `ImagePicker` & `ImageCropper`, top-right "Skip", and subtitle *"and make it personal"*.
+  - **Screen 4 (Personalise: Name)**: Split into dedicated ID card badge screen with `TextFormField`, input capitalization formatting, and live-validation gating the "Next" button (disabled/grey until name is typed).
+  - **Screen 5 (Choose Currency)**: Integrated currency catalog with animated selection cards and transparent safe-area bottom floating bar overlay per design specification.
+  - **Screen 6 (Permissions we want)**: Added shield with heart icon, containing toggle cards for All Files Access and Notifications with direct permission handler requests.
+  - **Screen 7 (Let's set the Colours)**: Triple ring color wheel header with Dynamic Color Monet switch (connected to `themeControllerProvider`), displaying the 6 fixed swatches from Media 0 (`#E7702B`, `#F1FAEE`, `#A8DADC`, `#457B9D`, `#1D3557`, `#0C1A2F`) when dynamic color is OFF.
+  - **Screen 8 (You're all set)**: Open Source Initiative badge at top-right, `Sunny - Move` rotating behind the central wallet logo, 4 M3 Expressive value highlight cards, and full-width "Let’s Dive in" button triggering circular reveal exit animation.
+  - **Alternate State (Backup Complete)**: Verified green checkmark badge overlay on drive icon with direct "Let’s Dive in" button to restart/launch app into restored data.
+- **Files Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `assets/images/shape_sunny.svg`
+  - `assets/images/shape_bun.svg`
+  - `assets/images/shape_soft_boom.svg`
+  - `Version.md`
+- **Status**: 100% (Completed)
