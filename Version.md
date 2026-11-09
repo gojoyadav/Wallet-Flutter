@@ -1428,3 +1428,15 @@ ont_awesome_flutter\ v11 APIs.
   - `.github/workflows/build_apks.yml`
   - `Version.md`
 - **Status**: 100% (Completed)
+
+
+## [2026-11-10 01:12:00 IST] - Pre-Release v6.0.0-dev01 Published on GitHub Releases
+- **Action**: Verified the successful execution of GitHub Actions CI/CD pipeline run `#42684428792` on branch `Improv` and confirmed official publication of the automated pre-release `v6.0.0-dev01` on GitHub Releases.
+- **Published Deliverables**:
+  - Release URL: `https://github.com/junksidetm/Wallet-Flutter/releases/tag/v6.0.0-dev01`
+  - Binary Assets:
+    - `wallet-arm64-v8a.apk` (ARM64-v8a standalone) & `.sha256`
+    - `wallet-universal.apk` (Fat universal binary) & `.sha256`
+    - `wallet-arm-v7a.apk` (32-bit ARMv7a) & `.sha256`
+    - `wallet-x86_64.apk` (64-bit x86 architecture) & `.sha256`
+- **Status**: 100% (Completed & Published Live)
