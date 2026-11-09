@@ -1501,3 +1501,66 @@ ont_awesome_flutter\ v11 APIs.
     - `wallet-arm-v7a.apk` (32-bit ARMv7a) & `.sha256`
     - `wallet-x86_64.apk` (64-bit x86 architecture) & `.sha256`
 - **Status**: 100% (Completed & Published Live)
+
+
+## [2026-11-10 02:16:00 IST] - Session Continuity & Comprehensive Onboarding Wireframe Execution Record
+- **Action**: Exhaustive documentation of the user prompt, design specifications, architectural changes, vector asset extractions, layout calibrations, and CI/CD verification for the Onboarding module overhaul on the `Improv` branch to facilitate seamless cross-session resumption.
+- **Archived User Prompt (Verbatim Source of Truth)**:
+  > "/context-mode:context-mode The current implemnetation of Onboarding Screen for Imporv Branch is very badly implemented, we will now put the OldS to legacy and remove everything from OldS. (Read version.md) This is the prompt I gave you before (> /context-mode:context-mode All the colours are there in "Testing Colours.svg". Now let me tell you everything from Screen 1. I want the OldS for the top left, right and welcome.svg to be same. From NewS add the bun, sunny, BackGround (Shape: Soft Boom). The Move tag means they will rotate on their axis slow/fast you will decide. Their colours will be dynamic secondary colour (if dyan,mic colour is on. If off then #457B9D) and the welcome colour will have the hero colour and you will set the dynamic colour. In screen 2, bun, sunny, soft boom shape will seamless transform while rotating and then will be placed to the places to the location as seen on the screen 2. They will still keep rotataing to all the screens till they are removed in the 8 screen. Now you know the colours, you can adjust everything from here. If the user choose file and restored the backup then all the remaining screen will be skipped and the "Backup Complete" screen and the OldS "Let's deep dive" when clicked it shows a circular animation. In screen 3, when user add a photo just like in oldS the croper that we implemented it will use that and then that Photo Icon will change into that photo with he same size. in screen 4, Add name conatiner is a text field. The next button at the bottom will stay grey till the name is not emtered. Also implemnent the OldS next and previous with the arrows. In screen 5, list of currency shows all the curerency implemetaion from OldS. The safe area is a fixed white space. It should have no colour. I aded for visual for me. But when implenetating it should have no colour. It houses the previous and next button and their container that it will fixed. The list will be in the background. In screen 6, add oldS pernissions in the old permission square. In screen 7, Dynamic colour toggle willhave dynamic colour from the prefrences. The colour scemmes box will show the color sceme variants. If user turn off the dybnamic colour switch then it will show the fixed colours. The fix colours are shown in colour scemes colours. In screen 8, The sunny will move where the screen is shown in that wireframe. It will still keep rotate. OldS implement the  screen let's dive in screen animation.) In this wherever there is OldS written. First check what does it actually mean and what it implemented. Now when i gave the wireframe (All 11 media attached) it is how I want the screen to look without padding. I want every element to be the exact position where it is locayted in those svgs. You can read the previous that answers how eveyrthing will go. Implement this and push everything to Imporv with a new pre-release tag. read version.md. /goal keep fixing the code, and keep checking till a new pre release is released/goal"
+
+- **Exhaustive Record of Implementation & Changes**:
+  1. **Legacy Modularization (OldS)**:
+     - Preserved the complete 5-screen predecessor onboarding flow into `lib/features/auth/pages/legacy_onboarding_page.dart` under `LegacyOnboardingPage`.
+     - Retained all legacy logic: dynamic shadow branding (`_buildDynamicShadowLogo`), platform brightness theme toggle (`_buildThemeToggle`), permissions request flow (`Permission.manageExternalStorage` & `Permission.notification`), backup restoration modal (`_restoreBackup`), photo cropping via `ImagePicker` & `ImageCropper` with 1:1 ratio, currency catalog, and the full-screen circular ripple launch transition (`_startRippleAnimation`).
+  2. **Clean Redesign without Padding (`onboarding_page.dart`)**:
+     - Removed all loose `Column`/`Padding`/`Spacer` layouts from the active onboarding screen.
+     - Implemented coordinate-based responsive positioning engine (`_pos(x, y, w, h)`) mapping exact wireframe SVG element bounds in the standard `412 x 917` Android viewport canvas (`sx = width / 412.0`, `sy = height / 917.0`).
+  3. **Ambient Rotating Background "Move" Shapes**:
+     - Normalized `assets/images/shape_sunny.svg`, `shape_bun.svg`, and `shape_soft_boom.svg` with centered viewBoxes for rotation on center axes.
+     - `_ambientRotationController` powers perpetual rotation (Sunny clockwise, Bun counter-clockwise, Soft Boom clockwise).
+     - Seamless interpolation of shape centers, dimensions, and opacities across `_currentPage`:
+       - **Screen 1**: Sunny at `(364.5, 621.5)` (size 82.2), Bun at `(47.5, 694.5)` (size 76.0), Soft Boom at `(35.0, 917.0)` (size 367.2).
+       - **Screens 2–7 & Backup Complete**: Sunny pinned at `(339.0, 93.0)` (size 287.3), Bun pinned at `(16.0, 459.0)` (size 210.0), Soft Boom pinned at `(205.5, 974.5)` (size 694.8).
+       - **Screen 8**: Sunny translates directly behind the central wallet logo at `(206.5, 244.5)` (size 376.4), while Bun and Soft Boom fade out completely.
+     - Color binding: Dynamic secondary color (`colorScheme.secondary`) when Dynamic Color is enabled; fallback to `#457B9D` when disabled.
+  4. **Vector Hero Icons Extraction**:
+     - Extracted 7 vector SVG hero icons with exact wireframe path geometry into `assets/images/`:
+       - `onboarding_backup_icon.svg` (Screen 2 download drive tray)
+       - `onboarding_backup_complete_icon.svg` (Alternate view drive tray + green checkmark badge)
+       - `onboarding_photo_icon.svg` (Screen 3 user circular avatar outline)
+       - `onboarding_name_icon.svg` (Screen 4 ID badge with profile lines)
+       - `onboarding_currency_icon.svg` (Screen 5 multi-currency coin cluster: Euro, Pound, Dollar, Rupee)
+       - `onboarding_permissions_icon.svg` (Screen 6 security shield with heart)
+       - `onboarding_colour_icon.svg` (Screen 7 triple overlapping Venn color rings)
+  5. **Screen Specifications**:
+     - **Screen 1 (Welcome to Wallet)**: Dynamic shadow logo at `x:9, y:10, w:59, h:59`, theme toggle at `x:354, y:16, w:44, h:44`, `welcome.svg` at `x:75, y:144, w:299, h:343` filtered with hero dynamic color, "Welcome to" headline at `y:546`, "Wallet" sub-pill at `x:27, y:602, w:358, h:114, rx:57`, and "Welcome" button at `x:39, y:816, w:335, h:81, rx:12`.
+     - **Screen 2 (Restore Backup)**: Top-right "Skip" pill at `x:294, y:13, w:174, h:62, rx:31`, `onboarding_backup_icon.svg` at `x:49.8, y:133, w:313, h:298`, "Restore" headline at `y:450`, "Backup" sub-pill at `x:23, y:510, w:358, h:114, rx:57`, and "Choose file" button at `x:19, y:816, w:374, h:81, rx:12` triggering `_restoreBackup()`.
+     - **Alternate View (Backup Complete)**: Automatically triggered upon successful backup restoration; shows drive tray + green checkmark badge at `x:50, y:133`, "Restore" headline, "Complete" sub-pill at `y:510`, and "Let’s Dive in" button at `x:19, y:816` triggering circular reveal exit and app restart.
+     - **Screen 3 (Personalise: Photo)**: Top-right "Skip" pill, circular photo frame at `x:64, y:145, w:284, h:284` displaying cropped photo in exact same circular frame once picked via `ImagePicker` & `ImageCropper`, "Let’s Personalise" headline, "Add Photo" sub-pill, "and make it personal" subtitle at `y:645`, and "Choose file" action button.
+     - **Screen 4 (Personalise: Name)**: ID badge illustration at `x:19, y:195, w:374.7, h:198, rx:47.4`, "Let’s Personalise" headline, "Add Name" label at `y:475`, text field container at `x:27, y:510, w:358, h:57, rx:28.5` with `_WordCapitalizationFormatter`, "we need a name, surely you have one" subtitle, OldS Previous button with arrow (`x:23, y:816`), and OldS Next button with arrow (`x:223, y:816`, disabled and grey until name is typed).
+     - **Screen 5 (Choose Currency)**: Multi-currency coin cluster at `x:15, y:60, w:380, h:340`, "Choose Currency" headline at `y:420`, scrollable currency catalog from OldS at `x:23, y:487, w:366, h:320, rx:23`, and transparent safe area at `y:800..917` housing fixed Previous and Next buttons with currency items scrolling in the background.
+     - **Screen 6 (Permissions we want)**: Security shield with heart at `x:70, y:80, w:270, h:270`, "Permissions we want" headline at `y:390`, and OldS permissions container at `x:26, y:459, w:361, h:303, rx:25` housing All Files Access and Notifications toggles.
+     - **Screen 7 (Let's set the Colours)**: Top-right "Skip" pill, 3-ring color wheel at `x:65, y:75, w:280, h:280`, "Let’s set the Colours" headline at `y:390`, Dynamic Color switch container at `x:50, y:459, w:319, h:73, rx:20` bound to Monet system / `themeControllerProvider`, and color schemes container at `x:62, y:555, w:307, h:230, rx:20` displaying Material 3 scheme variants when Dynamic Color is ON, or the 6 fixed swatches from `Testing Colours.svg` (`#E7702B`, `#F1FAEE`, `#A8DADC`, `#457B9D`, `#1D3557`, `#0C1A2F`) when OFF.
+     - **Screen 8 (You're all set)**: Open Source Initiative badge at `x:360, y:14, w:38, h:38`, central rotating Sunny behind the wallet logo at `x:103.6, y:180.1, w:205.6, h:149.1`, "You’re all set" headline at `y:480`, open-source privacy declaration body text, and full-width "Let’s Dive in" button at `x:23, y:820, w:366, h:75, rx:16` triggering circular reveal exit animation into the main app.
+  6. **CI/CD Build & Pre-Release Publication**:
+     - Corrected static call to `FileService.saveImagePermanently(_imagePath!)`.
+     - Committed and pushed signed commits (`fbb9a79`, `6fd0c9c`, `78df8d4`) with SSH key `id_ed25519_junksidetm`.
+     - GitHub Actions run `#42693728732` compiled successfully in 6m 19s and published the automated pre-release `v6.0.0-dev03` on GitHub Releases with all 4 signed APK architectures (`arm64-v8a`, `universal`, `arm-v7a`, `x86_64`) and checksums.
+- **Published Deliverable**:
+  - Release URL: `https://github.com/junksidetm/Wallet-Flutter/releases/tag/v6.0.0-dev03`
+  - Release Title: `v6.0.0-dev03`
+- **Files Documented & Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `lib/features/auth/pages/legacy_onboarding_page.dart`
+  - `assets/images/shape_sunny.svg`
+  - `assets/images/shape_bun.svg`
+  - `assets/images/shape_soft_boom.svg`
+  - `assets/images/onboarding_backup_icon.svg`
+  - `assets/images/onboarding_backup_complete_icon.svg`
+  - `assets/images/onboarding_photo_icon.svg`
+  - `assets/images/onboarding_name_icon.svg`
+  - `assets/images/onboarding_currency_icon.svg`
+  - `assets/images/onboarding_permissions_icon.svg`
+  - `assets/images/onboarding_colour_icon.svg`
+  - `Version.md`
+- **Status**: 100% (Completed, Published & Synced)
