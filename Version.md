@@ -522,3 +522,872 @@ ont_awesome_flutter\ v11 APIs.
   - `lib/features/auth/pages/onboarding_page.dart`
   - `Version.md`
 - **Status**: 100% (Completed)
+
+## [2026-10-21 00:30:00 IST] - Comprehensive Repository Directory & File System Index
+- **Action**: Fully indexed all repository directories (187) and files (607), mapping structural hierarchy and defining the functional responsibility of each component.
+- **Directory Structure & Purpose**:
+  - `.github/`: GitHub platform repository configuration and community templates.
+  - `.github/ISSUE_TEMPLATE/`: Repository directory component: `.github/ISSUE_TEMPLATE`.
+  - `.github/workflows/`: GitHub Actions CI/CD workflows for builds, releases, and tests.
+  - `.stitch/`: Repository directory component: `.stitch`.
+  - `.stitch/designs/`: Repository directory component: `.stitch/designs`.
+  - `android/`: Native Android platform runner and embedding bridge project.
+  - `android/app/`: Repository directory component: `android/app`.
+  - `android/app/src/`: Repository directory component: `android/app/src`.
+  - `android/app/src/debug/`: Repository directory component: `android/app/src/debug`.
+  - `android/app/src/main/`: Repository directory component: `android/app/src/main`.
+  - `android/app/src/main/java/`: Repository directory component: `android/app/src/main/java`.
+  - `android/app/src/main/java/io/`: Repository directory component: `android/app/src/main/java/io`.
+  - `android/app/src/main/java/io/flutter/`: Repository directory component: `android/app/src/main/java/io/flutter`.
+  - `android/app/src/main/java/io/flutter/plugins/`: Repository directory component: `android/app/src/main/java/io/flutter/plugins`.
+  - `android/app/src/main/jniLibs/`: Repository directory component: `android/app/src/main/jniLibs`.
+  - `android/app/src/main/jniLibs/arm64-v8a/`: Repository directory component: `android/app/src/main/jniLibs/arm64-v8a`.
+  - `android/app/src/main/jniLibs/armeabi-v7a/`: Repository directory component: `android/app/src/main/jniLibs/armeabi-v7a`.
+  - `android/app/src/main/jniLibs/x86/`: Repository directory component: `android/app/src/main/jniLibs/x86`.
+  - `android/app/src/main/jniLibs/x86_64/`: Repository directory component: `android/app/src/main/jniLibs/x86_64`.
+  - `android/app/src/main/kotlin/`: Repository directory component: `android/app/src/main/kotlin`.
+  - `android/app/src/main/kotlin/com/`: Repository directory component: `android/app/src/main/kotlin/com`.
+  - `android/app/src/main/kotlin/com/mrdarksidetm/`: Repository directory component: `android/app/src/main/kotlin/com/mrdarksidetm`.
+  - `android/app/src/main/kotlin/com/mrdarksidetm/wallet/`: Repository directory component: `android/app/src/main/kotlin/com/mrdarksidetm/wallet`.
+  - `android/app/src/main/res/`: Repository directory component: `android/app/src/main/res`.
+  - `android/app/src/main/res/drawable/`: Repository directory component: `android/app/src/main/res/drawable`.
+  - `android/app/src/main/res/drawable-hdpi/`: Repository directory component: `android/app/src/main/res/drawable-hdpi`.
+  - `android/app/src/main/res/drawable-mdpi/`: Repository directory component: `android/app/src/main/res/drawable-mdpi`.
+  - `android/app/src/main/res/drawable-v21/`: Repository directory component: `android/app/src/main/res/drawable-v21`.
+  - `android/app/src/main/res/drawable-xhdpi/`: Repository directory component: `android/app/src/main/res/drawable-xhdpi`.
+  - `android/app/src/main/res/drawable-xxhdpi/`: Repository directory component: `android/app/src/main/res/drawable-xxhdpi`.
+  - `android/app/src/main/res/drawable-xxxhdpi/`: Repository directory component: `android/app/src/main/res/drawable-xxxhdpi`.
+  - `android/app/src/main/res/mipmap-anydpi-v26/`: Repository directory component: `android/app/src/main/res/mipmap-anydpi-v26`.
+  - `android/app/src/main/res/mipmap-hdpi/`: Repository directory component: `android/app/src/main/res/mipmap-hdpi`.
+  - `android/app/src/main/res/mipmap-mdpi/`: Repository directory component: `android/app/src/main/res/mipmap-mdpi`.
+  - `android/app/src/main/res/mipmap-xhdpi/`: Repository directory component: `android/app/src/main/res/mipmap-xhdpi`.
+  - `android/app/src/main/res/mipmap-xxhdpi/`: Repository directory component: `android/app/src/main/res/mipmap-xxhdpi`.
+  - `android/app/src/main/res/mipmap-xxxhdpi/`: Repository directory component: `android/app/src/main/res/mipmap-xxxhdpi`.
+  - `android/app/src/main/res/values/`: Repository directory component: `android/app/src/main/res/values`.
+  - `android/app/src/main/res/values-night/`: Repository directory component: `android/app/src/main/res/values-night`.
+  - `android/app/src/profile/`: Repository directory component: `android/app/src/profile`.
+  - `android/gradle/`: Repository directory component: `android/gradle`.
+  - `android/gradle/wrapper/`: Repository directory component: `android/gradle/wrapper`.
+  - `assets/`: Visual assets, iconography, vector drawables, images, and fonts.
+  - `assets/fonts/`: Asset directory storing fonts resources.
+  - `assets/fonts/Emoji/`: Asset directory storing fonts/Emoji resources.
+  - `assets/fonts/GoogleSansFlex/`: Asset directory storing fonts/GoogleSansFlex resources.
+  - `assets/fonts/Icons/`: Asset directory storing fonts/Icons resources.
+  - `assets/icon/`: Asset directory storing icon resources.
+  - `assets/images/`: Asset directory storing images resources.
+  - `assets/metadata/`: Asset directory storing metadata resources.
+  - `docs/`: Project documentation, architectural specifications, and web showcase.
+  - `docs/fonts/`: Repository directory component: `docs/fonts`.
+  - `isar_community/`: Repository directory component: `isar_community`.
+  - `isar_community/.github/`: Repository directory component: `isar_community/.github`.
+  - `isar_community/.github/actions/`: Repository directory component: `isar_community/.github/actions`.
+  - `isar_community/.github/actions/prepare-build/`: Repository directory component: `isar_community/.github/actions/prepare-build`.
+  - `isar_community/.github/assets/`: Repository directory component: `isar_community/.github/assets`.
+  - `isar_community/.github/assets/benchmarks/`: Repository directory component: `isar_community/.github/assets/benchmarks`.
+  - `isar_community/.github/ISSUE_TEMPLATE/`: Repository directory component: `isar_community/.github/ISSUE_TEMPLATE`.
+  - `isar_community/.github/workflows/`: Repository directory component: `isar_community/.github/workflows`.
+  - `isar_community/examples/`: Repository directory component: `isar_community/examples`.
+  - `isar_community/examples/pub/`: Repository directory component: `isar_community/examples/pub`.
+  - `isar_community/examples/pub/assets/`: Repository directory component: `isar_community/examples/pub/assets`.
+  - `isar_community/examples/pub/lib/`: Repository directory component: `isar_community/examples/pub/lib`.
+  - `isar_community/examples/pub/lib/models/`: Repository directory component: `isar_community/examples/pub/lib/models`.
+  - `isar_community/examples/pub/lib/models/api/`: Repository directory component: `isar_community/examples/pub/lib/models/api`.
+  - `isar_community/examples/pub/lib/ui/`: Repository directory component: `isar_community/examples/pub/lib/ui`.
+  - `isar_community/packages/`: Repository directory component: `isar_community/packages`.
+  - `isar_community/packages/isar/`: Repository directory component: `isar_community/packages/isar`.
+  - `isar_community/packages/isar/example/`: Repository directory component: `isar_community/packages/isar/example`.
+  - `isar_community/packages/isar/lib/`: Repository directory component: `isar_community/packages/isar/lib`.
+  - `isar_community/packages/isar/lib/src/`: Repository directory component: `isar_community/packages/isar/lib/src`.
+  - `isar_community/packages/isar/lib/src/annotations/`: Repository directory component: `isar_community/packages/isar/lib/src/annotations`.
+  - `isar_community/packages/isar/lib/src/common/`: Repository directory component: `isar_community/packages/isar/lib/src/common`.
+  - `isar_community/packages/isar/lib/src/native/`: Repository directory component: `isar_community/packages/isar/lib/src/native`.
+  - `isar_community/packages/isar/lib/src/schema/`: Repository directory component: `isar_community/packages/isar/lib/src/schema`.
+  - `isar_community/packages/isar/lib/src/web/`: Repository directory component: `isar_community/packages/isar/lib/src/web`.
+  - `isar_community/packages/isar/test/`: Repository directory component: `isar_community/packages/isar/test`.
+  - `isar_community/packages/isar/tool/`: Repository directory component: `isar_community/packages/isar/tool`.
+  - `isar_community/packages/isar_core/`: Repository directory component: `isar_community/packages/isar_core`.
+  - `isar_community/packages/isar_core/src/`: Repository directory component: `isar_community/packages/isar_core/src`.
+  - `isar_community/packages/isar_core/src/index/`: Repository directory component: `isar_community/packages/isar_core/src/index`.
+  - `isar_community/packages/isar_core/src/legacy/`: Repository directory component: `isar_community/packages/isar_core/src/legacy`.
+  - `isar_community/packages/isar_core/src/mdbx/`: Repository directory component: `isar_community/packages/isar_core/src/mdbx`.
+  - `isar_community/packages/isar_core/src/object/`: Repository directory component: `isar_community/packages/isar_core/src/object`.
+  - `isar_community/packages/isar_core/src/query/`: Repository directory component: `isar_community/packages/isar_core/src/query`.
+  - `isar_community/packages/isar_core/src/schema/`: Repository directory component: `isar_community/packages/isar_core/src/schema`.
+  - `isar_community/packages/isar_core/src/watch/`: Repository directory component: `isar_community/packages/isar_core/src/watch`.
+  - `isar_community/packages/isar_core/tests/`: Repository directory component: `isar_community/packages/isar_core/tests`.
+  - `isar_community/packages/isar_core_ffi/`: Repository directory component: `isar_community/packages/isar_core_ffi`.
+  - `isar_community/packages/isar_core_ffi/.cargo/`: Repository directory component: `isar_community/packages/isar_core_ffi/.cargo`.
+  - `isar_community/packages/isar_core_ffi/src/`: Repository directory component: `isar_community/packages/isar_core_ffi/src`.
+  - `isar_community/packages/isar_flutter_libs/`: Repository directory component: `isar_community/packages/isar_flutter_libs`.
+  - `isar_community/packages/isar_flutter_libs/android/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android`.
+  - `isar_community/packages/isar_flutter_libs/android/gradle/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/gradle`.
+  - `isar_community/packages/isar_flutter_libs/android/gradle/wrapper/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/gradle/wrapper`.
+  - `isar_community/packages/isar_flutter_libs/android/src/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src/main`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/java/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src/main/java`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/java/dev/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src/main/java/dev`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/java/dev/isar/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src/main/java/dev/isar`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/java/dev/isar/isar_flutter_libs/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src/main/java/dev/isar/isar_flutter_libs`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/arm64-v8a/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/arm64-v8a`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/armeabi-v7a/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/armeabi-v7a`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/x86/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/x86`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/x86_64/`: Repository directory component: `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/x86_64`.
+  - `isar_community/packages/isar_flutter_libs/ios/`: Repository directory component: `isar_community/packages/isar_flutter_libs/ios`.
+  - `isar_community/packages/isar_flutter_libs/ios/Assets/`: Repository directory component: `isar_community/packages/isar_flutter_libs/ios/Assets`.
+  - `isar_community/packages/isar_flutter_libs/ios/Classes/`: Repository directory component: `isar_community/packages/isar_flutter_libs/ios/Classes`.
+  - `isar_community/packages/isar_flutter_libs/ios/isar.xcframework/`: Repository directory component: `isar_community/packages/isar_flutter_libs/ios/isar.xcframework`.
+  - `isar_community/packages/isar_flutter_libs/ios/isar.xcframework/ios-arm64/`: Repository directory component: `isar_community/packages/isar_flutter_libs/ios/isar.xcframework/ios-arm64`.
+  - `isar_community/packages/isar_flutter_libs/ios/isar.xcframework/ios-arm64_x86_64-simulator/`: Repository directory component: `isar_community/packages/isar_flutter_libs/ios/isar.xcframework/ios-arm64_x86_64-simulator`.
+  - `isar_community/packages/isar_flutter_libs/ios/Resources/`: Repository directory component: `isar_community/packages/isar_flutter_libs/ios/Resources`.
+  - `isar_community/packages/isar_flutter_libs/lib/`: Repository directory component: `isar_community/packages/isar_flutter_libs/lib`.
+  - `isar_community/packages/isar_flutter_libs/linux/`: Repository directory component: `isar_community/packages/isar_flutter_libs/linux`.
+  - `isar_community/packages/isar_flutter_libs/linux/include/`: Repository directory component: `isar_community/packages/isar_flutter_libs/linux/include`.
+  - `isar_community/packages/isar_flutter_libs/linux/include/isar_flutter_libs/`: Repository directory component: `isar_community/packages/isar_flutter_libs/linux/include/isar_flutter_libs`.
+  - `isar_community/packages/isar_flutter_libs/macos/`: Repository directory component: `isar_community/packages/isar_flutter_libs/macos`.
+  - `isar_community/packages/isar_flutter_libs/macos/Classes/`: Repository directory component: `isar_community/packages/isar_flutter_libs/macos/Classes`.
+  - `isar_community/packages/isar_flutter_libs/windows/`: Repository directory component: `isar_community/packages/isar_flutter_libs/windows`.
+  - `isar_community/packages/isar_flutter_libs/windows/include/`: Repository directory component: `isar_community/packages/isar_flutter_libs/windows/include`.
+  - `isar_community/packages/isar_flutter_libs/windows/include/isar_flutter_libs/`: Repository directory component: `isar_community/packages/isar_flutter_libs/windows/include/isar_flutter_libs`.
+  - `isar_community/packages/isar_generator/`: Repository directory component: `isar_community/packages/isar_generator`.
+  - `isar_community/packages/isar_generator/lib/`: Repository directory component: `isar_community/packages/isar_generator/lib`.
+  - `isar_community/packages/isar_generator/lib/src/`: Repository directory component: `isar_community/packages/isar_generator/lib/src`.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/`: Repository directory component: `isar_community/packages/isar_generator/lib/src/code_gen`.
+  - `isar_community/packages/isar_generator/test/`: Repository directory component: `isar_community/packages/isar_generator/test`.
+  - `isar_community/packages/isar_generator/test/errors/`: Repository directory component: `isar_community/packages/isar_generator/test/errors`.
+  - `isar_community/packages/isar_generator/test/errors/class/`: Repository directory component: `isar_community/packages/isar_generator/test/errors/class`.
+  - `isar_community/packages/isar_generator/test/errors/id/`: Repository directory component: `isar_community/packages/isar_generator/test/errors/id`.
+  - `isar_community/packages/isar_generator/test/errors/index/`: Repository directory component: `isar_community/packages/isar_generator/test/errors/index`.
+  - `isar_community/packages/isar_generator/test/errors/link/`: Repository directory component: `isar_community/packages/isar_generator/test/errors/link`.
+  - `isar_community/packages/isar_generator/test/errors/property/`: Repository directory component: `isar_community/packages/isar_generator/test/errors/property`.
+  - `isar_community/packages/isar_inspector/`: Repository directory component: `isar_community/packages/isar_inspector`.
+  - `isar_community/packages/isar_inspector/assets/`: Repository directory component: `isar_community/packages/isar_inspector/assets`.
+  - `isar_community/packages/isar_inspector/lib/`: Repository directory component: `isar_community/packages/isar_inspector/lib`.
+  - `isar_community/packages/isar_inspector/lib/collection/`: Repository directory component: `isar_community/packages/isar_inspector/lib/collection`.
+  - `isar_community/packages/isar_inspector/lib/object/`: Repository directory component: `isar_community/packages/isar_inspector/lib/object`.
+  - `isar_community/packages/isar_inspector/lib/query_builder/`: Repository directory component: `isar_community/packages/isar_inspector/lib/query_builder`.
+  - `isar_community/packages/isar_inspector/web/`: Repository directory component: `isar_community/packages/isar_inspector/web`.
+  - `isar_community/packages/isar_web/`: Repository directory component: `isar_community/packages/isar_web`.
+  - `isar_community/packages/isar_web/src/`: Repository directory component: `isar_community/packages/isar_web/src`.
+  - `isar_community/packages/mdbx_sys/`: Repository directory component: `isar_community/packages/mdbx_sys`.
+  - `isar_community/packages/mdbx_sys/src/`: Repository directory component: `isar_community/packages/mdbx_sys/src`.
+  - `isar_community/tool/`: Repository directory component: `isar_community/tool`.
+  - `lib/`: Flutter / Dart primary application source code tree.
+  - `lib/app/`: Repository directory component: `lib/app`.
+  - `lib/core/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/database/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/database/models/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/database/repositories/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/database/services/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/domain/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/domain/models/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/domain/repositories/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/providers/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/services/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/theme/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/utils/`: Core domain utilities, themes, networking, and common services.
+  - `lib/core/widgets/`: Core domain utilities, themes, networking, and common services.
+  - `lib/features/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/accounts/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/accounts/pages/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/accounts/widgets/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/auth/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/auth/pages/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/auth/providers/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/home/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/home/pages/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/home/widgets/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/loans/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/loans/pages/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/loans/widgets/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/people/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/people/pages/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/people/widgets/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/reports/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/reports/pages/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/settings/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/settings/pages/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/settings/widgets/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/transactions/`: Feature UI modules, screens, widgets, and state controllers.
+  - `lib/features/transactions/pages/`: Feature UI modules, screens, widgets, and state controllers.
+  - `release-notes/`: Repository directory component: `release-notes`.
+  - `scripts/`: Operational scripts, automation workflows, build hooks, and utility tooling.
+  - `test/`: Dart / Flutter automated test suite.
+- **File System Manifest & Functional Roles**:
+  - `.flutter-plugins-dependencies`: Repository asset file: `.flutter-plugins-dependencies`.
+  - `.github/dependabot.yml`: Dependabot configuration for GitHub Actions.
+  - `.github/ISSUE_TEMPLATE/bug_report.md`: # Steps To Reproduce.
+  - `.github/ISSUE_TEMPLATE/config.yml`: Repository asset file: `config.yml`.
+  - `.github/ISSUE_TEMPLATE/feature_request.md`: # Problem Statement.
+  - `.github/workflows/build_apks.yml`: Automated CI/CD workflow (`Build Wallet APKs`) managing pipeline stages, builds, tests, or releases.
+  - `.github/workflows/codeql.yml`: Automated CI/CD workflow (`CodeQL Analysis`) managing pipeline stages, builds, tests, or releases.
+  - `.github/workflows/pages.yml`: Automated CI/CD workflow (`Deploy GitHub Pages`) managing pipeline stages, builds, tests, or releases.
+  - `.gitignore`: Git exclusion specifications ignoring build artifacts, local secrets, and IDE temporary caches.
+  - `.metadata`: Repository asset file: `.metadata`.
+  - `analysis_options.yaml`: Dart static analysis rules enforcing linting standards and idiomatic best practices.
+  - `android/.gitignore`: Git exclusion specifications ignoring build artifacts, local secrets, and IDE temporary caches.
+  - `android/app/build.gradle.kts`: Gradle build script defining compiler plugins, dependencies, and build configurations.
+  - `android/app/proguard-rules.pro`: R8 / ProGuard code shrinking, obfuscation, and optimization rules.
+  - `android/app/src/debug/AndroidManifest.xml`: Android application manifest defining package identity, permissions, services, and activities.
+  - `android/app/src/main/AndroidManifest.xml`: Android application manifest defining package identity, permissions, services, and activities.
+  - `android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java`: Generated file. Do not edit.
+  - `android/app/src/main/jniLibs/arm64-v8a/libisar.so`: Repository asset file: `libisar.so`.
+  - `android/app/src/main/jniLibs/armeabi-v7a/libisar.so`: Repository asset file: `libisar.so`.
+  - `android/app/src/main/jniLibs/x86/libisar.so`: Repository asset file: `libisar.so`.
+  - `android/app/src/main/jniLibs/x86_64/libisar.so`: Repository asset file: `libisar.so`.
+  - `android/app/src/main/kotlin/com/mrdarksidetm/wallet/MainActivity.kt`: We removed "context." here because MainActivity is already a Context!.
+  - `android/app/src/main/res/drawable/ic_launcher_foreground.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `android/app/src/main/res/drawable/ic_launcher_monochrome.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `android/app/src/main/res/drawable/launch_background.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `android/app/src/main/res/drawable-hdpi/ic_launcher_background.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-hdpi/ic_launcher_foreground.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-hdpi/ic_launcher_monochrome.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-mdpi/ic_launcher_background.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-mdpi/ic_launcher_foreground.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-mdpi/ic_launcher_monochrome.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-v21/launch_background.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `android/app/src/main/res/drawable-xhdpi/ic_launcher_background.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-xhdpi/ic_launcher_foreground.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-xhdpi/ic_launcher_monochrome.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-xxhdpi/ic_launcher_background.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-xxhdpi/ic_launcher_foreground.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-xxhdpi/ic_launcher_monochrome.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-xxxhdpi/ic_launcher_background.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-xxxhdpi/ic_launcher_foreground.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/drawable-xxxhdpi/ic_launcher_monochrome.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `android/app/src/main/res/mipmap-hdpi/ic_launcher.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/mipmap-mdpi/ic_launcher.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/mipmap-xhdpi/ic_launcher.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `android/app/src/main/res/values/colors.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `android/app/src/main/res/values/styles.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `android/app/src/main/res/values-night/styles.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `android/app/src/profile/AndroidManifest.xml`: Android application manifest defining package identity, permissions, services, and activities.
+  - `android/app/upload-keystore.jks`: Cryptographic signing keystore binary.
+  - `android/build.gradle.kts`: Gradle build script defining compiler plugins, dependencies, and build configurations.
+  - `android/gradle/wrapper/gradle-wrapper.jar`: Gradle wrapper Java runtime binary used to bootstrap Gradle.
+  - `android/gradle/wrapper/gradle-wrapper.properties`: Configures the pinned Gradle distribution version and download URL for the wrapper.
+  - `android/gradle.properties`: Gradle daemon runtime flags, JVM memory allocation limits, and AndroidX enablement.
+  - `android/gradlew`: Unix shell executable for the Gradle build wrapper.
+  - `android/gradlew.bat`: Windows batch script executable for the Gradle build wrapper.
+  - `android/key.properties`: Repository asset file: `key.properties`.
+  - `android/local.properties`: Repository asset file: `local.properties`.
+  - `android/settings.gradle.kts`: Gradle settings script defining repository sources and module inclusion.
+  - `assets/fonts/Emoji/iOS15.4_Fixed_space.ttf`: Typography font asset utilized for application text rendering.
+  - `assets/fonts/GoogleSansFlex/google_sans_flex.ttf`: Typography font asset utilized for application text rendering.
+  - `assets/fonts/Icons/Font-Awesome-7-Brands-Regular-400.otf`: Typography font asset utilized for application text rendering.
+  - `assets/fonts/Icons/Font-Awesome-7-Free-Regular-400.otf`: Typography font asset utilized for application text rendering.
+  - `assets/fonts/Icons/Font-Awesome-7-Free-Solid-900.otf`: Typography font asset utilized for application text rendering.
+  - `assets/fonts/Icons/materialdesignicons-webfont.ttf`: Typography font asset utilized for application text rendering.
+  - `assets/fonts/Icons/MaterialSymbolsOutlined.ttf`: Typography font asset utilized for application text rendering.
+  - `assets/fonts/Icons/MaterialSymbolsRounded.ttf`: Typography font asset utilized for application text rendering.
+  - `assets/fonts/Icons/MaterialSymbolsSharp.ttf`: Typography font asset utilized for application text rendering.
+  - `assets/icon/background.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `assets/icon/background.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/icon/ic_launcher_background.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `assets/icon/ic_launcher_foreground.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `assets/icon/ic_launcher_monochrome.xml`: Android XML layout, value dictionary, or system configuration definition.
+  - `assets/icon/monochrome.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `assets/icon/monochrome.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/icon/original.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `assets/icon/original.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/images/blueprint.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/images/developer.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `assets/images/Direct Link Frame Badge.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/images/expressive_showdown_banner.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/images/github-badge.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `assets/images/logo.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/images/obtanium-badge.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `assets/images/open-source.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/images/Testing APK Fail.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/images/Testing APK Pass.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/images/welcome.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `assets/metadata/icons.json`: JSON data configuration or metadata dictionary.
+  - `build_fail.log`: Repository asset file: `build_fail.log`.
+  - `CONTRIBUTING.md`: 🤝 Contributing to Project Wallet.
+  - `docs/blueprint.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `docs/developer.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `docs/fonts/google-sans-flex.ttf`: Typography font asset utilized for application text rendering.
+  - `docs/fonts/ios-emoji.ttf`: Typography font asset utilized for application text rendering.
+  - `docs/github-badge.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `docs/index.html`: HTML web page markup or documentation entrypoint.
+  - `docs/logo.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `docs/obtanium-badge.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `docs/open-source.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `docs/wallet-logo.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `docs/welcome.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `GEMINI.md`: Project AI assistant operational instructions, framework architecture mandates, and platform-specific constraints.
+  - `IMPROVEMENT_PLAN.md`: Wallet-Flutter — Improvement Plan & Milestones.
+  - `isar_community/.all-contributorsrc`: Repository asset file: `.all-contributorsrc`.
+  - `isar_community/.github/actions/prepare-build/action.yaml`: See https://github.com/godot-rust/godot-rust/pull/920.
+  - `isar_community/.github/assets/benchmarks/delete.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `isar_community/.github/assets/benchmarks/insert.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `isar_community/.github/assets/benchmarks/query.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `isar_community/.github/assets/benchmarks/size.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `isar_community/.github/assets/inspector.gif`: Raster graphic image or icon asset used in application UI or documentation.
+  - `isar_community/.github/assets/isar.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `isar_community/.github/dependabot.yaml`: Repository asset file: `dependabot.yaml`.
+  - `isar_community/.github/FUNDING.yml`: Repository asset file: `FUNDING.yml`.
+  - `isar_community/.github/ISSUE_TEMPLATE/bug_report.md`: ## Steps to Reproduce.
+  - `isar_community/.github/ISSUE_TEMPLATE/config.yml`: Repository asset file: `config.yml`.
+  - `isar_community/.github/ISSUE_TEMPLATE/feature_request.md`: *Is your feature request related to a problem? Please describe.**.
+  - `isar_community/.github/workflows/cron_test.yaml`: Repository asset file: `cron_test.yaml`.
+  - `isar_community/.github/workflows/docs.yaml`: Repository asset file: `docs.yaml`.
+  - `isar_community/.github/workflows/release.yaml`: Repository asset file: `release.yaml`.
+  - `isar_community/.github/workflows/skynet.yaml`: Repository asset file: `skynet.yaml`.
+  - `isar_community/.github/workflows/test.yaml`: Repository asset file: `test.yaml`.
+  - `isar_community/.github/workflows/testlab.yaml`: Repository asset file: `testlab.yaml`.
+  - `isar_community/.gitignore`: Git exclusion specifications ignoring build artifacts, local secrets, and IDE temporary caches.
+  - `isar_community/Cargo.toml`: Repository asset file: `Cargo.toml`.
+  - `isar_community/examples/pub/.gitignore`: Git exclusion specifications ignoring build artifacts, local secrets, and IDE temporary caches.
+  - `isar_community/examples/pub/.metadata`: Repository asset file: `.metadata`.
+  - `isar_community/examples/pub/analysis_options.yaml`: Dart static analysis rules enforcing linting standards and idiomatic best practices.
+  - `isar_community/examples/pub/assets/ff_banner.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `isar_community/examples/pub/assets/pub_logo_dark.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `isar_community/examples/pub/assets/pub_logo.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `isar_community/examples/pub/assets/search_bg.svg`: Scalable vector graphic resource for UI iconography and branding.
+  - `isar_community/examples/pub/lib/asset_loader.dart`: Defines `PackageAndVersion` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/main.dart`: Defines `PubApp` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/models/api/metrics.dart`: Defines `ApiPackageMetrics` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/models/api/package.dart`: Defines `ApiPackage` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/models/asset.dart`: Defines `Asset` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/models/package.dart`: Defines `Package` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/package_manager.dart`: Defines `PackageManager` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/provider.dart`: ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes.
+  - `isar_community/examples/pub/lib/repository.dart`: ignore_for_file: avoid_dynamic_calls.
+  - `isar_community/examples/pub/lib/ui/app_bar.dart`: Defines `PubAppBar` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/ui/detail_page.dart`: Defines `DetailPage` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/ui/home_page.dart`: Defines `HomePage` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/ui/markdown_viewer.dart`: Defines `MarkdownViewer` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/ui/package_metadata.dart`: Defines `PackageHeader` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/ui/package_versions.dart`: Defines `PackageVersions` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/ui/publisher.dart`: Defines `Publisher` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/ui/search_page.dart`: Defines `SearchPage` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/lib/ui/search.dart`: Defines `Search` component widget, state notifier, or data model.
+  - `isar_community/examples/pub/pubspec.yaml`: Flutter package specification declaring application dependencies, asset bindings, fonts, and SDK versions.
+  - `isar_community/examples/pub/README.md`: Repository documentation, architectural overview, usage instructions, and downstream integration guidelines.
+  - `isar_community/LICENSE`: Open-source software license defining terms of use, distribution, and attribution.
+  - `isar_community/packages/isar/.gitignore`: Git exclusion specifications ignoring build artifacts, local secrets, and IDE temporary caches.
+  - `isar_community/packages/isar/analysis_options.yaml`: Dart static analysis rules enforcing linting standards and idiomatic best practices.
+  - `isar_community/packages/isar/CHANGELOG.md`: ## Enhancements.
+  - `isar_community/packages/isar/example/README.md`: Repository documentation, architectural overview, usage instructions, and downstream integration guidelines.
+  - `isar_community/packages/isar/lib/isar.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar/lib/src/annotations/backlink.dart`: Annotation to create a backlink to an existing link.
+  - `isar_community/packages/isar/lib/src/annotations/collection.dart`: Annotation to create an Isar collection.
+  - `isar_community/packages/isar/lib/src/annotations/embedded.dart`: Annotation to nest objects of this type in collections.
+  - `isar_community/packages/isar/lib/src/annotations/enumerated.dart`: Annotation to specify how an enum property should be serialized.
+  - `isar_community/packages/isar/lib/src/annotations/ignore.dart`: Annotate a property or accessor in an Isar collection to ignore it.
+  - `isar_community/packages/isar/lib/src/annotations/index.dart`: Specifies how an index is stored in Isar.
+  - `isar_community/packages/isar/lib/src/annotations/name.dart`: Annotate Isar collections or properties to change their name.
+  - `isar_community/packages/isar/lib/src/annotations/type.dart`: ignore_for_file: camel_case_types.
+  - `isar_community/packages/isar/lib/src/common/isar_common.dart`: ignore_for_file: invalid_use_of_protected_member.
+  - `isar_community/packages/isar/lib/src/common/isar_link_base_impl.dart`: The isar name of the link.
+  - `isar_community/packages/isar/lib/src/common/isar_link_common.dart`: Defines `IsarLinkCommon` component widget, state notifier, or data model.
+  - `isar_community/packages/isar/lib/src/common/isar_links_common.dart`: Defines `IsarLinksCommon` component widget, state notifier, or data model.
+  - `isar_community/packages/isar/lib/src/common/schemas.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar/lib/src/isar_collection.dart`: Normal keys consist of a single object, composite keys multiple.
+  - `isar_community/packages/isar/lib/src/isar_connect_api.dart`: coverage:ignore-file.
+  - `isar_community/packages/isar/lib/src/isar_connect.dart`: coverage:ignore-file.
+  - `isar_community/packages/isar/lib/src/isar_error.dart`: An error raised by Isar.
+  - `isar_community/packages/isar/lib/src/isar_link.dart`: Is the containing object managed by Isar?.
+  - `isar_community/packages/isar/lib/src/isar_reader.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/isar_writer.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/isar.dart`: Callback for a newly opened Isar instance.
+  - `isar_community/packages/isar/lib/src/native/bindings.dart`: ignore_for_file: camel_case_types, non_constant_identifier_names.
+  - `isar_community/packages/isar/lib/src/native/encode_string.dart`: Encodes a Dart String to UTF8, writes it at [offset] into [buffer] and.
+  - `isar_community/packages/isar/lib/src/native/index_key.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/native/isar_collection_impl.dart`: ignore_for_file: public_member_api_docs, invalid_use_of_protected_member.
+  - `isar_community/packages/isar/lib/src/native/isar_core.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/native/isar_impl.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/native/isar_link_impl.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/native/isar_reader_impl.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/native/isar_writer_impl.dart`: ignore_for_file: public_member_api_docs, prefer_asserts_with_message,.
+  - `isar_community/packages/isar/lib/src/native/open.dart`: ignore_for_file: public_member_api_docs, invalid_use_of_protected_member.
+  - `isar_community/packages/isar/lib/src/native/query_build.dart`: ignore_for_file: invalid_use_of_protected_member, public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/native/query_impl.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/native/split_words.dart`: ignore: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/native/txn.dart`: An arena allocator that has the same lifetime as this transaction.
+  - `isar_community/packages/isar/lib/src/query_builder_extensions.dart`: Extension for QueryBuilders.
+  - `isar_community/packages/isar/lib/src/query_builder.dart`: Query builders are used to create queries in a safe way.
+  - `isar_community/packages/isar/lib/src/query_components.dart`: A where clause to traverse an Isar index.
+  - `isar_community/packages/isar/lib/src/query.dart`: Querying is how you find records that match certain conditions.
+  - `isar_community/packages/isar/lib/src/schema/collection_schema.dart`: This schema represents a collection.
+  - `isar_community/packages/isar/lib/src/schema/index_schema.dart`: This schema represents an index.
+  - `isar_community/packages/isar/lib/src/schema/link_schema.dart`: This schema represents a link to the same or another collection.
+  - `isar_community/packages/isar/lib/src/schema/property_schema.dart`: A single propery of a collection or embedded object.
+  - `isar_community/packages/isar/lib/src/schema/schema.dart`: This schema either represents a collection or embedded object.
+  - `isar_community/packages/isar/lib/src/web/bindings.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/web/isar_collection_impl.dart`: ignore_for_file: public_member_api_docs, invalid_use_of_protected_member.
+  - `isar_community/packages/isar/lib/src/web/isar_impl.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/web/isar_link_impl.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/web/isar_reader_impl.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/web/isar_web.dart`: ignore_for_file: unused_field, public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/web/isar_writer_impl.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/web/open.dart`: ignore_for_file: public_member_api_docs, invalid_use_of_protected_member.
+  - `isar_community/packages/isar/lib/src/web/query_build.dart`: ignore_for_file: public_member_api_docs, invalid_use_of_protected_member.
+  - `isar_community/packages/isar/lib/src/web/query_impl.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/lib/src/web/split_words.dart`: ignore_for_file: public_member_api_docs.
+  - `isar_community/packages/isar/LICENSE`: Open-source software license defining terms of use, distribution, and attribution.
+  - `isar_community/packages/isar/pubspec.yaml`: Flutter package specification declaring application dependencies, asset bindings, fonts, and SDK versions.
+  - `isar_community/packages/isar/README.md`: Repository documentation, architectural overview, usage instructions, and downstream integration guidelines.
+  - `isar_community/packages/isar/test/isar_reader_writer_test.dart`: ignore_for_file: constant_identifier_names.
+  - `isar_community/packages/isar/tool/get_version.dart`: ignore: avoid_print.
+  - `isar_community/packages/isar/tool/verify_release_version.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_core/Cargo.toml`: Repository asset file: `Cargo.toml`.
+  - `isar_community/packages/isar_core/README.md`: Repository documentation, architectural overview, usage instructions, and downstream integration guidelines.
+  - `isar_community/packages/isar_core/src/collection.rs`: [allow(clippy::too_many_arguments)].
+  - `isar_community/packages/isar_core/src/cursor.rs`: Repository asset file: `cursor.rs`.
+  - `isar_community/packages/isar_core/src/error.rs`: [derive(Debug, Snafu, Eq, PartialEq)].
+  - `isar_community/packages/isar_core/src/index/index_key_builder.rs`: Repository asset file: `index_key_builder.rs`.
+  - `isar_community/packages/isar_core/src/index/index_key.rs`: [derive(Clone, Eq, PartialEq)].
+  - `isar_community/packages/isar_core/src/index/mod.rs`: [derive(Clone, Eq, PartialEq)].
+  - `isar_community/packages/isar_core/src/instance.rs`: Repository asset file: `instance.rs`.
+  - `isar_community/packages/isar_core/src/legacy/isar_object_v1.rs`: [derive(Copy, Clone, Eq, PartialEq)].
+  - `isar_community/packages/isar_core/src/legacy/mod.rs`: Repository asset file: `mod.rs`.
+  - `isar_community/packages/isar_core/src/lib.rs`: [cfg(not(target_endian = "little"))].
+  - `isar_community/packages/isar_core/src/link.rs`: [derive(Clone)].
+  - `isar_community/packages/isar_core/src/mdbx/cursor.rs`: [allow(clippy::try_err)].
+  - `isar_community/packages/isar_core/src/mdbx/db.rs`: [derive(Copy, Clone, Eq, PartialEq)].
+  - `isar_community/packages/isar_core/src/mdbx/env.rs`: Repository asset file: `env.rs`.
+  - `isar_community/packages/isar_core/src/mdbx/mod.rs`: Repository asset file: `mod.rs`.
+  - `isar_community/packages/isar_core/src/mdbx/txn.rs`: Repository asset file: `txn.rs`.
+  - `isar_community/packages/isar_core/src/object/data_type.rs`: [derive(Serialize, Deserialize, PartialEq, Eq, Clone, Copy, Hash)].
+  - `isar_community/packages/isar_core/src/object/id.rs`: Repository asset file: `id.rs`.
+  - `isar_community/packages/isar_core/src/object/isar_object.rs`: [derive(Copy, Clone, Eq, PartialEq)].
+  - `isar_community/packages/isar_core/src/object/json_encode_decode.rs`: [inline(never)].
+  - `isar_community/packages/isar_core/src/object/mod.rs`: Repository asset file: `mod.rs`.
+  - `isar_community/packages/isar_core/src/object/object_builder.rs`: Repository asset file: `object_builder.rs`.
+  - `isar_community/packages/isar_core/src/object/property.rs`: [derive(Clone, Eq, PartialEq)].
+  - `isar_community/packages/isar_core/src/query/fast_wild_match.rs`: Repository asset file: `fast_wild_match.rs`.
+  - `isar_community/packages/isar_core/src/query/filter.rs`: [macro_export].
+  - `isar_community/packages/isar_core/src/query/id_where_clause.rs`: [derive(Clone)].
+  - `isar_community/packages/isar_core/src/query/index_where_clause.rs`: [derive(Clone)].
+  - `isar_community/packages/isar_core/src/query/link_where_clause.rs`: [derive(Clone)].
+  - `isar_community/packages/isar_core/src/query/mod.rs`: [derive(Copy, Clone, Eq, PartialEq)].
+  - `isar_community/packages/isar_core/src/query/query_builder.rs`: Repository asset file: `query_builder.rs`.
+  - `isar_community/packages/isar_core/src/query/where_clause.rs`: [derive(Clone)].
+  - `isar_community/packages/isar_core/src/schema/collection_schema.rs`: [derive(Serialize, Deserialize, Clone, Eq)].
+  - `isar_community/packages/isar_core/src/schema/index_schema.rs`: [derive(Serialize, Deserialize, Copy, Clone, Eq, PartialEq)].
+  - `isar_community/packages/isar_core/src/schema/link_schema.rs`: [derive(Serialize, Deserialize, Clone, Eq, PartialEq)].
+  - `isar_community/packages/isar_core/src/schema/migrate_v1.rs`: We need to copy the data here because it will become invalid during the write.
+  - `isar_community/packages/isar_core/src/schema/mod.rs`: [derive(Serialize, Deserialize, Clone)].
+  - `isar_community/packages/isar_core/src/schema/property_schema.rs`: [derive(Serialize, Deserialize, Clone, Eq)].
+  - `isar_community/packages/isar_core/src/schema/schema_manager.rs`: Repository asset file: `schema_manager.rs`.
+  - `isar_community/packages/isar_core/src/txn.rs`: Repository asset file: `txn.rs`.
+  - `isar_community/packages/isar_core/src/watch/change_set.rs`: Repository asset file: `change_set.rs`.
+  - `isar_community/packages/isar_core/src/watch/isar_watchers.rs`: Repository asset file: `isar_watchers.rs`.
+  - `isar_community/packages/isar_core/src/watch/mod.rs`: Repository asset file: `mod.rs`.
+  - `isar_community/packages/isar_core/src/watch/watcher.rs`: Repository asset file: `watcher.rs`.
+  - `isar_community/packages/isar_core/tests/binary_golden.json`: JSON data configuration or metadata dictionary.
+  - `isar_community/packages/isar_core/tests/test_binary.rs`: [derive(PartialEq, Eq, Serialize, Deserialize, Clone)].
+  - `isar_community/packages/isar_core/tests/test_hash.rs`: Repository asset file: `test_hash.rs`.
+  - `isar_community/packages/isar_core_ffi/.cargo/config.toml`: Repository asset file: `config.toml`.
+  - `isar_community/packages/isar_core_ffi/build.rs`: Repository asset file: `build.rs`.
+  - `isar_community/packages/isar_core_ffi/Cargo.toml`: Repository asset file: `Cargo.toml`.
+  - `isar_community/packages/isar_core_ffi/src/c_object_set.rs`: [allow(clippy::mut_from_ref)].
+  - `isar_community/packages/isar_core_ffi/src/crud.rs`: Repository asset file: `crud.rs`.
+  - `isar_community/packages/isar_core_ffi/src/dart.rs`: Repository asset file: `dart.rs`.
+  - `isar_community/packages/isar_core_ffi/src/error.rs`: counter = counter.wrapping_add(1);.
+  - `isar_community/packages/isar_core_ffi/src/filter.rs`: Repository asset file: `filter.rs`.
+  - `isar_community/packages/isar_core_ffi/src/index_key.rs`: Repository asset file: `index_key.rs`.
+  - `isar_community/packages/isar_core_ffi/src/instance.rs`: Repository asset file: `instance.rs`.
+  - `isar_community/packages/isar_core_ffi/src/lib.rs`: Repository asset file: `lib.rs`.
+  - `isar_community/packages/isar_core_ffi/src/link.rs`: Repository asset file: `link.rs`.
+  - `isar_community/packages/isar_core_ffi/src/query_aggregation.rs`: [derive(PartialEq)].
+  - `isar_community/packages/isar_core_ffi/src/query.rs`: Repository asset file: `query.rs`.
+  - `isar_community/packages/isar_core_ffi/src/txn.rs`: Repository asset file: `txn.rs`.
+  - `isar_community/packages/isar_core_ffi/src/watchers.rs`: Repository asset file: `watchers.rs`.
+  - `isar_community/packages/isar_flutter_libs/.pubignore`: Repository asset file: `.pubignore`.
+  - `isar_community/packages/isar_flutter_libs/android/.gitignore`: Git exclusion specifications ignoring build artifacts, local secrets, and IDE temporary caches.
+  - `isar_community/packages/isar_flutter_libs/android/build.gradle`: Gradle build script defining compiler plugins, dependencies, and build configurations.
+  - `isar_community/packages/isar_flutter_libs/android/gradle/wrapper/gradle-wrapper.properties`: Configures the pinned Gradle distribution version and download URL for the wrapper.
+  - `isar_community/packages/isar_flutter_libs/android/gradle.properties`: Gradle daemon runtime flags, JVM memory allocation limits, and AndroidX enablement.
+  - `isar_community/packages/isar_flutter_libs/android/settings.gradle`: Gradle settings script defining repository sources and module inclusion.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/AndroidManifest.xml`: Android application manifest defining package identity, permissions, services, and activities.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/java/dev/isar/isar_flutter_libs/IsarFlutterLibsPlugin.java`: Defines `IsarFlutterLibsPlugin` implementing application logic, UI composable, or data entity.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/arm64-v8a/libisar.so`: Repository asset file: `libisar.so`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/armeabi-v7a/libisar.so`: Repository asset file: `libisar.so`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/x86/libisar.so`: Repository asset file: `libisar.so`.
+  - `isar_community/packages/isar_flutter_libs/android/src/main/jniLibs/x86_64/libisar.so`: Repository asset file: `libisar.so`.
+  - `isar_community/packages/isar_flutter_libs/CHANGELOG.md`: Markdown documentation article.
+  - `isar_community/packages/isar_flutter_libs/ios/.gitignore`: Git exclusion specifications ignoring build artifacts, local secrets, and IDE temporary caches.
+  - `isar_community/packages/isar_flutter_libs/ios/Assets/.gitkeep`: Repository asset file: `.gitkeep`.
+  - `isar_community/packages/isar_flutter_libs/ios/Classes/binding.h`: include <stdarg.h>.
+  - `isar_community/packages/isar_flutter_libs/ios/Classes/IsarFlutterLibsPlugin.h`: Repository asset file: `IsarFlutterLibsPlugin.h`.
+  - `isar_community/packages/isar_flutter_libs/ios/Classes/IsarFlutterLibsPlugin.m`: Repository asset file: `IsarFlutterLibsPlugin.m`.
+  - `isar_community/packages/isar_flutter_libs/ios/Classes/SwiftIsarFlutterLibsPlugin.swift`: Repository asset file: `SwiftIsarFlutterLibsPlugin.swift`.
+  - `isar_community/packages/isar_flutter_libs/ios/isar_flutter_libs.podspec`: Repository asset file: `isar_flutter_libs.podspec`.
+  - `isar_community/packages/isar_flutter_libs/ios/isar.xcframework/Info.plist`: Repository asset file: `Info.plist`.
+  - `isar_community/packages/isar_flutter_libs/ios/isar.xcframework/ios-arm64/libisar.a`: Repository asset file: `libisar.a`.
+  - `isar_community/packages/isar_flutter_libs/ios/isar.xcframework/ios-arm64_x86_64-simulator/libisar.a`: Repository asset file: `libisar.a`.
+  - `isar_community/packages/isar_flutter_libs/ios/Resources/PrivacyInfo.xcprivacy`: Repository asset file: `PrivacyInfo.xcprivacy`.
+  - `isar_community/packages/isar_flutter_libs/lib/isar_flutter_libs.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_flutter_libs/LICENSE`: Open-source software license defining terms of use, distribution, and attribution.
+  - `isar_community/packages/isar_flutter_libs/linux/CMakeLists.txt`: This value is used when generating builds using this plugin, so it must.
+  - `isar_community/packages/isar_flutter_libs/linux/include/isar_flutter_libs/isar_flutter_libs_plugin.h`: ifndef FLUTTER_PLUGIN_ISAR_FLUTTER_LIBS_PLUGIN_H_.
+  - `isar_community/packages/isar_flutter_libs/linux/isar_flutter_libs_plugin.cc`: Repository asset file: `isar_flutter_libs_plugin.cc`.
+  - `isar_community/packages/isar_flutter_libs/linux/libisar.so`: Repository asset file: `libisar.so`.
+  - `isar_community/packages/isar_flutter_libs/macos/Classes/IsarFlutterLibsPlugin.swift`: Repository asset file: `IsarFlutterLibsPlugin.swift`.
+  - `isar_community/packages/isar_flutter_libs/macos/isar_flutter_libs.podspec`: Repository asset file: `isar_flutter_libs.podspec`.
+  - `isar_community/packages/isar_flutter_libs/macos/libisar.dylib`: Repository asset file: `libisar.dylib`.
+  - `isar_community/packages/isar_flutter_libs/pubspec_overrides.yaml`: Repository asset file: `pubspec_overrides.yaml`.
+  - `isar_community/packages/isar_flutter_libs/pubspec.yaml`: Flutter package specification declaring application dependencies, asset bindings, fonts, and SDK versions.
+  - `isar_community/packages/isar_flutter_libs/README.md`: Repository documentation, architectural overview, usage instructions, and downstream integration guidelines.
+  - `isar_community/packages/isar_flutter_libs/windows/.gitignore`: Git exclusion specifications ignoring build artifacts, local secrets, and IDE temporary caches.
+  - `isar_community/packages/isar_flutter_libs/windows/CMakeLists.txt`: This value is used when generating builds using this plugin, so it must.
+  - `isar_community/packages/isar_flutter_libs/windows/include/isar_flutter_libs/isar_flutter_libs_plugin.h`: ifndef FLUTTER_PLUGIN_ISAR_FLUTTER_LIBS_PLUGIN_H_.
+  - `isar_community/packages/isar_flutter_libs/windows/isar_flutter_libs_plugin.cpp`: include "include/isar_flutter_libs/isar_flutter_libs_plugin.h".
+  - `isar_community/packages/isar_flutter_libs/windows/isar.dll`: Repository asset file: `isar.dll`.
+  - `isar_community/packages/isar_generator/analysis_options.yaml`: Dart static analysis rules enforcing linting standards and idiomatic best practices.
+  - `isar_community/packages/isar_generator/build.yaml`: Repository asset file: `build.yaml`.
+  - `isar_community/packages/isar_generator/CHANGELOG.md`: Markdown documentation article.
+  - `isar_community/packages/isar_generator/lib/isar_generator.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/by_index_generator.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/collection_schema_generator.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/query_distinct_by_generator.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/query_filter_generator.dart`: Defines `FilterGenerator` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/query_filter_length.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/query_link_generator.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/query_object_generator.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/query_property_generator.dart`: Ids are always non-nullable regardless of their specified nullability.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/query_sort_by_generator.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/query_where_generator.dart`: Defines `WhereGenerator` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_generator/lib/src/code_gen/type_adapter_generator.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/collection_generator.dart`: coverage:ignore-file.
+  - `isar_community/packages/isar_generator/lib/src/helper.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/isar_analyzer.dart`: Defines `IsarAnalyzer` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_generator/lib/src/isar_type.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/lib/src/object_info.dart`: Defines `ObjectInfo` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_generator/LICENSE`: Open-source software license defining terms of use, distribution, and attribution.
+  - `isar_community/packages/isar_generator/pubspec_overrides.yaml`: Repository asset file: `pubspec_overrides.yaml`.
+  - `isar_community/packages/isar_generator/pubspec.yaml`: Flutter package specification declaring application dependencies, asset bindings, fonts, and SDK versions.
+  - `isar_community/packages/isar_generator/README.md`: Repository documentation, architectural overview, usage instructions, and downstream integration guidelines.
+  - `isar_community/packages/isar_generator/test/error_test.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_generator/test/errors/class/abstract.dart`: must not be abstract.
+  - `isar_community/packages/isar_generator/test/errors/class/collection_supertype.dart`: supertype annotated with @collection.
+  - `isar_community/packages/isar_generator/test/errors/class/constructor_named.dart`: unnamed constructor.
+  - `isar_community/packages/isar_generator/test/errors/class/constructor_unknown_parameter.dart`: constructor parameter does not match a property.
+  - `isar_community/packages/isar_generator/test/errors/class/constructor_wrong_parameter.dart`: constructor parameter type does not match property type.
+  - `isar_community/packages/isar_generator/test/errors/class/enum.dart`: ignore: invalid_annotation_target.
+  - `isar_community/packages/isar_generator/test/errors/class/invalid_name.dart`: must not be abstract.
+  - `isar_community/packages/isar_generator/test/errors/class/mixin.dart`: ignore: invalid_annotation_target.
+  - `isar_community/packages/isar_generator/test/errors/class/private.dart`: must be public.
+  - `isar_community/packages/isar_generator/test/errors/class/variable.dart`: ignore: invalid_annotation_target.
+  - `isar_community/packages/isar_generator/test/errors/id/duplicate.dart`: two or more properties with type "Id" defined.
+  - `isar_community/packages/isar_generator/test/errors/id/missing.dart`: no id property defined.
+  - `isar_community/packages/isar_generator/test/errors/index/composite_double_not_last.dart`: only the last property of a composite index may be a double value.
+  - `isar_community/packages/isar_generator/test/errors/index/composite_non_hashed_list.dart`: composite indexes do not support non-hashed lists.
+  - `isar_community/packages/isar_generator/test/errors/index/composite_string_value_not_last.dart`: last property of a composite index may be a non-hashed string.
+  - `isar_community/packages/isar_generator/test/errors/index/contains_id.dart`: ids cannot be indexed.
+  - `isar_community/packages/isar_generator/test/errors/index/double_list_hashed.dart`: list<double> may must not be hashed.
+  - `isar_community/packages/isar_generator/test/errors/index/duplicate_name.dart`: Defines `Model` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_generator/test/errors/index/duplicate_property.dart`: composite index contains duplicate properties.
+  - `isar_community/packages/isar_generator/test/errors/index/invalid_name.dart`: names must not be blank or start with "_".
+  - `isar_community/packages/isar_generator/test/errors/index/non_string_hashed.dart`: only strings and lists may be hashed.
+  - `isar_community/packages/isar_generator/test/errors/index/non_string_list_hashed_elements.dart`: only string lists may have hashed elements.
+  - `isar_community/packages/isar_generator/test/errors/index/non_unique_replace.dart`: only unique indexes can replace.
+  - `isar_community/packages/isar_generator/test/errors/index/object_hashed.dart`: objects may not be indexed.
+  - `isar_community/packages/isar_generator/test/errors/index/object_list_hashed.dart`: objects may not be indexed.
+  - `isar_community/packages/isar_generator/test/errors/index/property_does_not_exist.dart`: property does not exist.
+  - `isar_community/packages/isar_generator/test/errors/link/backlink_target_does_no_exist.dart`: target of backlink does not exist.
+  - `isar_community/packages/isar_generator/test/errors/link/backlink_target_is_backlink.dart`: target of backlink is also a backlink.
+  - `isar_community/packages/isar_generator/test/errors/link/backlink_target_not_a_link.dart`: target of backlink is not a link.
+  - `isar_community/packages/isar_generator/test/errors/link/duplicate_name.dart`: Defines `Model` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_generator/test/errors/link/invalid_name.dart`: names must not be blank or start with.
+  - `isar_community/packages/isar_generator/test/errors/link/late.dart`: must not be late.
+  - `isar_community/packages/isar_generator/test/errors/link/nullable.dart`: must not be nullable.
+  - `isar_community/packages/isar_generator/test/errors/link/target_not_a_collection.dart`: link target is not annotated with @collection.
+  - `isar_community/packages/isar_generator/test/errors/link/type_nullable.dart`: links type must not be nullable.
+  - `isar_community/packages/isar_generator/test/errors/property/duplicate_name.dart`: Defines `Model` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_generator/test/errors/property/enum_bool_type.dart`: unsupported enum property type.
+  - `isar_community/packages/isar_generator/test/errors/property/enum_double_type.dart`: unsupported enum property type.
+  - `isar_community/packages/isar_generator/test/errors/property/enum_duplicate.dart`: has duplicate values.
+  - `isar_community/packages/isar_generator/test/errors/property/enum_float_type.dart`: unsupported enum property type.
+  - `isar_community/packages/isar_generator/test/errors/property/enum_list_type.dart`: unsupported enum property type.
+  - `isar_community/packages/isar_generator/test/errors/property/enum_not_annotated.dart`: enum property must be annotated with @enumerated.
+  - `isar_community/packages/isar_generator/test/errors/property/enum_null_value.dart`: null values are not supported.
+  - `isar_community/packages/isar_generator/test/errors/property/enum_object_type.dart`: unsupported enum property type.
+  - `isar_community/packages/isar_generator/test/errors/property/invalid_name.dart`: names must not be blank or start with "_".
+  - `isar_community/packages/isar_generator/test/errors/property/null_byte_element.dart`: bytes must not be nullable.
+  - `isar_community/packages/isar_generator/test/errors/property/null_byte.dart`: bytes must not be nullable.
+  - `isar_community/packages/isar_generator/test/errors/property/unsupported_type.dart`: unsupported type.
+  - `isar_community/packages/isar_inspector/.metadata`: Repository asset file: `.metadata`.
+  - `isar_community/packages/isar_inspector/analysis_options.yaml`: Dart static analysis rules enforcing linting standards and idiomatic best practices.
+  - `isar_community/packages/isar_inspector/assets/logo.png`: Raster graphic image or icon asset used in application UI or documentation.
+  - `isar_community/packages/isar_inspector/lib/collection/button_prev_next.dart`: Defines `PrevNextButtons` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/collection/button_sort.dart`: Defines `SortButtons` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/collection/collection_area.dart`: ignore_for_file: type_annotate_public_apis, avoid_web_libraries_in_flutter.
+  - `isar_community/packages/isar_inspector/lib/collection/objects_list_sliver.dart`: Defines `ObjectsListSliver` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/collections_list.dart`: Defines `CollectionsList` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/connect_client.dart`: ignore_for_file: implementation_imports.
+  - `isar_community/packages/isar_inspector/lib/connected_layout.dart`: Defines `ConnectedLayout` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/connection_screen.dart`: Defines `ConnectionScreen` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/error_screen.dart`: ignore: avoid_web_libraries_in_flutter.
+  - `isar_community/packages/isar_inspector/lib/instance_selector.dart`: Defines `InstanceSelector` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/main.dart`: ignore: avoid_web_libraries_in_flutter.
+  - `isar_community/packages/isar_inspector/lib/object/isar_object.dart`: Defines `IsarObject` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/object/object_view.dart`: Defines `ObjectView` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/object/property_builder.dart`: Defines `PropertyBuilder` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/object/property_embedded_view.dart`: Defines `EmbeddedPropertyView` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/object/property_link_view.dart`: Defines `LinkPropertyView` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/object/property_value.dart`: Defines `PropertyValue` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/object/property_view.dart`: ignore: avoid_dynamic_calls.
+  - `isar_community/packages/isar_inspector/lib/query_builder/query_filter.dart`: Defines `QueryFilter` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/query_builder/query_group.dart`: Defines `QueryGroup` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/sidebar.dart`: Defines `Sidebar` component widget, state notifier, or data model.
+  - `isar_community/packages/isar_inspector/lib/util.dart`: Dart / Flutter component implementation file.
+  - `isar_community/packages/isar_inspector/pubspec.yaml`: Flutter package specification declaring application dependencies, asset bindings, fonts, and SDK versions.
+  - `isar_community/packages/isar_inspector/README.md`: Repository documentation, architectural overview, usage instructions, and downstream integration guidelines.
+  - `isar_community/packages/isar_inspector/web/index.html`: HTML web page markup or documentation entrypoint.
+  - `isar_community/packages/isar_inspector/web/manifest.json`: JSON data configuration or metadata dictionary.
+  - `isar_community/packages/isar_web/.eslintrc.yml`: Repository asset file: `.eslintrc.yml`.
+  - `isar_community/packages/isar_web/.gitignore`: Git exclusion specifications ignoring build artifacts, local secrets, and IDE temporary caches.
+  - `isar_community/packages/isar_web/.prettierrc`: Repository asset file: `.prettierrc`.
+  - `isar_community/packages/isar_web/README.md`: Repository documentation, architectural overview, usage instructions, and downstream integration guidelines.
+  - `isar_community/packages/isar_web/src/bulk-delete.ts`: Exports `bulkDelete` providing functional logic or interactive component behavior.
+  - `isar_community/packages/isar_web/src/collection.ts`: only backlinks that don't target this collection.
+  - `isar_community/packages/isar_web/src/cursor.ts`: Exports `useCursor` providing functional logic or interactive component behavior.
+  - `isar_community/packages/isar_web/src/index.ts`: TypeScript application module or UI component.
+  - `isar_community/packages/isar_web/src/instance.ts`: Exports `idName` providing functional logic or interactive component behavior.
+  - `isar_community/packages/isar_web/src/link.ts`: Exports `IsarLink` providing functional logic or interactive component behavior.
+  - `isar_community/packages/isar_web/src/open.ts`: Polyfill for older browsers.
+  - `isar_community/packages/isar_web/src/query.ts`: Exports `IsarQuery` providing functional logic or interactive component behavior.
+  - `isar_community/packages/isar_web/src/schema.ts`: Exports `isIndexMultiEntry` providing functional logic or interactive component behavior.
+  - `isar_community/packages/isar_web/src/txn.ts`: Exports `IsarTxn` providing functional logic or interactive component behavior.
+  - `isar_community/packages/isar_web/src/watcher.ts`: Exports `IsarChangeSet` providing functional logic or interactive component behavior.
+  - `isar_community/packages/isar_web/tsconfig.json`: TypeScript compiler configuration defining language target, module resolution, and path aliases.
+  - `isar_community/packages/isar_web/webpack.config.js`: JavaScript execution script or utility module.
+  - `isar_community/packages/mdbx_sys/.gitignore`: Git exclusion specifications ignoring build artifacts, local secrets, and IDE temporary caches.
+  - `isar_community/packages/mdbx_sys/build.rs`: [derive(Debug)].
+  - `isar_community/packages/mdbx_sys/Cargo.toml`: Repository asset file: `Cargo.toml`.
+  - `isar_community/packages/mdbx_sys/src/lib.rs`: Repository asset file: `lib.rs`.
+  - `isar_community/README.md`: Repository documentation, architectural overview, usage instructions, and downstream integration guidelines.
+  - `isar_community/TODO.md`: Documentation.
+  - `isar_community/tool/build_android.sh`: Shell script for Linux / POSIX system operations.
+  - `isar_community/tool/build_ios.sh`: Shell script for Linux / POSIX system operations.
+  - `isar_community/tool/build_linux.sh`: Shell script for Linux / POSIX system operations.
+  - `isar_community/tool/build_macos.sh`: Shell script for Linux / POSIX system operations.
+  - `isar_community/tool/build_windows.sh`: Shell script for Linux / POSIX system operations.
+  - `isar_community/tool/build.sh`: Shell script for Linux / POSIX system operations.
+  - `isar_community/tool/cbindgen.toml`: Repository asset file: `cbindgen.toml`.
+  - `isar_community/tool/download_binaries.sh`: Shell script for Linux / POSIX system operations.
+  - `isar_community/tool/ffigen.yaml`: ignore_for_file: camel_case_types, non_constant_identifier_names.
+  - `isar_community/tool/generate_bindings.sh`: Shell script for Linux / POSIX system operations.
+  - `isar_community/tool/prepare_tests.sh`: Shell script for Linux / POSIX system operations.
+  - `isar_community/tool/publish.sh`: Publishes the packages for a release to isar-community.dev using the artifacts from github.
+  - `isar_community/tool/replace-versions.sh`: This script replaces the version placeholder with the latest tag version on this branch.
+  - `lib/app/router.dart`: Defines `AppShell` component widget, state notifier, or data model.
+  - `lib/core/database/isar_service.dart`: Seed default data if database is empty.
+  - `lib/core/database/models/account.dart`: Defines `Account` component widget, state notifier, or data model.
+  - `lib/core/database/models/account.g.dart`: GENERATED CODE - DO NOT MODIFY BY HAND.
+  - `lib/core/database/models/auxiliary_models.dart`: --- Person ---.
+  - `lib/core/database/models/auxiliary_models.g.dart`: GENERATED CODE - DO NOT MODIFY BY HAND.
+  - `lib/core/database/models/category.dart`: Defines `Category` component widget, state notifier, or data model.
+  - `lib/core/database/models/category.g.dart`: GENERATED CODE - DO NOT MODIFY BY HAND.
+  - `lib/core/database/models/transaction_model.dart`: Defines `TransactionModel` component widget, state notifier, or data model.
+  - `lib/core/database/models/transaction_model.g.dart`: GENERATED CODE - DO NOT MODIFY BY HAND.
+  - `lib/core/database/providers.dart`: --- Storage Providers ---.
+  - `lib/core/database/repositories/account_repository.dart`: Defines `AccountRepository` component widget, state notifier, or data model.
+  - `lib/core/database/repositories/base_repository.dart`: Defines `BaseRepository` component widget, state notifier, or data model.
+  - `lib/core/database/repositories/category_repository.dart`: Defines `CategoryRepository` component widget, state notifier, or data model.
+  - `lib/core/database/repositories/finance_repositories.dart`: Defines `BudgetRepository` component widget, state notifier, or data model.
+  - `lib/core/database/repositories/transaction_repository.dart`: Defines `TransactionRepository` component widget, state notifier, or data model.
+  - `lib/core/database/services/account_service.dart`: Defines `AccountService` component widget, state notifier, or data model.
+  - `lib/core/database/services/backup_service.dart`: 1. Request Permission (Modern Android handling).
+  - `lib/core/database/services/budget_service.dart`: Calculate spent amount for a budget.
+  - `lib/core/database/services/category_service.dart`: Defines `CategoryService` component widget, state notifier, or data model.
+  - `lib/core/database/services/csv_service.dart`: Defines `CsvService` component widget, state notifier, or data model.
+  - `lib/core/database/services/goal_service.dart`: Defines `GoalService` component widget, state notifier, or data model.
+  - `lib/core/database/services/json_service.dart`: Defines `JsonService` component widget, state notifier, or data model.
+  - `lib/core/database/services/loan_service.dart`: Defines `LoanService` component widget, state notifier, or data model.
+  - `lib/core/database/services/performance_audit_service.dart`: 1. Clear existing transactions for a clean test.
+  - `lib/core/database/services/person_service.dart`: Defines `PersonService` component widget, state notifier, or data model.
+  - `lib/core/database/services/recurring_service.dart`: Checks and processes due recurring transactions.
+  - `lib/core/database/services/seed_service.dart`: Defines `SeedService` component widget, state notifier, or data model.
+  - `lib/core/database/services/statistics_service.dart`: Defines `StatisticsService` component widget, state notifier, or data model.
+  - `lib/core/database/services/transaction_service.dart`: Adds a transaction and updates the associated account balance atomically.
+  - `lib/core/domain/models/transaction.dart`: A robust, scalable Transaction model for personal finance.
+  - `lib/core/domain/repositories/transaction_repository.dart`: Abstract repository defining the contract for transaction operations.
+  - `lib/core/providers/fab_action_provider.dart`: Defines `FABActionNotifier` component widget, state notifier, or data model.
+  - `lib/core/services/backup_reminder_service.dart`: Phase 50: In-App Backup Reminders & TTL.
+  - `lib/core/services/currency_engine.dart`: Maps a currency code to its primary locale to ensure correct.
+  - `lib/core/services/data_shredder.dart`: Phase 30: Secure Data Shredding.
+  - `lib/core/services/debt_payoff_engine.dart`: Phase 27: Debt Payoff Calculators.
+  - `lib/core/services/exchange_rate_service.dart`: Using a free, no-auth API endpoint for demonstration/open-source purposes.
+  - `lib/core/services/file_service.dart`: [ACTION]: Get the application documents directory for permanent storage.
+  - `lib/core/services/greeting_service.dart`: 1. Festivals & Holidays (Fixed Dates for simplicity, can be dynamic later).
+  - `lib/core/services/haptic_service.dart`: Triggers a vibration only when a new transaction is added.
+  - `lib/core/services/log_service.dart`: Defines `LogLevel` component widget, state notifier, or data model.
+  - `lib/core/services/notification_service.dart`: Phase 24: Local Scheduled Notifications.
+  - `lib/core/services/privacy_service.dart`: Phase 29: Privacy Masking & Security Gestures.
+  - `lib/core/services/reconciliation_service.dart`: Phase 48: Multi-Account Reconciliation Workflow.
+  - `lib/core/services/round_up_service.dart`: Phase 49: Simulated "Round-Up" Savings Goals.
+  - `lib/core/services/streak_engine.dart`: Phase 19: Gamification & Financial Streaks.
+  - `lib/core/services/update_service.dart`: If the current build is universal, we prefer the universal APK.
+  - `lib/core/theme/color_extension.dart`: 1. Clean the string: trim, uppercase.
+  - `lib/core/theme/colors.dart`: --- Atelier Design Tokens (Editorial System - Light) ---.
+  - `lib/core/theme/personalization_provider.dart`: Defines `PersonalizationState` component widget, state notifier, or data model.
+  - `lib/core/theme/theme_provider.dart`: Defines `ColorSchemeVariant` component widget, state notifier, or data model.
+  - `lib/core/theme/theme.dart`: ignore: unused_element.
+  - `lib/core/theme/typography.dart`: Defines `AppTypography` component widget, state notifier, or data model.
+  - `lib/core/utils/shortcuts_util.dart`: Phase 15: Home Screen Shortcuts & Deep Linking.
+  - `lib/core/widgets/animated_counter.dart`: Phase 52: Dynamic Number Counting (Odometer Effect).
+  - `lib/core/widgets/animated_gradient_text.dart`: AnimatedGradientText: A highly expressive text widget for main balances or headers.
+  - `lib/core/widgets/app_back_button.dart`: A Material 3 Expressive circular/squircle back button matching the About page design.
+  - `lib/core/widgets/bouncy_button.dart`: Phase 52: Spring-Based Micro-Interactions (The "Squish" Effect).
+  - `lib/core/widgets/expressive_bottom_sheet.dart`: Defines `ExpressiveBottomSheet` component widget, state notifier, or data model.
+  - `lib/core/widgets/expressive_morphing_fab.dart`: ExpressiveMorphingFab: A floating action button that morphs into a frosted glass menu.
+  - `lib/core/widgets/expressive_segmented_control.dart`: ExpressiveSegmentedControl: A Material 3 SegmentedButton wrapper.
+  - `lib/core/widgets/expressive_shape.dart`: Computes the exact vector Path for any Material 3 Expressive shape.
+  - `lib/core/widgets/fluid_mesh_background.dart`: FluidMeshBackground: A highly expressive, premium animated background.
+  - `lib/core/widgets/glass_card.dart`: GlassCard: An expressive, frosted glass container.
+  - `lib/core/widgets/global_error_screen.dart`: Defines `GlobalErrorScreen` component widget, state notifier, or data model.
+  - `lib/core/widgets/hero_container.dart`: Phase 52: Container Transforms (Hero Animations).
+  - `lib/core/widgets/icon_picker.dart`: Provider to track and persist recently used icons.
+  - `lib/core/widgets/overview_grid_card.dart`: Defines `OverviewGridCard` component widget, state notifier, or data model.
+  - `lib/core/widgets/paisa_charts.dart`: PaisaDonutChart: A high-performance, interactive Donut Chart for spending analysis.
+  - `lib/core/widgets/primary_atelier_button.dart`: [ACTION]: Defining the main background for the primary interactive button.
+  - `lib/core/widgets/safe_runtime_fixer.dart`: Catch-all for logic errors that don't trigger FlutterError.
+  - `lib/core/widgets/staggered_animated_list.dart`: Phase 52: Staggered List Entrance Choreography.
+  - `lib/core/widgets/tactile_keypad.dart`: TactileKeypad: An expressive, haptic-enabled numeric keypad.
+  - `lib/core/widgets/transaction_list_tile.dart`: Defines `TransactionListTile` component widget, state notifier, or data model.
+  - `lib/core/widgets/transaction_search_anchor.dart`: TransactionSearchAnchor: A pure Material 3 Expressive search component.
+  - `lib/core/widgets/transaction_segmented_group.dart`: Formats a DateTime into a friendly date header label (Today, Yesterday, etc.).
+  - `lib/core/widgets/wallet_carousel.dart`: WalletCarousel: An extremely expressive Material 3 CarouselView.
+  - `lib/features/accounts/pages/account_details_page.dart`: Optimized: Watch transactions for this account specifically using ID filter in DB.
+  - `lib/features/accounts/pages/accounts_page.dart`: Defines `AccountsPage` component widget, state notifier, or data model.
+  - `lib/features/accounts/pages/add_edit_account_page.dart`: Defines `AddEditAccountPage` component widget, state notifier, or data model.
+  - `lib/features/accounts/widgets/account_card.dart`: Defines `AccountCard` component widget, state notifier, or data model.
+  - `lib/features/accounts/widgets/category_segmented_bar.dart`: Defines `CategorySegmentData` component widget, state notifier, or data model.
+  - `lib/features/accounts/widgets/edit_account_bottom_sheet.dart`: This file is deprecated. Please use AddEditAccountPage instead.
+  - `lib/features/auth/pages/onboarding_page.dart`: Defines `OnboardingPage` component widget, state notifier, or data model.
+  - `lib/features/auth/pages/unlock_page.dart`: Defines `UnlockPage` component widget, state notifier, or data model.
+  - `lib/features/auth/pages/user_info_page.dart`: Defines `UserInfoPage` component widget, state notifier, or data model.
+  - `lib/features/auth/providers/auth_provider.dart`: Check capabilities in background.
+  - `lib/features/home/pages/activity_heatmap_page.dart`: Group transactions by year and month.
+  - `lib/features/home/pages/add_edit_goal_page.dart`: Defines `AddEditGoalPage` component widget, state notifier, or data model.
+  - `lib/features/home/pages/add_edit_recurring_page.dart`: Defines `AddEditRecurringPage` component widget, state notifier, or data model.
+  - `lib/features/home/pages/bill_splitter_page.dart`: Defines `BillSplitterPage` component widget, state notifier, or data model.
+  - `lib/features/home/pages/budgets_page.dart`: Defines `BudgetsPage` component widget, state notifier, or data model.
+  - `lib/features/home/pages/goals_page.dart`: Defines `GoalsPage` component widget, state notifier, or data model.
+  - `lib/features/home/pages/home_page.dart`: Defines `HomePage` component widget, state notifier, or data model.
+  - `lib/features/home/pages/recurring_page.dart`: Defines `RecurringPage` component widget, state notifier, or data model.
+  - `lib/features/home/pages/search_page.dart`: Defines `SearchPage` component widget, state notifier, or data model.
+  - `lib/features/home/widgets/activity_insights_section.dart`: Filter transactions for the current month for the heatmap.
+  - `lib/features/home/widgets/animated_balance_hero.dart`: Defines `AnimatedBalanceHero` component widget, state notifier, or data model.
+  - `lib/features/home/widgets/home_header.dart`: Left Side: Logo & Greeting.
+  - `lib/features/home/widgets/overview_card.dart`: Defines `OverviewCard` component widget, state notifier, or data model.
+  - `lib/features/home/widgets/total_balance_card.dart`: Defines `TotalBalanceCard` component widget, state notifier, or data model.
+  - `lib/features/loans/pages/add_edit_loan_page.dart`: Defines `AddEditLoanPage` component widget, state notifier, or data model.
+  - `lib/features/loans/pages/loans_page.dart`: Defines `LoansPage` component widget, state notifier, or data model.
+  - `lib/features/loans/widgets/add_debt_installment_sheet.dart`: Bottom Sheet modal to record a partial repayment/installment for a Loan or Debt.
+  - `lib/features/loans/widgets/wavy_debt_progress_line.dart`: Animated Harmonic Wavy Line Visualizer for Debt / Loan Progress.
+  - `lib/features/people/pages/people_page.dart`: ref might be already disposed in some unmount scenarios.
+  - `lib/features/people/pages/person_details_page.dart`: Defines `PersonDetailsPage` component widget, state notifier, or data model.
+  - `lib/features/people/widgets/person_avatar.dart`: 1. Check if it's a file path.
+  - `lib/features/reports/pages/category_details_page.dart`: Defines `CategoryDetailsPage` component widget, state notifier, or data model.
+  - `lib/features/reports/pages/reports_page.dart`: ReportsPage: A dynamic, Material 3 reactive dashboard for financial analysis.
+  - `lib/features/settings/pages/about_page.dart`: Defines `AboutPage` component widget, state notifier, or data model.
+  - `lib/features/settings/pages/add_edit_category_page.dart`: Defines `AddEditCategoryPage` component widget, state notifier, or data model.
+  - `lib/features/settings/pages/backup_restore_page.dart`: Medium Flexible Top App Bar with back navigation & enlarged title.
+  - `lib/features/settings/pages/categories_page.dart`: Medium Flexible Top App Bar with back navigation & enlarged title.
+  - `lib/features/settings/pages/currency_selection_page.dart`: Defines `CurrencySelectionPage` component widget, state notifier, or data model.
+  - `lib/features/settings/pages/edit_profile_page.dart`: Defines `EditProfilePage` component widget, state notifier, or data model.
+  - `lib/features/settings/pages/expressive_showdown_page.dart`: Expressive Showdown Page.
+  - `lib/features/settings/pages/feedback_page.dart`: Defines `FeedbackPage` component widget, state notifier, or data model.
+  - `lib/features/settings/pages/general_settings_page.dart`: Medium Flexible Top App Bar with back navigation & enlarged title.
+  - `lib/features/settings/pages/logcat_page.dart`: Defines `LogcatPage` component widget, state notifier, or data model.
+  - `lib/features/settings/pages/personalization_page.dart`: A custom painter that draws a circle split into three colored segments:.
+  - `lib/features/settings/pages/privacy_policy_page.dart`: Last updated: August 2026*.
+  - `lib/features/settings/pages/privacy_security_page.dart`: Medium Flexible Top App Bar with back navigation & enlarged title.
+  - `lib/features/settings/pages/settings_page.dart`: Defines `SettingsPage` component widget, state notifier, or data model.
+  - `lib/features/settings/pages/terms_of_use_page.dart`: Last updated: August 2026*.
+  - `lib/features/settings/pages/theme_selection_page.dart`: A custom painter that draws a circle split into three colored segments:.
+  - `lib/features/settings/widgets/expressive_backdrop_banner.dart`: Animated Expressive Backdrop Banner.
+  - `lib/features/settings/widgets/settings_segmented_card.dart`: An expressive Material 3 segmented menu card used on the main Settings page.
+  - `lib/features/transactions/pages/add_transaction_page.dart`: People & Debt/Loan Integration.
+  - `lib/features/transactions/pages/all_transactions_page.dart`: Defines `AllTransactionsPage` component widget, state notifier, or data model.
+  - `lib/main.dart`: 1. Pre-load SharedPreferences for synchronous access.
+  - `LICENSE`: Open-source software license defining terms of use, distribution, and attribution.
+  - `pubspec.lock`: Concrete lockfile capturing exact resolved versions of Flutter packages.
+  - `pubspec.yaml`: Flutter package specification declaring application dependencies, asset bindings, fonts, and SDK versions.
+  - `README.md`: Repository documentation, architectural overview, usage instructions, and downstream integration guidelines.
+  - `release-notes/v5.1.2.md`: ## ✨ What's New in v5.1.2.
+  - `scripts/fetch_icons.dart`: ignore_for_file: avoid_print, prefer_const_constructors.
+  - `SECURITY.md`: 🛡️ Security Policy.
+  - `test/error_collector_activation_test.dart`: Initially false.
+  - `test/widget_test.dart`: This is a basic Flutter widget test.
+  - `Version.md`: Permanent, immutable project ledger tracking historical changelogs, architecture evolution, and component manifests.
+- **Status**: 100% (Completed & Verified across repository)
+
+
+## [2026-11-09 17:41:30 IST] - Onboarding UX Refinement & Asset XML Synchronization
+- **Action**: Refined Onboarding Page 1 title constraints, extended Screen 5 with Material 3 Expressive core value highlight cards and smooth scrolling, copied welcome vector image assets, and generated Android VectorDrawable XML.
+- **Changes**:
+  - **Screen 1 (Welcome)**: Enforced `maxLines: 1` and `softWrap: false` on the "Welcome to" title text to guarantee a single-line presentation across all device viewports, preserving "Wallet" in its dynamic primary pill below.
+  - **Screen 5 (All Set)**: Substantially lengthened Screen 5 by integrating `SingleChildScrollView` (with `BouncingScrollPhysics`) and four Material 3 Expressive value highlight cards:
+    - *100% Offline & Private* (`Symbols.shield_lock_rounded`)
+    - *Encrypted Local Backups* (`Symbols.settings_backup_restore_rounded`)
+    - *Material 3 Expressive* (`Symbols.auto_awesome_rounded`)
+    - *Pure Open Source* (`Symbols.code_rounded`)
+  - **Assets**:
+    - Copied `assets/images/welcome.svg` to `assets/welcome.svg`.
+    - Generated Android VectorDrawable XML (`assets/welcome.xml`) with exact path geometry (`viewportWidth="500"`, `viewportHeight="500"`, `android:fillType="evenOdd"`).
+- **Files Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `assets/welcome.svg`
+  - `assets/welcome.xml`
+  - `Version.md`
+- **Status**: 100% (Completed)
+
+
+## [2026-11-09 23:30:00 IST] - Onboarding Architecture & Wireframe Evolution (OldS vs NewS Comprehensive Specification)
+- **Action**: Comprehensive visual, layer, and architectural analysis of the 11 uploaded wireframe media assets (`uploaded_media_0` through `uploaded_media_10`) for the Onboarding module redesign, establishing the transition roadmap from the legacy 5-page flow (`OldS`) to the expanded 8-page wireframe specification (`NewS`) with dedicated Backup Restore, separated Profile & Personalization stages, new Color Scheme setup, and dedicated Restore Success state.
+- **Key Visual & Architectural Distinctions (OldS vs NewS)**:
+  - **Screen 1 (Welcome)**:
+    - *Preserved from OldS*: Dynamic brand logo at top-left (`_buildDynamicShadowLogo`), interactive dark/light mode toggle at top-right (`_buildThemeToggle`), and central vector illustration (`assets/images/welcome.svg`).
+    - *Adopted from NewS*: Ambient fluid background choreography introducing `Sunny - Move` (mid-right blob), `Bun - Move` (mid-left blob), and `BackGround` (spiky soft boom petals at bottom).
+    - *Color Palette System*: Integration of the 6-swatch palette from Media 0 (`#E7702B` Orange, `#F1FAEE` Honeydew Off-White, `#A8DADC` Soft Cyan, `#457B9D` Steel Blue, `#1D3557` Prussian Navy, `#0C1A2F` Midnight Dark).
+  - **Screen 2 (Restore Backup - Brand New)**:
+    - Introduces initial branching option for returning users. Features download tray drive icon (`Backup - Icon`), "Restore" header, "Backup" sub-pill, and "Choose file" action button, with a top-right "Skip" escape hatch to continue fresh onboarding.
+  - **Screen 3 (Personalise: Add Photo - Split from OldS Page 2)**:
+    - Dedicated circular avatar picker (`Photo - Icon`), title "Let’s Personalise", new subtitle *"and make it personal"*, "Add Photo" indicator, and "Choose file" action button with top-right "Skip".
+  - **Screen 4 (Personalise: Add Name - Split from OldS Page 2)**:
+    - Dedicated ID badge card illustration (`Name - icon` with avatar and profile text lines), title "Let’s Personalise", new subtitle *"we need a name, surely you have one"*, text form field container (`Add Photo - container`), with "Previous" and "Next" dual navigation buttons.
+  - **Screen 5 (Choose Currency - Enhanced)**:
+    - Multi-currency coin cluster (`€`, `£`, `$`, `₹`), "Choose Currency" header, scrollable list/grid container (`List of currency`), and visual bottom safe margin indicator (`Safe area`), with "Previous" and "Next" buttons.
+  - **Screen 6 (Permissions we want - Enhanced)**:
+    - Security shield illustration with inner heart (`Shield`, `Vector`), title "Permissions we want", permission list cards container (`All permissions`), with "Previous" and "Skip" (or proceed) buttons.
+  - **Screen 7 (Let's set the Colours - Brand New Screen)**:
+    - Color wheel triple-ring icon (`Colour`), title "Let’s set the Colours", dynamic Monet theme switcher container (`Dynamic Colour Toggle`), and preset palette picker container (`Color Scemas`), with "Previous", "Next", and top-right "Skip".
+  - **Screen 8 (You're all set / "Let's Dive in" - Redesigned Final Screen)**:
+    - Top-right Open Source Initiative badge (`Open Source Logo`, `#61A76A`), central wallet emblem nested in a 12-lobed sunburst flower badge (`Sunny - Move_8` / `shape_22`), header "You’re all set", body text *"Wallet is fully open source and works offline. Your data never leaves your device"*, and full-width "Let’s Dive in" primary action button triggering the circular ripple launch transition.
+  - **Alternate Flow (Restore Complete - Success Screen)**:
+    - Dedicated success screen triggered when a backup file is selected on Screen 2. Features download tray icon accented with a green verification badge (`Tick Mark`, `#61A76A`), "Restore Complete" title, and direct "Let’s Dive in" button immediately loading the restored workspace.
+  - **Ambient Motion Choreography ("Move" Shapes)**:
+    - Tracking layer coordinates across all 8 screens: `Sunny - Move` interpolates from mid-right (`y ≈ 584`) to top-right (`y ≈ -35`), `Bun - Move` expands on the left edge (`x ≈ -88`, `y ≈ 406`), and `Soft boom - Move` anchors the bottom edge across screens 2 through 7.
+- **Files Documented**:
+  - `D:\code\Wallet-Flutter\Improv\Version.md`
+  - `D:\code\temp\Wallet-Flutter\Onboarding Screen\*.svg`
+  - `C:\Users\Abhi\.gemini\antigravity-cli\brain\4d1f0c71-48f5-4fe5-bba5-aab26cbaf581\.user_uploaded\*.svg`
+- **Status**: 100% (Specification & Architectural Analysis Completed)
+
+
+## [2026-11-10 00:22:00 IST] - Release v6.0.0 Version Transition & Assets Synchronization
+- **Action**: Bumped application release version to `v6.0.0` (`6.0.0+60000`), created dedicated release notes in `release-notes/v6.0.0.md`, updated in-app version constants across `about_page.dart` and `settings_page.dart`, and registered root asset directory bindings in `pubspec.yaml`.
+- **Changes**:
+  - `pubspec.yaml`: Updated version string from `5.1.2+50102` to `6.0.0+60000` and bound top-level `- assets/` directory.
+  - `lib/features/settings/pages/about_page.dart`: Updated `_currentVersion` to `'6.0.0'`.
+  - `lib/features/settings/pages/settings_page.dart`: Updated `_currentVersion` to `'6.0.0'`.
+  - `release-notes/v6.0.0.md`: Authored official release notes for `v6.0.0`.
+  - `assets/`: Synchronized `Wallet - Logo.svg`, `welcome.svg`, and `welcome.xml`.
+- **Files Modified**:
+  - `pubspec.yaml`
+  - `lib/features/settings/pages/about_page.dart`
+  - `lib/features/settings/pages/settings_page.dart`
+  - `release-notes/v6.0.0.md`
+  - `Version.md`
+- **Status**: 100% (Completed)

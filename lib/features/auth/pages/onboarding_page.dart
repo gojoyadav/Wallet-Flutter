@@ -400,6 +400,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
                   // ------------------------------------------------------------
                   Text(
                     'Welcome to',
+                    maxLines: 1,
+                    softWrap: false,
                     style: theme.textTheme.displaySmall?.copyWith(
                       color: colorScheme.onSurface,
                       fontWeight: FontWeight.w900,
@@ -907,45 +909,153 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> with SingleTick
               ],
             ),
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Spacer(),
-                  // ----------------------------------------------------------
-                  // ELEMENT: DYNAMIC SHADOW HERO BRAND LOGO
-                  // ----------------------------------------------------------
-                  _buildDynamicShadowLogo(logoPath: 'assets/images/logo.svg', size: 120),
-                  const SizedBox(height: 48),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 24),
+                    // ----------------------------------------------------------
+                    // ELEMENT: DYNAMIC SHADOW HERO BRAND LOGO
+                    // ----------------------------------------------------------
+                    _buildDynamicShadowLogo(logoPath: 'assets/images/logo.svg', size: 100),
+                    const SizedBox(height: 28),
 
-                  // ----------------------------------------------------------
-                  // ELEMENT: PRIVACY & OPEN SOURCE HEADLINE TITLE
-                  // ----------------------------------------------------------
-                  Text(
-                    "Open Source & Private",
-                    style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // ----------------------------------------------------------
-                  // ELEMENT: OFFLINE-FIRST EXPLANATION SUBTITLE
-                  // ----------------------------------------------------------
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      "Wallet is fully open source and works offline. Your data never leaves your device.",
-                      style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
+                    // ----------------------------------------------------------
+                    // ELEMENT: PRIVACY & OPEN SOURCE HEADLINE TITLE
+                    // ----------------------------------------------------------
+                    Text(
+                      "Open Source & Private",
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.3,
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                  ),
-                  const Spacer(),
-                  const SizedBox(height: 100), // Space for navigation action button
-                ],
+                    const SizedBox(height: 12),
+
+                    // ----------------------------------------------------------
+                    // ELEMENT: OFFLINE-FIRST EXPLANATION SUBTITLE
+                    // ----------------------------------------------------------
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        "Wallet is fully open source and works completely offline. Your financial data never leaves your device.",
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                          height: 1.4,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+
+                    // ----------------------------------------------------------
+                    // ELEMENT: CORE VALUE HIGHLIGHT CARDS (Extending Screen 5)
+                    // ----------------------------------------------------------
+                    _buildValueHighlightCard(
+                      theme,
+                      colorScheme,
+                      icon: Symbols.shield_lock_rounded,
+                      title: "100% Offline & Private",
+                      description: "Powered by Isar embedded database with zero telemetry, trackers, or cloud dependencies.",
+                    ),
+                    const SizedBox(height: 12),
+                    _buildValueHighlightCard(
+                      theme,
+                      colorScheme,
+                      icon: Symbols.settings_backup_restore_rounded,
+                      title: "Encrypted Local Backups",
+                      description: "Safely export and restore all accounts, transactions, and categories anytime on your terms.",
+                    ),
+                    const SizedBox(height: 12),
+                    _buildValueHighlightCard(
+                      theme,
+                      colorScheme,
+                      icon: Symbols.auto_awesome_rounded,
+                      title: "Material 3 Expressive",
+                      description: "Fluid spring animations, Atelier dynamic color harmonies, and tactile haptic response.",
+                    ),
+                    const SizedBox(height: 12),
+                    _buildValueHighlightCard(
+                      theme,
+                      colorScheme,
+                      icon: Symbols.code_rounded,
+                      title: "Pure Open Source",
+                      description: "Transparent, community-driven codebase with no paid paywalls or hidden subscriptions.",
+                    ),
+
+                    const SizedBox(height: 140), // Space for floating "Let's dive in" action button
+                  ],
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // ============================================================================
+  // SECTION: REUSABLE VALUE HIGHLIGHT CARD COMPONENT (Screen 5)
+  // ============================================================================
+  Widget _buildValueHighlightCard(
+    ThemeData theme,
+    ColorScheme colorScheme, {
+    required IconData icon,
+    required String title,
+    required String description,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest.withOpacity(0.35),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(
+              icon,
+              size: 22,
+              color: colorScheme.onPrimaryContainer,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

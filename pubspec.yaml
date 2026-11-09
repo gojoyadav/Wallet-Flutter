@@ -2,7 +2,7 @@ name: wallet
 description: A new Flutter project.
 publish_to: 'none'
 
-version: 5.1.2+50102
+version: 6.0.0+60000
 
 environment:
   sdk: ">=3.5.0 <4.0.0"
@@ -98,6 +98,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/
     - assets/images/
     - assets/images/blueprint.svg
     - assets/icon/
