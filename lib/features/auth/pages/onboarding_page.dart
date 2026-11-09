@@ -207,10 +207,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
         : 'User';
     final currency = _selectedCurrency ?? 'INR';
 
-    String? savedPhotoPath;
+    String? savedPhotoPath = _imagePath;
     if (_imagePath != null) {
-      final fileService = ref.read(fileServiceProvider);
-      savedPhotoPath = await fileService.saveProfilePhoto(File(_imagePath!));
+      savedPhotoPath = await FileService.saveImagePermanently(_imagePath!);
     }
 
     ref.read(personalizationProvider.notifier).completeOnboarding(

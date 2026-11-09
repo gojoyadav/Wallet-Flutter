@@ -1480,3 +1480,11 @@ ont_awesome_flutter\ v11 APIs.
   - `assets/images/shape_soft_boom.svg`
   - `Version.md`
 - **Status**: 100% (Completed)
+
+
+## [2026-11-10 02:01:00 IST] - Onboarding FileService Static API Alignment
+- **Action**: Corrected `FileService` invocation within `_finishOnboarding` in `lib/features/auth/pages/onboarding_page.dart` to directly call `FileService.saveImagePermanently(_imagePath!)` static method, resolving the compilation error detected by remote GitHub Actions CI.
+- **Files Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `Version.md`
+- **Status**: 100% (Completed)
