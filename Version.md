@@ -1413,3 +1413,18 @@ ont_awesome_flutter\ v11 APIs.
   - `assets/images/shape_soft_boom.svg`
   - `Version.md`
 - **Status**: 100% (Completed)
+
+
+## [2026-11-10 01:02:00 IST] - Automated Pre-Release Pipeline for Improv Branch
+- **Action**: Configured automated GitHub Pre-Release publishing directly on `Improv` branch pushes within `.github/workflows/build_apks.yml`, featuring dynamic auto-incrementing dev tags (`v<VERSION>-dev01`, `v<VERSION>-dev02`, etc.), release title matching the exact tag string per repository mandates, `prerelease: true`, and inclusion of all 4 supported APK architecture binaries (`arm64-v8a`, `universal`, `arm-v7a`, `x86_64`) along with SHA-256 checksums.
+- **Changes**:
+  - `.github/workflows/build_apks.yml`:
+    - Extended `Resolve Release Version` trigger condition to include `refs/heads/Improv`.
+    - Added automated tag resolution querying remote tags to compute the next sequential two-digit dev counter (`v${VERSION}-dev01`, `v${VERSION}-dev02`...).
+    - Aligned release name to match tag string directly (`${{ steps.release.outputs.tag }}`).
+    - Configured `prerelease: true` and `make_latest: false` for all development builds on `Improv`.
+    - Included all 4 APK architecture binaries and checksum files in release assets.
+- **Files Modified**:
+  - `.github/workflows/build_apks.yml`
+  - `Version.md`
+- **Status**: 100% (Completed)

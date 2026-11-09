@@ -355,26 +355,58 @@ jobs:
           done
           ls -lah
 
-      # Tag = pubspec version (e.g. v5.1.2). Releases once per version: pushes
-      # to main that don't bump pubspec.yaml build but don't re-release.
+      # Tag = pubspec version (e.g. v5.1.2) on main, or auto-incrementing pre-release
+      # dev tag (e.g. v6.0.0-dev01) on Improv branch.
       - name: Resolve Release Version
         id: release
-        if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/Improv')
         run: |
           VERSION=$(grep -E '^version:' pubspec.yaml | sed -E 's/version:[[:space:]]*//; s/\+.*//' | tr -d '\r ')
-          TAG="v${VERSION}"
+          IS_PRE_RELEASE="false"
+          MAKE_LATEST="true"
+
+          if [ "${{ github.ref }}" = "refs/heads/Improv" ]; then
+            IS_PRE_RELEASE="true"
+            MAKE_LATEST="false"
+            EXISTING_DEV_TAGS=$(git ls-remote --tags origin "refs/tags/v${VERSION}-dev*" 2>/dev/null | awk -F'/' '{print $3}' | grep -v '\^{}' || true)
+            if [ -z "$EXISTING_DEV_TAGS" ]; then
+              NEXT_NUM=1
+            else
+              HIGHEST=$(echo "$EXISTING_DEV_TAGS" | sed -E "s/v${VERSION}-dev0*//" | sort -n | tail -n 1)
+              if [ -z "$HIGHEST" ]; then
+                HIGHEST=0
+              fi
+              NEXT_NUM=$((HIGHEST + 1))
+            fi
+            DEV_SUFFIX=$(printf "%02d" $NEXT_NUM)
+            TAG="v${VERSION}-dev${DEV_SUFFIX}"
+            echo "Calculated Pre-Release dev tag: ${TAG}"
+          else
+            TAG="v${VERSION}"
+            if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+              echo "Tag ${TAG} already exists; skipping production release."
+              echo "create=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
-            echo "Tag ${TAG} already exists; skipping release."
-            echo "create=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          echo "prerelease=${IS_PRE_RELEASE}" >> "$GITHUB_OUTPUT"
+          echo "make_latest=${MAKE_LATEST}" >> "$GITHUB_OUTPUT"
           echo "create=true" >> "$GITHUB_OUTPUT"
           DL="https://github.com/${{ github.repository }}/releases/download/${TAG}"
           {
-            echo "## 📱 Project Wallet Flutter ${TAG}"
-            echo
+            if [ "$IS_PRE_RELEASE" = "true" ]; then
+              echo "## 🚧 Project Wallet Flutter — Development Pre-Release (\`${TAG}\`)"
+              echo
+              echo "> [!NOTE]"
+              echo "> This is an automated development pre-release built directly from the \`Improv\` staging branch."
+              echo
+            else
+              echo "## 📱 Project Wallet Flutter ${TAG}"
+              echo
+            fi
             echo '<p align="center">'
             echo "  <a href=\"${DL}/wallet-arm64-v8a.apk\">"
             echo '    <img src="https://raw.githubusercontent.com/junksidetm/assests/d8774837b8c8658389ea37193a77a9a100414bc5/Images/badges/SVG%20-%20Version/Android%20Direct%20Link%20Frame.svg" alt="Direct APK Download" width="290" />'
@@ -383,6 +415,9 @@ jobs:
             echo
             if [ -f "release-notes/${TAG}.md" ]; then
               cat "release-notes/${TAG}.md"
+              echo
+            elif [ -f "release-notes/v${VERSION}.md" ]; then
+              cat "release-notes/v${VERSION}.md"
               echo
             fi
             echo "### 🚀 Direct Standalone Downloads"
@@ -394,14 +429,15 @@ jobs:
             echo "_Build #${{ github.run_number }} · \`${GITHUB_SHA::7}\` · SHA-256 checksums attached._"
           } > release-body.md
 
-      - name: Create GitHub Release (On Main Branch)
+      - name: Create GitHub Release
         if: success() && steps.release.outputs.create == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.release.outputs.tag }}
           target_commitish: ${{ github.sha }}
-          name: "Wallet ${{ steps.release.outputs.tag }}"
-          make_latest: true
+          name: ${{ steps.release.outputs.tag }}
+          prerelease: ${{ steps.release.outputs.prerelease == 'true' }}
+          make_latest: ${{ steps.release.outputs.make_latest == 'true' }}
           body_path: release-body.md
           files: |
             build/app/outputs/final-apks/*.apk
