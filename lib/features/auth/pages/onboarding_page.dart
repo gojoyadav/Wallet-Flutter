@@ -572,7 +572,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Top Bar
             Row(
@@ -582,11 +581,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 _buildThemeToggle(colorScheme),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
             // Hero Illustration
             Expanded(
-              flex: 4,
+              flex: 5,
               child: Center(
                 child: SvgPicture.asset(
                   'assets/images/welcome.svg',
@@ -595,69 +594,77 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
-            // Headline Text
-            Text(
-              'Welcome to',
-              maxLines: 1,
-              softWrap: false,
-              style: TextStyle(
-                fontSize: 34,
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface,
-                fontFamily: 'GoogleSansFlex',
-                letterSpacing: -0.5,
+            // Headline Text: "Welcome to" (Centered exact as WireFrame 1)
+            Center(
+              child: Text(
+                'Welcome to',
+                maxLines: 1,
+                softWrap: false,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                  fontFamily: 'GoogleSansFlex',
+                  letterSpacing: -0.5,
+                ),
               ),
             ),
             const SizedBox(height: 12),
 
-            // Sub-pill "Wallet"
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
-              decoration: BoxDecoration(
-                color: colorScheme.primary,
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.primary.withOpacity(0.35),
-                    blurRadius: 18,
-                    offset: const Offset(0, 6),
+            // Sub-pill "Wallet" (Centered exact as WireFrame 1)
+            Center(
+              child: Container(
+                width: 287,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(40),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.primary.withOpacity(0.35),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  'Wallet',
+                  style: TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w900,
+                    color: colorScheme.onPrimary,
+                    fontFamily: 'GoogleSansFlex',
+                    letterSpacing: -1,
                   ),
-                ],
-              ),
-              child: Text(
-                'Wallet',
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.w900,
-                  color: colorScheme.onPrimary,
-                  fontFamily: 'GoogleSansFlex',
-                  letterSpacing: -1,
                 ),
               ),
             ),
             const Spacer(flex: 1),
 
-            // Bottom "Welcome" Button
+            // Bottom "Welcome" Button (Uses colorScheme.primary & colorScheme.onPrimary so text dynamically matches Next/Skip buttons in dark mode)
             SizedBox(
               width: double.infinity,
               height: 62,
               child: FilledButton(
                 onPressed: _nextPage,
                 style: FilledButton.styleFrom(
-                  backgroundColor: heroColor,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                   elevation: 2,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Welcome',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
+                    color: colorScheme.onPrimary,
                     fontFamily: 'GoogleSansFlex',
                   ),
                 ),

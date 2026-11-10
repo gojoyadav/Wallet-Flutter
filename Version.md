@@ -1709,3 +1709,13 @@ ont_awesome_flutter\ v11 APIs.
     - `wallet-arm-v7a.apk` (32-bit ARMv7a) & `.sha256`
     - `wallet-x86_64.apk` (64-bit x86 architecture) & `.sha256`
 - **Status**: 100% (Completed & Published Live)
+
+## [2026-11-10 19:18:00 IST] - Screen 1 Wireframe 1 Alignment & Dark Mode Dynamic Contrast Fix
+- **Action**: Aligned Screen 1 to strictly reflect Wireframe 1 center-aligned geometry and resolved dark mode dynamic contrast discrepancy on the "Welcome" button.
+- **Changes**:
+  - **Screen 1 Layout Alignment**: Center-aligned "Welcome to" headline and the 287dp "Wallet" pill container with the background ambient shapes (`Bun` on mid-left, `Sunny` on mid-right, and `Soft Boom` at bottom), matching `uploaded_media_8` (Wireframe 1).
+  - **Dark Mode Button Contrast**: Replaced hardcoded `foregroundColor: Colors.white` with `foregroundColor: colorScheme.onPrimary` (and `backgroundColor: colorScheme.primary`), ensuring button label typography dynamically renders in the appropriate high-contrast dark tonal color in dark mode, matching all subsequent action buttons.
+- **Files Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `Version.md`
+- **Status**: 100% (Completed & Verified)
