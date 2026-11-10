@@ -679,18 +679,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Column(
           children: [
-            // Top Bar with Skip
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton.icon(
-                onPressed: () => _goToPage(2),
-                icon: const Icon(Symbols.skip_next_rounded, size: 20),
-                label: const Text('Skip', style: TextStyle(fontWeight: FontWeight.bold)),
-                style: TextButton.styleFrom(
-                  foregroundColor: colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
             const Spacer(flex: 1),
 
             // Hero Icon
@@ -744,56 +732,51 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             ),
             const Spacer(flex: 2),
 
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 58,
-                    child: OutlinedButton(
-                      onPressed: () => _goToPage(2),
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        side: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
-                      ),
-                      child: const Text(
-                        'Skip',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'GoogleSansFlex',
-                        ),
-                      ),
-                    ),
+            // Centered Skip Button (Exact as Wireframe SVG)
+            SizedBox(
+              width: 174,
+              height: 56,
+              child: OutlinedButton(
+                onPressed: () => _goToPage(2),
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(28),
+                  ),
+                  side: BorderSide(color: colorScheme.outline.withOpacity(0.4)),
+                ),
+                child: const Text(
+                  'Skip',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'GoogleSansFlex',
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  flex: 2,
-                  child: SizedBox(
-                    height: 58,
-                    child: FilledButton.icon(
-                      onPressed: _restoreBackup,
-                      icon: const Icon(Symbols.folder_open_rounded),
-                      label: const Text(
-                        'Choose file',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'GoogleSansFlex',
-                        ),
-                      ),
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                    ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Bottom Full-Width "Choose file" Action Button (Exact as Wireframe SVG)
+            SizedBox(
+              width: double.infinity,
+              height: 62,
+              child: FilledButton.icon(
+                onPressed: _restoreBackup,
+                icon: const Icon(Symbols.folder_open_rounded),
+                label: const Text(
+                  'Choose file',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'GoogleSansFlex',
                   ),
                 ),
-              ],
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 8),
           ],
@@ -908,18 +891,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Column(
           children: [
-            // Top Bar with Skip
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton.icon(
-                onPressed: _nextPage,
-                icon: const Icon(Symbols.skip_next_rounded, size: 20),
-                label: const Text('Skip', style: TextStyle(fontWeight: FontWeight.bold)),
-                style: TextButton.styleFrom(
-                  foregroundColor: colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
             const Spacer(flex: 1),
 
             // Circular Avatar Frame
@@ -1010,58 +981,53 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             ),
             const Spacer(flex: 2),
 
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 58,
-                    child: OutlinedButton(
-                      onPressed: _nextPage,
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        side: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
-                      ),
-                      child: const Text(
-                        'Skip',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'GoogleSansFlex',
-                        ),
-                      ),
-                    ),
+            // Centered Skip Button (Exact as Wireframe SVG)
+            SizedBox(
+              width: 174,
+              height: 56,
+              child: OutlinedButton(
+                onPressed: _nextPage,
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(28),
+                  ),
+                  side: BorderSide(color: colorScheme.outline.withOpacity(0.4)),
+                ),
+                child: const Text(
+                  'Skip',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'GoogleSansFlex',
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  flex: 2,
-                  child: SizedBox(
-                    height: 58,
-                    child: FilledButton.icon(
-                      onPressed: _pickImage,
-                      icon: Icon(_imagePath != null
-                          ? Symbols.edit_rounded
-                          : Symbols.add_a_photo_rounded),
-                      label: Text(
-                        _imagePath != null ? 'Change photo' : 'Choose file',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'GoogleSansFlex',
-                        ),
-                      ),
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                    ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Bottom Full-Width "Choose file" Action Button (Exact as Wireframe SVG)
+            SizedBox(
+              width: double.infinity,
+              height: 62,
+              child: FilledButton.icon(
+                onPressed: _pickImage,
+                icon: Icon(_imagePath != null
+                    ? Symbols.edit_rounded
+                    : Symbols.add_a_photo_rounded),
+                label: Text(
+                  _imagePath != null ? 'Change photo' : 'Choose file',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'GoogleSansFlex',
                   ),
                 ),
-              ],
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 8),
           ],
@@ -1108,19 +1074,22 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 fontFamily: 'GoogleSansFlex',
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
 
-            // Subtitle
-            Text(
-              'we need a name, surely you have one',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: colorScheme.onSurfaceVariant,
-                fontFamily: 'GoogleSansFlex',
+            // Label: "Add Name" (Exact as SVG Wireframe)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Add Name',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                  fontFamily: 'GoogleSansFlex',
+                ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 8),
 
             // Text Input Field Container
             TextFormField(
@@ -1136,7 +1105,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 fontFamily: 'GoogleSansFlex',
               ),
               decoration: InputDecoration(
-                labelText: 'Add Name',
                 hintText: 'Enter your name',
                 prefixIcon: Icon(Symbols.badge_rounded, color: colorScheme.primary),
                 filled: true,
@@ -1149,6 +1117,18 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide(color: colorScheme.primary, width: 2),
                 ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Subtitle: "we need a name, surely you have one" (Exact as SVG Wireframe)
+            Text(
+              'we need a name, surely you have one',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: colorScheme.onSurfaceVariant,
+                fontFamily: 'GoogleSansFlex',
               ),
             ),
             const Spacer(flex: 2),
@@ -1491,7 +1471,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             ),
             const SizedBox(height: 16),
 
-            // Previous and Skip/Next Buttons
+            // Previous and Skip Buttons (Exact as SVG Wireframe)
             Row(
               children: [
                 Expanded(
@@ -1525,7 +1505,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                       onPressed: _nextPage,
                       icon: const Icon(Symbols.arrow_forward_rounded),
                       label: const Text(
-                        'Next',
+                        'Skip',
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
@@ -1697,7 +1677,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             ),
             const SizedBox(height: 16),
 
-            // Navigation Buttons
+            // Navigation Buttons (Previous and Skip per SVG Wireframe)
             Row(
               children: [
                 Expanded(
@@ -1731,7 +1711,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                       onPressed: _nextPage,
                       icon: const Icon(Symbols.arrow_forward_rounded),
                       label: const Text(
-                        'Next',
+                        'Skip',
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,

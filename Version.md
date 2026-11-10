@@ -1681,3 +1681,18 @@ ont_awesome_flutter\ v11 APIs.
     - `wallet-arm-v7a.apk` (32-bit ARMv7a) & `.sha256`
     - `wallet-x86_64.apk` (64-bit x86 architecture) & `.sha256`
 - **Status**: 100% (Completed & Published Live)
+
+## [2026-11-10 19:02:00 IST] - Bun Shape ViewBox Normalization & Wireframe Button Action Alignment
+- **Action**: Corrected `shape_bun.svg` viewBox geometry and strictly aligned Onboarding action buttons and "Skip" placements to match the 11 wireframe SVGs pixel-for-pixel without redundant header controls.
+- **Changes**:
+  - **`assets/images/shape_bun.svg`**: Corrected corrupted viewBox (`48.7844 64.6681 671.1986 655.3149`) to centered 1:1 square bounding box `47.808 657.507 62.476 62.476`, restoring the Bun moving shape to its full, prominent scale and smooth axis rotation along the left screen border.
+  - **Screen 2 (Restore Backup)**: Removed redundant top-right Skip button. Restored exact SVG wireframe vertical layout featuring centered Skip pill button (`width: 174, height: 56, rx: 28`) positioned directly above the full-width "Choose file" action button (`height: 62, rx: 16`).
+  - **Screen 3 (Personalise: Photo)**: Removed redundant top-right Skip button. Restored exact SVG wireframe vertical layout featuring centered Skip pill button (`width: 174, height: 56, rx: 28`) positioned directly above the full-width "Choose file" action button (`height: 62, rx: 16`).
+  - **Screen 4 (Personalise: Name)**: Strictly matched wireframe SVG vertical hierarchy: Headline "Let's Personalise" -> "Add Name" label -> text input container -> subtitle "we need a name, surely you have one" -> dual navigation buttons (Previous and gated Next).
+  - **Screen 6 (Permissions we want)**: Aligned primary action button label from "Next" to "Skip" per wireframe SVG (`uploaded_media_3`).
+  - **Screen 7 (Let's set the Colours)**: Aligned primary action button label from "Next" to "Skip" per wireframe SVG (`uploaded_media_2`).
+- **Files Modified**:
+  - `assets/images/shape_bun.svg`
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `Version.md`
+- **Status**: 100% (Completed & Verified)
