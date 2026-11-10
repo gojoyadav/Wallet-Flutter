@@ -119,7 +119,21 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     super.dispose();
   }
 
+  bool get _canGoNext {
+    final page = _currentPage.round();
+    if (page == 3) {
+      // Screen 4: Personalise (Name) - cannot proceed until name is entered
+      return _nameController.text.trim().isNotEmpty;
+    }
+    if (page == 4) {
+      // Screen 5: Choose Currency - cannot proceed until currency is selected
+      return _selectedCurrency != null && _selectedCurrency!.isNotEmpty;
+    }
+    return true;
+  }
+
   void _nextPage() {
+    if (!_canGoNext) return;
     if (_currentPage < 7) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
@@ -138,6 +152,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   }
 
   void _goToPage(int page) {
+    if (page > _currentPage.round() && !_canGoNext) return;
     _pageController.animateToPage(
       page,
       duration: const Duration(milliseconds: 450),
@@ -256,60 +271,69 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
         ? colorScheme.primary
         : const Color(0xFF457B9D);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: Stack(
-        children: [
-          // --------------------------------------------------------------------
-          // AMBIENT ROTATING BACKGROUND SHAPES (SUNNY, BUN, SOFT BOOM)
-          // --------------------------------------------------------------------
-          _buildAmbientBackgroundShapes(size, moveShapeColor),
+    return PopScope(
+      canPop: _currentPage <= 0.05,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (_currentPage > 0.05) {
+          _previousPage();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: Stack(
+          children: [
+            // --------------------------------------------------------------------
+            // AMBIENT ROTATING BACKGROUND SHAPES (SUNNY, BUN, SOFT BOOM)
+            // --------------------------------------------------------------------
+            _buildAmbientBackgroundShapes(size, moveShapeColor),
 
-          // --------------------------------------------------------------------
-          // MAIN PAGE FLOW (OR ALTERNATE BACKUP COMPLETE VIEW)
-          // --------------------------------------------------------------------
-          if (_isRestoreComplete)
-            _buildBackupCompleteScreen(theme, colorScheme)
-          else
-            PageView(
-              controller: _pageController,
-              physics: const BouncingScrollPhysics(),
-              children: [
-                _buildScreen1(theme, colorScheme, heroColor),
-                _buildScreen2(theme, colorScheme),
-                _buildScreen3(theme, colorScheme),
-                _buildScreen4(theme, colorScheme),
-                _buildScreen5(theme, colorScheme),
-                _buildScreen6(theme, colorScheme),
-                _buildScreen7(theme, colorScheme),
-                _buildScreen8(theme, colorScheme),
-              ],
-            ),
+            // --------------------------------------------------------------------
+            // MAIN PAGE FLOW (OR ALTERNATE BACKUP COMPLETE VIEW)
+            // --------------------------------------------------------------------
+            if (_isRestoreComplete)
+              _buildBackupCompleteScreen(theme, colorScheme)
+            else
+              PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _buildScreen1(theme, colorScheme, heroColor),
+                  _buildScreen2(theme, colorScheme),
+                  _buildScreen3(theme, colorScheme),
+                  _buildScreen4(theme, colorScheme),
+                  _buildScreen5(theme, colorScheme),
+                  _buildScreen6(theme, colorScheme),
+                  _buildScreen7(theme, colorScheme),
+                  _buildScreen8(theme, colorScheme),
+                ],
+              ),
 
-          // --------------------------------------------------------------------
-          // CIRCULAR REVEAL RIPPLE EXIT ANIMATION
-          // --------------------------------------------------------------------
-          if (_showBlueScreen)
-            AnimatedBuilder(
-              animation: _rippleController,
-              builder: (context, child) {
-                final maxDim = math.max(size.width, size.height);
-                return Positioned.fill(
-                  child: ClipPath(
-                    clipper: CircleClipper(
-                      offset: _rippleOffset,
-                      radius: _rippleController.value * maxDim * 1.6,
+            // --------------------------------------------------------------------
+            // CIRCULAR REVEAL RIPPLE EXIT ANIMATION
+            // --------------------------------------------------------------------
+            if (_showBlueScreen)
+              AnimatedBuilder(
+                animation: _rippleController,
+                builder: (context, child) {
+                  final maxDim = math.max(size.width, size.height);
+                  return Positioned.fill(
+                    child: ClipPath(
+                      clipper: CircleClipper(
+                        offset: _rippleOffset,
+                        radius: _rippleController.value * maxDim * 1.6,
+                      ),
+                      child: Container(
+                        color: isDynamicColor
+                            ? colorScheme.primary
+                            : const Color(0xFF457B9D),
+                      ),
                     ),
-                    child: Container(
-                      color: isDynamicColor
-                          ? colorScheme.primary
-                          : const Color(0xFF457B9D),
-                    ),
-                  ),
-                );
-              },
-            ),
-        ],
+                  );
+                },
+              ),
+          ],
+        ),
       ),
     );
   }

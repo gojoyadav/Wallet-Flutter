@@ -1762,3 +1762,13 @@ ont_awesome_flutter\ v11 APIs.
   - `lib/features/auth/pages/onboarding_page.dart`
   - `Version.md`
 - **Status**: 100% (Completed & Verified)
+
+## [2026-11-10 20:25:00 IST] - Swipe Prevention Gating & System Back-Press Page Navigation
+- **Action**: Enforced strict progression gating across Name and Currency stages by disabling page swiping, and wired Android system back-press handling via `PopScope`.
+- **Changes**:
+  - **Progression Gating Enforcement**: Replaced `BouncingScrollPhysics` with `NeverScrollableScrollPhysics` on the main `PageView`, preventing users from swiping past mandatory setup screens. Added `_canGoNext` verification in `_nextPage()` and `_goToPage()` to guarantee the user cannot advance past Screen 4 without entering a name or past Screen 5 without selecting a currency.
+  - **Android System Back-Press Navigation (`PopScope`)**: Wrapped the root onboarding `Scaffold` in `PopScope` with `canPop: _currentPage <= 0.05`. Tapping the device back button or performing the back swipe gesture now steps backward page-by-page until Screen 1 is reached, allowing app exit only from the initial welcome screen.
+- **Files Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `Version.md`
+- **Status**: 100% (Completed & Verified)
