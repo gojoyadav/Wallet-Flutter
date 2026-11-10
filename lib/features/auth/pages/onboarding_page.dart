@@ -148,6 +148,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (pickedFile != null) {
       final croppedFile = await ImageCropper().cropImage(
@@ -156,10 +157,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: 'Crop Photo',
-            toolbarColor: Theme.of(context).colorScheme.primary,
-            toolbarWidgetColor: Colors.white,
+            toolbarColor: colorScheme.surfaceContainerHighest,
+            toolbarWidgetColor: colorScheme.onSurface,
+            statusBarColor: colorScheme.surfaceContainerHighest,
+            activeControlsWidgetColor: colorScheme.primary,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
+            hideBottomControls: true,
           ),
           IOSUiSettings(
             title: 'Crop Photo',
@@ -583,14 +587,17 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             ),
             const SizedBox(height: 12),
 
-            // Hero Illustration
+            // Hero Illustration (welcome.svg - scaled up ~1.35x for prominent hero presence)
             Expanded(
-              flex: 5,
+              flex: 6,
               child: Center(
-                child: SvgPicture.asset(
-                  'assets/images/welcome.svg',
-                  fit: BoxFit.contain,
-                  colorFilter: ColorFilter.mode(heroColor, BlendMode.srcIn),
+                child: Transform.scale(
+                  scale: 1.35,
+                  child: SvgPicture.asset(
+                    'assets/images/welcome.svg',
+                    fit: BoxFit.contain,
+                    colorFilter: ColorFilter.mode(heroColor, BlendMode.srcIn),
+                  ),
                 ),
               ),
             ),
@@ -614,17 +621,17 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             ),
             const SizedBox(height: 12),
 
-            // Sub-pill "Wallet" (Centered exact as WireFrame 1)
+            // Sub-pill "Wallet" (75% opacity so underlying background shapes can be seen)
             Center(
               child: Container(
                 width: 287,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: colorScheme.primary,
+                  color: colorScheme.primary.withValues(alpha: 0.75),
                   borderRadius: BorderRadius.circular(40),
                   boxShadow: [
                     BoxShadow(
-                      color: colorScheme.primary.withOpacity(0.35),
+                      color: colorScheme.primary.withValues(alpha: 0.25),
                       blurRadius: 18,
                       offset: const Offset(0, 6),
                     ),
@@ -1056,17 +1063,91 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
           children: [
             const Spacer(flex: 1),
 
-            // Hero ID Badge Icon
+            // Hero ID Badge Card (Colorful & Dynamic Material 3 Expressive)
             Container(
-              padding: const EdgeInsets.all(16),
+              width: 300,
+              height: 145,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(28),
+                gradient: LinearGradient(
+                  colors: [
+                    colorScheme.primaryContainer.withValues(alpha: 0.9),
+                    colorScheme.secondaryContainer.withValues(alpha: 0.75),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(
+                  color: colorScheme.primary.withValues(alpha: 0.35),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.primary.withValues(alpha: 0.18),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-              child: SvgPicture.asset(
-                'assets/images/onboarding_name_icon.svg',
-                height: 130,
-                fit: BoxFit.contain,
+              child: Row(
+                children: [
+                  Container(
+                    width: 76,
+                    height: 76,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.primary.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Symbols.person_rounded,
+                      size: 46,
+                      color: colorScheme.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 14,
+                          width: 120,
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary.withValues(alpha: 0.8),
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          height: 10,
+                          width: 85,
+                          decoration: BoxDecoration(
+                            color: colorScheme.secondary.withValues(alpha: 0.7),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          height: 8,
+                          width: 55,
+                          decoration: BoxDecoration(
+                            color: colorScheme.tertiary.withValues(alpha: 0.6),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 28),
@@ -1209,14 +1290,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Column(
           children: [
-            // Center Coin Cluster Illustration (Dynamic contrast for Light/Dark)
+            // Center Coin Cluster Illustration (~2x larger hero presence with stroke removed)
             SvgPicture.asset(
               'assets/images/onboarding_currency_icon.svg',
-              height: 120,
+              height: 190,
               fit: BoxFit.contain,
               colorFilter: ColorFilter.mode(colorScheme.onSurface, BlendMode.srcIn),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
             // Headline Text
             Text(
@@ -1228,7 +1309,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 fontFamily: 'GoogleSansFlex',
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
             // Scrollable Currency List Container (M3 Expressive)
             Expanded(
@@ -1763,8 +1844,18 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   }
 
   Widget _buildDynamicVariantsSelector(ColorScheme colorScheme) {
-    final currentVariant = ref.watch(themeControllerProvider).variant;
-    final variants = ColorSchemeVariant.values;
+    final personalization = ref.watch(personalizationProvider);
+    final currentVariant = personalization.colorSchemeVariant;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final variants = [
+      {'variant': 'tonalSpot', 'label': 'Tonal Spot'},
+      {'variant': 'vibrant', 'label': 'Vibrant'},
+      {'variant': 'expressive', 'label': 'Expressive'},
+      {'variant': 'rainbow', 'label': 'Rainbow'},
+      {'variant': 'fruitSalad', 'label': 'Fruit Salad'},
+      {'variant': 'fidelity', 'label': 'Fidelity'},
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1784,38 +1875,89 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             physics: const BouncingScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              childAspectRatio: 1.15,
+              childAspectRatio: 0.95,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
-            itemCount: math.min(6, variants.length),
+            itemCount: variants.length,
             itemBuilder: (context, idx) {
-              final v = variants[idx];
-              final isSel = currentVariant == v;
+              final item = variants[idx];
+              final vKey = item['variant']!;
+              final label = item['label']!;
+              final isSelected = currentVariant == vKey;
+              final colors = _getVariantColors(vKey, isDark);
+
               return InkWell(
                 onTap: () {
-                  ref.read(themeControllerProvider.notifier).setVariant(v);
+                  ref.read(personalizationProvider.notifier).updateColorSchemeVariant(vKey);
+                  final cVar = ColorSchemeVariant.values.firstWhere(
+                    (e) => e.name == vKey,
+                    orElse: () => ColorSchemeVariant.tonalSpot,
+                  );
+                  ref.read(themeControllerProvider.notifier).setVariant(cVar);
                 },
                 borderRadius: BorderRadius.circular(16),
                 child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   decoration: BoxDecoration(
-                    color: isSel ? colorScheme.primary : colorScheme.surfaceContainerHigh,
+                    color: isSelected
+                        ? colorScheme.primaryContainer.withValues(alpha: 0.4)
+                        : colorScheme.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(16),
-                    border: isSel
-                        ? Border.all(color: Colors.white, width: 2.5)
-                        : null,
-                  ),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: Text(
-                    v.name.toUpperCase(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: isSel ? Colors.white : colorScheme.onSurface,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'GoogleSansFlex',
+                    border: Border.all(
+                      color: isSelected ? colorScheme.primary : Colors.transparent,
+                      width: 2,
                     ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 44,
+                        height: 44,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Positioned.fill(
+                              child: CustomPaint(
+                                painter: _PalettePainter(
+                                  topColor: colors['top']!,
+                                  bottomLeftColor: colors['bottomLeft']!,
+                                  bottomRightColor: colors['bottomRight']!,
+                                ),
+                              ),
+                            ),
+                            if (isSelected)
+                              Container(
+                                width: 22,
+                                height: 22,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.check_rounded,
+                                  color: colorScheme.onPrimary,
+                                  size: 14,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                          color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+                          fontFamily: 'GoogleSansFlex',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -1923,7 +2065,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             ),
             const SizedBox(height: 28),
 
-            // Headline Text
+            // Headline Text: "You’re all set"
             Text(
               'You’re all set',
               style: TextStyle(
@@ -1933,11 +2075,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 fontFamily: 'GoogleSansFlex',
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
 
-            // Subtitle Privacy Declaration Body
+            // Subtitle Privacy Declaration Body (Exact as SVG Wireframe 8)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 'Wallet is fully open source and works offline. Your data never leaves your device.',
                 textAlign: TextAlign.center,
@@ -1946,22 +2088,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                   fontWeight: FontWeight.w500,
                   color: colorScheme.onSurfaceVariant,
                   fontFamily: 'GoogleSansFlex',
-                  height: 1.4,
+                  height: 1.5,
                 ),
               ),
-            ),
-            const SizedBox(height: 28),
-
-            // Expressive M3 Value Pills
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: [
-                _buildValueChip(Symbols.cloud_off_rounded, '100% Offline', colorScheme),
-                _buildValueChip(Symbols.shield_lock_rounded, 'Zero Tracking', colorScheme),
-                _buildValueChip(Symbols.bolt_rounded, 'Fast & Native', colorScheme),
-              ],
             ),
             const Spacer(flex: 2),
 
@@ -2002,37 +2131,88 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     );
   }
 
-  Widget _buildValueChip(IconData icon, String label, ColorScheme colorScheme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 18, color: colorScheme.primary),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
-              fontFamily: 'GoogleSansFlex',
-            ),
-          ),
-        ],
-      ),
-    );
+  static Map<String, Color> _getVariantColors(String variant, bool isDark) {
+    switch (variant) {
+      case 'tonalSpot':
+        return {
+          'top': isDark ? const Color(0xFF9BB1E8) : const Color(0xFFD3DFFF),
+          'bottomLeft': isDark ? const Color(0xFFCBBCD6) : const Color(0xFFE8D5EC),
+          'bottomRight': isDark ? const Color(0xFF42567D) : const Color(0xFF677799),
+        };
+      case 'vibrant':
+        return {
+          'top': isDark ? const Color(0xFFFFB0C8) : const Color(0xFFFFD8E4),
+          'bottomLeft': isDark ? const Color(0xFFFFB787) : const Color(0xFFFFDCC1),
+          'bottomRight': isDark ? const Color(0xFFB01D56) : const Color(0xFFE91E63),
+        };
+      case 'expressive':
+        return {
+          'top': isDark ? const Color(0xFFFFB596) : const Color(0xFFFFDBCA),
+          'bottomLeft': isDark ? const Color(0xFFC7BFFF) : const Color(0xFFE5DEFF),
+          'bottomRight': isDark ? const Color(0xFFB36700) : const Color(0xFFFF9800),
+        };
+      case 'rainbow':
+        return {
+          'top': isDark ? const Color(0xFFFFB0D0) : const Color(0xFFFFD8E6),
+          'bottomLeft': isDark ? const Color(0xFFA3DDB3) : const Color(0xFFC4EED0),
+          'bottomRight': isDark ? const Color(0xFF7B1FA2) : const Color(0xFF9C27B0),
+        };
+      case 'fruitSalad':
+        return {
+          'top': isDark ? const Color(0xFFA1DECA) : const Color(0xFFC3EEDD),
+          'bottomLeft': isDark ? const Color(0xFFFFB1C1) : const Color(0xFFFFD8DF),
+          'bottomRight': isDark ? const Color(0xFF007A50) : const Color(0xFF00B074),
+        };
+      case 'fidelity':
+      default:
+        return {
+          'top': isDark ? const Color(0xFFB8C4F6) : const Color(0xFFDFE2F9),
+          'bottomLeft': isDark ? const Color(0xFFC4B2EE) : const Color(0xFFE1D3F8),
+          'bottomRight': isDark ? const Color(0xFF303F9F) : const Color(0xFF3F51B5),
+        };
+    }
   }
 }
 
 // ==============================================================================
-// UTILITIES & CUSTOM CLIPPERS / FORMATTERS
+// UTILITIES & CUSTOM CLIPPERS / FORMATTERS / PAINTERS
 // ==============================================================================
+
+class _PalettePainter extends CustomPainter {
+  final Color topColor;
+  final Color bottomLeftColor;
+  final Color bottomRightColor;
+
+  _PalettePainter({
+    required this.topColor,
+    required this.bottomLeftColor,
+    required this.bottomRightColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Offset center = Offset(size.width / 2, size.height / 2);
+    final double radius = math.min(size.width / 2, size.height / 2);
+    final Rect rect = Rect.fromCircle(center: center, radius: radius);
+    final Paint paint = Paint()..style = PaintingStyle.fill;
+
+    paint.color = topColor;
+    canvas.drawArc(rect, math.pi, math.pi, true, paint);
+
+    paint.color = bottomRightColor;
+    canvas.drawArc(rect, 0, math.pi / 2, true, paint);
+
+    paint.color = bottomLeftColor;
+    canvas.drawArc(rect, math.pi / 2, math.pi / 2, true, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _PalettePainter oldDelegate) {
+    return oldDelegate.topColor != topColor ||
+        oldDelegate.bottomLeftColor != bottomLeftColor ||
+        oldDelegate.bottomRightColor != bottomRightColor;
+  }
+}
 
 class CircleClipper extends CustomClipper<Path> {
   final Offset offset;

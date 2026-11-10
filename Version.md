@@ -1747,3 +1747,18 @@ ont_awesome_flutter\ v11 APIs.
     - `wallet-arm-v7a.apk` (32-bit ARMv7a) & `.sha256`
     - `wallet-x86_64.apk` (64-bit x86 architecture) & `.sha256`
 - **Status**: 100% (Completed & Published Live)
+
+## [2026-11-10 20:18:00 IST] - Onboarding Visual Scale, Theme Variant Pipeline & Crop System Insets Fix
+- **Action**: Applied targeted visual scaling, theme provider variant synchronization, color ring vector extraction, and image cropper system insets adjustments across the onboarding flow.
+- **Changes**:
+  - **Screen 1**: Scaled `welcome.svg` up ~1.35x for enhanced hero balance; set "Wallet" pill container to 75% opacity (`colorScheme.primary.withValues(alpha: 0.75)`), allowing underlying rotating shapes (`Bun` and `Sunny`) to remain visible.
+  - **Screen 3 (Image Cropper)**: Configured `AndroidUiSettings` with `statusBarColor`, `hideBottomControls: true`, and surface theme colors, preventing cropper headers and bottom navigation from colliding with Android notification and navigation bars.
+  - **Screen 4 (Name)**: Replaced flat grey and black badge with a vibrant Material 3 Expressive gradient card featuring a dynamic primary circular avatar badge and tonal accent profile lines.
+  - **Screen 5 (Currency)**: Scaled currency coin cluster to 190dp (~1.6x-2x) while keeping the scrollable currency list smoothly fitted and responsive.
+  - **Screen 7 (Colours)**: Replaced placeholder vector in `assets/images/onboarding_colour_icon.svg` with the authentic 3-color Venn rings from Wireframe 7. Upgraded dynamic color variant tiles with `_PalettePainter` and linked them directly to `personalizationProvider.notifier.updateColorSchemeVariant(vKey)`, ensuring dynamic theme variant selections immediately take effect.
+  - **Screen 8 (All Set)**: Aligned layout to Wireframe 8 by removing extraneous value chips and showcasing the central brand logo with rotating Sunny directly behind it.
+- **Files Modified**:
+  - `assets/images/onboarding_colour_icon.svg`
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `Version.md`
+- **Status**: 100% (Completed & Verified)
