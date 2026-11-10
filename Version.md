@@ -1638,3 +1638,26 @@ ont_awesome_flutter\ v11 APIs.
   - Release Title: `v6.0.0-dev06`
   - Commit SHA: `f85bba96cd4fe8982d30acf94dea83f538ae01dc`
 - **Status**: 100% (Completed & Verified)
+
+## [2026-11-10 17:55:00 IST] - Onboarding Architecture & M3 Expressive Responsive Overhaul
+- **Action**: Resolved critical layout, stacking collision, and wireframe placeholder issues across the 8-screen Onboarding module in `lib/features/auth/pages/onboarding_page.dart`. Replaced fragile absolute coordinate scaling (`_pos`) with standard, fully responsive Material 3 Expressive layouts while preserving perpetual rotating ambient background choreography (`Sunny`, `Bun`, `Soft Boom`).
+- **Root Cause Analysis (Why the Prebuilt Release Looked Broken)**:
+  1. **Coordinate Stacking Inversion**: The previous `_pos` formula (`top = topInset + progress * (availableHeight - scaledH)`) subtracted each element's scaled height from the available height. Consequently, tall container elements (Currency list `h=330`, Permissions card `h=393`, Color schemes box `h=245`) were assigned drastically smaller `top` coordinates than short title and icon elements positioned above them, causing catastrophic widget collisions, overlapping text, and unreadable screens.
+  2. **Literal Wireframe Placeholder Translation**: Wireframe mockup elements from Figma SVGs—such as grey `#D9D9D9` container shapes, unstyled placeholder boxes, and `#FE1010` red debug margins—were treated as final UI tokens rather than being translated into polished Material 3 Expressive components.
+  3. **Multi-Path SVG Color Tint Flattening**: Applying flat `ColorFilter.mode(..., BlendMode.srcIn)` across multi-stroke vector assets wiped out internal negative space and masks, turning intricate coin clusters and identity badges into solid black silhouettes.
+  4. **Device Navigation Bar Incompatibility**: Stacking within an inflexible 412x917 canvas without `SafeArea` protection caused bottom buttons to collide with Android 3-button navigation bars and get truncated on different aspect ratios.
+- **Architectural & Visual Fixes Implemented**:
+  - **Responsive Layout Engine**: Rebuilt all 8 screens and the alternate Backup Complete screen using native Flutter layout primitives (`SafeArea`, `Column`, `Expanded`, `ListView.builder`, and sticky bottom action bars).
+  - **Screen 1 (Welcome)**: Dynamic shadow brand logo, theme switcher, hero `welcome.svg`, bold display typography, dynamic primary "Wallet" pill, and full-width "Welcome" action.
+  - **Screen 2 (Restore Backup)**: Drive tray hero, "Restore" header with "Backup" container, top-right and bottom "Skip" navigation, and "Choose file" action triggering `_restoreBackup()`.
+  - **Alternate Screen (Backup Complete)**: Verified checkmark overlay on drive tray, "Complete" pill, and "Let's Dive in" launch button.
+  - **Screen 3 (Personalise: Photo)**: Circular avatar preview supporting cropped image or placeholder icon, "Add Photo" pill, and "Choose file" picker/cropper.
+  - **Screen 4 (Personalise: Name)**: ID badge illustration, "Let's Personalise" headline, subtitle, Material 3 `TextFormField` with auto-capitalization, and Next button gated until a valid name is entered.
+  - **Screen 5 (Choose Currency)**: Coin cluster hero, "Choose Currency" header, scrollable currency catalog with Material 3 selection states and symbol avatars, and persistent Previous/Next navigation.
+  - **Screen 6 (Permissions we want)**: Security shield illustration, Material 3 permission rows for All Files Access and Notifications with interactive toggle requests and status badges.
+  - **Screen 7 (Let's set the Colours)**: Triple ring color wheel, Dynamic Color Monet toggle switch, ColorSchemeVariant cards when dynamic color is ON, and 6 fixed swatches from `Testing Colours.svg` when OFF.
+  - **Screen 8 (You're all set)**: Open Source Initiative badge, rotating Sunny behind the central wallet emblem, privacy declaration, 3 M3 feature pills (100% Offline, Zero Tracking, Fast & Native), and circular reveal ripple launch button into the main workspace.
+- **Files Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `Version.md`
+- **Status**: 100% (Completed & Verified)
