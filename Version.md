@@ -1619,3 +1619,22 @@ ont_awesome_flutter\ v11 APIs.
   - `assets/images/shape_soft_boom.svg`
   - `Version.md`
 - **Status**: 100% (Completed & Verified)
+
+
+### [2026-11-10 15:40:00 IST] - Pre-Release Publication: v6.0.0-dev06 & Deterministic Keystore Verification
+- **Author**: Junkside (`junksidetm`)
+- **Target**: `Wallet-Flutter/Improv` branch
+- **Type**: CI/CD / Release Publication / Verification
+- **Summary**:
+  - GitHub Actions workflow run `#42795804159` compiled successfully in 6m 2s and published the automated development pre-release `v6.0.0-dev06` on GitHub Releases.
+  - Verified that all 4 signed APK binaries and their SHA-256 checksums are attached:
+    - `wallet-arm64-v8a.apk` + `wallet-arm64-v8a.apk.sha256`
+    - `wallet-universal.apk` + `wallet-universal.apk.sha256`
+    - `wallet-arm-v7a.apk` + `wallet-arm-v7a.apk.sha256`
+    - `wallet-x86_64.apk` + `wallet-x86_64.apk.sha256`
+  - Keystore persistence verified: `ci-keystore` branch established on remote (`junksidetm/Wallet-Flutter`) storing `upload-keystore.jks`, locking in deterministic signing certificate fingerprint across all subsequent builds.
+- **Published Deliverable**:
+  - Release URL: `https://github.com/junksidetm/Wallet-Flutter/releases/tag/v6.0.0-dev06`
+  - Release Title: `v6.0.0-dev06`
+  - Commit SHA: `f85bba96cd4fe8982d30acf94dea83f538ae01dc`
+- **Status**: 100% (Completed & Verified)
