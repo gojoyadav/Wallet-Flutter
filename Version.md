@@ -1564,3 +1564,58 @@ ont_awesome_flutter\ v11 APIs.
   - `assets/images/onboarding_colour_icon.svg`
   - `Version.md`
 - **Status**: 100% (Completed, Published & Synced)
+
+
+### [2026-11-10 15:35:00 IST] - Onboarding Screen Wireframe Redesign & Deterministic Signing Pipeline
+- **Author**: Junkside (`junksidetm`)
+- **Target**: `Wallet-Flutter/Improv` branch
+- **Type**: Feature / Architecture / Design System / CI/CD Pipeline
+- **Summary of Changes**:
+  1. **SVG Wireframe Implementation**:
+     - Upgraded the complete onboarding flow to match newly updated wireframes located in `D:\code\temp\Wallet-Flutter\Onboarding Screen` across all 8 screens and the alternate backup completion state.
+     - Preserved color palette harmony from `Testing Colours.svg` (`#E7702B`, `#F1FAEE`, `#A8DADC`, `#457B9D`, `#1D3557`, `#0C1A2F`) and dynamic Material 3 tonal palettes.
+  2. **System Overlay Exclusion & Adaptive Navigation Support**:
+     - Explicitly eliminated fake "System Overlay" elements (status bar notch, navigation bottom handle) present in the artistic wireframe SVGs.
+     - Formulated adaptive layout engine via `_pos` with dynamic safe insets:
+       - Anchored bottom buttons (`y >= 680`) dynamically using `bottom = bottomInset + math.max(0.0, 868.0 - (y + h)) * sy`.
+       - Fully validated against Android **3-button navigation** (48dp height) and gesture navigation bar across diverse screen aspect ratios, eliminating any element clipping or overlap.
+       - Anchored header action elements (`y < 120`) to top safe area below camera notch and status bar.
+  3. **Deterministic Keystore Architecture ("Hash Doesn't Change")**:
+     - Enhanced `.github/workflows/build_apks.yml` to support permanent production keystore persistence via the `ci-keystore` branch pattern (standardized across ecosystem repos `Autostart-Manager`, `m3-expressive-catalog`, `pulse-studio`, and `Android Battery Unrestricted Checker`).
+     - Automated workflow automatically reuses `origin/ci-keystore:upload-keystore.jks` with credentials `wallet_production_pass` / `wallet_release_key`, or generates and force-pushes a permanent 2048-bit RSA keystore to the orphan branch `ci-keystore` on first run.
+     - Guarantees identical APK certificate SHA-256 fingerprint across all automated dev pre-releases and production builds.
+  4. **Vector Asset Modernization**:
+     - Synchronized 7 modernized vector hero icons with exact SVG paths and bounding boxes into `assets/images/`:
+       - `onboarding_backup_icon.svg` (`viewBox="95 72 222 212"`)
+       - `onboarding_backup_complete_icon.svg` (`viewBox="95 72 260 255"`)
+       - `onboarding_photo_icon.svg` (`viewBox="100 100 210 210"`)
+       - `onboarding_name_icon.svg` (`viewBox="20 110 382 205"`)
+       - `onboarding_currency_icon.svg` (`viewBox="70 70 280 270"`)
+       - `onboarding_permissions_icon.svg` (`viewBox="110 90 195 210"`)
+       - `onboarding_colour_icon.svg` (`viewBox="105 95 200 200"`)
+     - Synchronized ambient rotating shapes (`shape_sunny.svg`, `shape_bun.svg`, `shape_soft_boom.svg`) with exact vector geometries.
+  5. **Screen Specifications**:
+     - **Screen 1 (Welcome to Wallet)**: Dynamic shadow logo at `x:9, y:56, w:59, h:59`, theme mode toggle at `x:354, y:56, w:44, h:44`, hero illustration at `x:75, y:144, w:299, h:343` with dynamic tint, "Welcome to" at `y:546`, "Wallet" sub-pill at `x:62.6, y:614.7, w:286.7, h:91.3, rx:45.7`, and bottom "Welcome" button at `x:33, y:787, w:335, h:81, rx:12`.
+     - **Screen 2 (Restore Backup)**: Top-right Skip removed; `onboarding_backup_icon.svg` centered at `x:101, y:78, w:210, h:233`, "Restore" headline at `y:337..363`, "Backup" sub-pill at `x:57, y:371, w:298, h:94.9, rx:47.4`, centered "Skip" button at `x:119, y:696, w:174, h:62, rx:31`, and "Choose file" at `x:19, y:796, w:374, h:81, rx:12`.
+     - **Screen 3 (Personalise: Photo)**: Top-right Skip removed; avatar circle at `x:107, y:108, w:196, h:196` displaying cropped user image via `ImagePicker` & `ImageCropper`, "Let’s Personalise" headline at `y:337..360`, "Add Photo" sub-pill at `x:63, y:369, w:298, h:94.9, rx:47.4`, centered "Skip" button at `x:120, y:694, w:174, h:62, rx:31`, and bottom "Choose file" at `x:19, y:789, w:374, h:81, rx:12`.
+     - **Screen 4 (Personalise: Name)**: ID badge card illustration at `x:24, y:113, w:374.7, h:198, rx:47.4`, "Let’s Personalise" headline at `y:337..360`, subtitle at `y:445`, name field container at `x:27, y:510, w:358, h:57, rx:28.5`, Previous button at `x:21, y:788`, and Next button at `x:221, y:788` (disabled & grey until input entered).
+     - **Screen 5 (Choose Currency)**: Multi-currency coin cluster at `x:75, y:76, w:267, h:257`, "Choose Currency" headline at `y:345`, scrollable currency catalog at `x:24, y:419, w:366, h:330, rx:23`, floating safe area housing Previous at `x:21, y:791` and Next at `x:221, y:791`.
+     - **Screen 6 (Permissions we want)**: Security shield at `x:114, y:93, w:183.2, h:204.2`, "Permissions we want" headline at `y:310`, permissions card at `x:26, y:360, w:361, h:393, rx:25` with All Files Access and Notification toggles, Previous button at `x:17, y:791`, and Skip button at `x:217, y:791`.
+     - **Screen 7 (Let's set the Colours)**: Triple overlapping color wheel at `x:105, y:95, w:200, h:200`, "Let’s set the Colours" headline at `y:330`, dynamic color switch container at `x:46, y:428, w:320, h:57, rx:28.5`, and theme color selection container at `x:48, y:504, w:317, h:245, rx:20`, Previous at `x:21, y:790`, and Next at `x:221, y:790`.
+     - **Screen 8 (You're all set)**: Open-source initiative badge at `x:355, y:56, w:44, h:44`, central wallet logo at `x:102.6, y:204.1, w:205.6, h:149.1` with rotating Sunny directly behind at `(206, 228)`, headline at `y:470`, declaration body at `y:535`, and "Let’s Dive in" button at `x:23, y:797, w:366, h:75, rx:16`.
+     - **Backup Complete View**: Drive tray with checkmark at `x:101, y:78`, "Restore" headline at `y:337`, "Complete" sub-pill at `x:48, y:402.2, w:316, h:100.6, rx:50.3`, and "Let’s Dive in" at `x:19, y:816, w:374, h:81, rx:12`.
+- **Files Documented & Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `.github/workflows/build_apks.yml`
+  - `assets/images/onboarding_backup_icon.svg`
+  - `assets/images/onboarding_backup_complete_icon.svg`
+  - `assets/images/onboarding_photo_icon.svg`
+  - `assets/images/onboarding_name_icon.svg`
+  - `assets/images/onboarding_currency_icon.svg`
+  - `assets/images/onboarding_permissions_icon.svg`
+  - `assets/images/onboarding_colour_icon.svg`
+  - `assets/images/shape_sunny.svg`
+  - `assets/images/shape_bun.svg`
+  - `assets/images/shape_soft_boom.svg`
+  - `Version.md`
+- **Status**: 100% (Completed & Verified)

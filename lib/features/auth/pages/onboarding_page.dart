@@ -34,7 +34,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   String? _imagePath;
 
   bool _showBlueScreen = false;
-  double _rippleRadius = 0;
   Offset _rippleOffset = Offset.zero;
   late AnimationController _rippleController;
 
@@ -82,15 +81,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
       vsync: this,
       duration: const Duration(milliseconds: 700),
     );
-
-    _rippleController.addListener(() {
-      setState(() {
-        _rippleRadius = _rippleController.value *
-            math.max(MediaQuery.of(context).size.width,
-                    MediaQuery.of(context).size.height) *
-            1.6;
-      });
-    });
 
     _checkPermissions();
   }
@@ -235,7 +225,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   }
 
   // ============================================================================
-  // COORDINATE POSITIONING HELPER (Exact 412 x 917 Wireframe Layout)
+  // ADAPTIVE COORDINATE POSITIONING HELPER (Wireframe Layout + 3-Button Nav Protection)
   // ============================================================================
   Widget _pos(
     double x,
@@ -243,15 +233,58 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     double w,
     double h,
     Size size,
-    Widget child,
-  ) {
+    Widget child, {
+    double topInset = 0,
+    double bottomInset = 0,
+  }) {
     final sx = size.width / 412.0;
     final sy = size.height / 917.0;
+    final scaledW = w * sx;
+    final scaledH = h * sy;
+    final scaledLeft = x * sx;
+
+    if (bottomInset > 0 && y >= 680) {
+      // Anchored to bottom above navigation bar (adapts to 3-button or gesture nav)
+      final gapFromSvgBottom = math.max(0.0, 868.0 - (y + h));
+      final bottom = bottomInset + gapFromSvgBottom * sy;
+      return Positioned(
+        left: scaledLeft,
+        bottom: bottom,
+        width: scaledW,
+        height: scaledH,
+        child: child,
+      );
+    } else if (topInset > 0 && y < 120) {
+      // Anchored to top below status bar/notch
+      final gapFromSvgTop = math.max(0.0, y - 56.0);
+      final top = topInset + gapFromSvgTop * sy;
+      return Positioned(
+        left: scaledLeft,
+        top: top,
+        width: scaledW,
+        height: scaledH,
+        child: child,
+      );
+    } else if (topInset > 0 && bottomInset > 0) {
+      // Content area smoothly distributed between status bar and bottom buttons
+      final availableHeight = size.height - topInset - bottomInset;
+      const svgContentHeight = 868.0 - 56.0; // 812.0
+      final progress = (y - 56.0) / svgContentHeight;
+      final top = topInset + progress * (availableHeight - scaledH);
+      return Positioned(
+        left: scaledLeft,
+        top: top,
+        width: scaledW,
+        height: scaledH,
+        child: child,
+      );
+    }
+
     return Positioned(
-      left: x * sx,
+      left: scaledLeft,
       top: y * sy,
-      width: w * sx,
-      height: h * sy,
+      width: scaledW,
+      height: scaledH,
       child: child,
     );
   }
@@ -261,7 +294,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final size = MediaQuery.of(context).size;
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final mediaPadding = MediaQuery.of(context).padding;
+    final topPadding = mediaPadding.top;
+    final bottomPadding = mediaPadding.bottom;
 
     final themeState = ref.watch(themeControllerProvider);
     final isDynamicColor = themeState.useMaterialYou;
@@ -290,20 +325,20 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
           // MAIN PAGE FLOW (OR ALTERNATE BACKUP COMPLETE VIEW)
           // --------------------------------------------------------------------
           if (_isRestoreComplete)
-            _buildBackupCompleteScreen(theme, colorScheme, size)
+            _buildBackupCompleteScreen(theme, colorScheme, size, topPadding, bottomPadding)
           else
             PageView(
               controller: _pageController,
               physics: const BouncingScrollPhysics(),
               children: [
-                _buildScreen1(theme, colorScheme, size, heroColor),
-                _buildScreen2(theme, colorScheme, size),
-                _buildScreen3(theme, colorScheme, size),
-                _buildScreen4(theme, colorScheme, size, bottomInset),
-                _buildScreen5(theme, colorScheme, size),
-                _buildScreen6(theme, colorScheme, size),
-                _buildScreen7(theme, colorScheme, size),
-                _buildScreen8(theme, colorScheme, size),
+                _buildScreen1(theme, colorScheme, size, heroColor, topPadding, bottomPadding),
+                _buildScreen2(theme, colorScheme, size, topPadding, bottomPadding),
+                _buildScreen3(theme, colorScheme, size, topPadding, bottomPadding),
+                _buildScreen4(theme, colorScheme, size, topPadding, bottomPadding),
+                _buildScreen5(theme, colorScheme, size, topPadding, bottomPadding),
+                _buildScreen6(theme, colorScheme, size, topPadding, bottomPadding),
+                _buildScreen7(theme, colorScheme, size, topPadding, bottomPadding),
+                _buildScreen8(theme, colorScheme, size, topPadding, bottomPadding),
               ],
             ),
 
@@ -311,18 +346,24 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
           // CIRCULAR REVEAL RIPPLE EXIT ANIMATION
           // --------------------------------------------------------------------
           if (_showBlueScreen)
-            Positioned.fill(
-              child: ClipPath(
-                clipper: CircleClipper(
-                  offset: _rippleOffset,
-                  radius: _rippleRadius,
-                ),
-                child: Container(
-                  color: isDynamicColor
-                      ? colorScheme.primary
-                      : const Color(0xFF457B9D),
-                ),
-              ),
+            AnimatedBuilder(
+              animation: _rippleController,
+              builder: (context, child) {
+                final maxDim = math.max(size.width, size.height);
+                return Positioned.fill(
+                  child: ClipPath(
+                    clipper: CircleClipper(
+                      offset: _rippleOffset,
+                      radius: _rippleController.value * maxDim * 1.6,
+                    ),
+                    child: Container(
+                      color: isDynamicColor
+                          ? colorScheme.primary
+                          : const Color(0xFF457B9D),
+                    ),
+                  ),
+                );
+              },
             ),
         ],
       ),
@@ -342,24 +383,24 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     final p67 = (_currentPage - 6.0).clamp(0.0, 1.0);
 
     // 1. SUNNY - MOVE:
-    // Screen 1: center (364.5, 621.5), size 82.2
+    // Screen 1: center (333.0, 630.3), size 65.8
     // Screen 2..7: center (339.0, 93.0), size 287.3
-    // Screen 8: center (206.5, 244.5), size 376.4
+    // Screen 8: center (206.0, 228.0), size 376.4
     double sunnyCenterX;
     double sunnyCenterY;
     double sunnySize;
 
     if (_currentPage <= 1.0) {
-      sunnyCenterX = lerpDouble(364.5, 339.0, p01)!;
-      sunnyCenterY = lerpDouble(621.5, 93.0, p01)!;
-      sunnySize = lerpDouble(82.2, 287.3, p01)!;
+      sunnyCenterX = lerpDouble(333.0, 339.0, p01)!;
+      sunnyCenterY = lerpDouble(630.3, 93.0, p01)!;
+      sunnySize = lerpDouble(65.8, 287.3, p01)!;
     } else if (_currentPage <= 6.0) {
       sunnyCenterX = 339.0;
       sunnyCenterY = 93.0;
       sunnySize = 287.3;
     } else {
-      sunnyCenterX = lerpDouble(339.0, 206.5, p67)!;
-      sunnyCenterY = lerpDouble(93.0, 244.5, p67)!;
+      sunnyCenterX = lerpDouble(339.0, 206.0, p67)!;
+      sunnyCenterY = lerpDouble(93.0, 228.0, p67)!;
       sunnySize = lerpDouble(287.3, 376.4, p67)!;
     }
 
@@ -370,7 +411,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     }
 
     // 2. BUN - MOVE:
-    // Screen 1: center (47.5, 694.5), size 76.0
+    // Screen 1: center (79.0, 688.7), size 60.5
     // Screen 2..7: center (16.0, 459.0), size 210.0
     // Screen 8: Fades out
     double bunCenterX;
@@ -379,27 +420,27 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     double bunOpacity;
 
     if (_currentPage <= 1.0) {
-      bunCenterX = lerpDouble(47.5, 16.0, p01)!;
-      bunCenterY = lerpDouble(694.5, 459.0, p01)!;
-      bunSize = lerpDouble(76.0, 210.0, p01)!;
-      bunOpacity = 0.55;
+      bunCenterX = lerpDouble(79.0, 16.0, p01)!;
+      bunCenterY = lerpDouble(688.7, 459.0, p01)!;
+      bunSize = lerpDouble(60.5, 210.0, p01)!;
+      bunOpacity = 0.50;
     } else if (_currentPage <= 6.0) {
       bunCenterX = 16.0;
       bunCenterY = 459.0;
       bunSize = 210.0;
-      bunOpacity = 0.55;
+      bunOpacity = 0.50;
     } else {
       bunCenterX = 16.0;
       bunCenterY = 459.0;
       bunSize = 210.0;
-      bunOpacity = lerpDouble(0.55, 0.0, p67)!;
+      bunOpacity = lerpDouble(0.50, 0.0, p67)!;
     }
 
     if (_isRestoreComplete) {
       bunCenterX = 16.0;
       bunCenterY = 459.0;
       bunSize = 210.0;
-      bunOpacity = 0.55;
+      bunOpacity = 0.50;
     }
 
     // 3. SOFT BOOM - MOVE (BackGround):
@@ -437,23 +478,22 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
 
     return AnimatedBuilder(
       animation: _ambientRotationController,
-      builder: (context, _) {
-        final rot = _ambientRotationController.value * 2 * math.pi;
+      builder: (context, child) {
+        final angle = _ambientRotationController.value * 2 * math.pi;
 
         return Stack(
           children: [
-            // Soft Boom (Bottom Background Petals)
+            // SOFT BOOM - MOVE
             if (boomOpacity > 0.01)
               Positioned(
-                left: (boomCenterX - boomSize / 2) * sx,
-                top: (boomCenterY - boomSize / 2) * sy,
+                left: (boomCenterX * sx) - (boomSize * sx / 2),
+                top: (boomCenterY * sy) - (boomSize * sy / 2),
                 width: boomSize * sx,
                 height: boomSize * sy,
                 child: Opacity(
-                  opacity: boomOpacity.clamp(0.0, 1.0),
+                  opacity: boomOpacity,
                   child: Transform.rotate(
-                    angle: rot * 0.7,
-                    alignment: Alignment.center,
+                    angle: angle,
                     child: SvgPicture.asset(
                       'assets/images/shape_soft_boom.svg',
                       fit: BoxFit.contain,
@@ -463,18 +503,17 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 ),
               ),
 
-            // Bun (Mid-Left Organic Pill)
+            // BUN - MOVE
             if (bunOpacity > 0.01)
               Positioned(
-                left: (bunCenterX - bunSize / 2) * sx,
-                top: (bunCenterY - bunSize / 2) * sy,
+                left: (bunCenterX * sx) - (bunSize * sx / 2),
+                top: (bunCenterY * sy) - (bunSize * sy / 2),
                 width: bunSize * sx,
                 height: bunSize * sy,
                 child: Opacity(
-                  opacity: bunOpacity.clamp(0.0, 1.0),
+                  opacity: bunOpacity,
                   child: Transform.rotate(
-                    angle: -rot,
-                    alignment: Alignment.center,
+                    angle: -angle * 0.75, // counter-clockwise
                     child: SvgPicture.asset(
                       'assets/images/shape_bun.svg',
                       fit: BoxFit.contain,
@@ -484,19 +523,21 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 ),
               ),
 
-            // Sunny (Multi-lobe Starburst)
+            // SUNNY - MOVE
             Positioned(
-              left: (sunnyCenterX - sunnySize / 2) * sx,
-              top: (sunnyCenterY - sunnySize / 2) * sy,
+              left: (sunnyCenterX * sx) - (sunnySize * sx / 2),
+              top: (sunnyCenterY * sy) - (sunnySize * sy / 2),
               width: sunnySize * sx,
               height: sunnySize * sy,
-              child: Transform.rotate(
-                angle: rot,
-                alignment: Alignment.center,
-                child: SvgPicture.asset(
-                  'assets/images/shape_sunny.svg',
-                  fit: BoxFit.contain,
-                  colorFilter: ColorFilter.mode(shapeColor, BlendMode.srcIn),
+              child: Opacity(
+                opacity: 0.60,
+                child: Transform.rotate(
+                  angle: angle * 0.85, // clockwise
+                  child: SvgPicture.asset(
+                    'assets/images/shape_sunny.svg',
+                    fit: BoxFit.contain,
+                    colorFilter: ColorFilter.mode(shapeColor, BlendMode.srcIn),
+                  ),
                 ),
               ),
             ),
@@ -507,7 +548,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   }
 
   // ============================================================================
-  // SECTION: TOP BAR COMMON ELEMENTS (OldS Dynamic Shadow Logo & Theme Toggle)
+  // SECTION: CORE REUSABLE APP BAR & THEME COMPONENTS
   // ============================================================================
   Widget _buildDynamicShadowLogo({
     String logoPath = 'assets/images/logo.svg',
@@ -561,15 +602,19 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     }
 
     return Container(
-      width: 44,
-      height: 44,
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withOpacity(0.85),
         shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: IconButton(
-        padding: EdgeInsets.zero,
-        icon: Icon(icon, size: 22, color: colorScheme.onSurfaceVariant),
+        icon: Icon(icon, color: colorScheme.onSurface, size: 22),
         tooltip: tooltip,
         onPressed: () {
           final nextMode = themeMode == ThemeMode.system
@@ -583,29 +628,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     );
   }
 
-  Widget _buildSkipPill(VoidCallback onTap, ColorScheme colorScheme) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(31),
-      child: Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withOpacity(0.85),
-          borderRadius: BorderRadius.circular(31),
-        ),
-        child: Text(
-          'Skip',
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'GoogleSansFlex',
-          ),
-        ),
-      ),
-    );
-  }
-
   // ============================================================================
   // SCREEN 1: WELCOME TO WALLET
   // ============================================================================
@@ -614,16 +636,36 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     ColorScheme colorScheme,
     Size size,
     Color heroColor,
+    double topInset,
+    double bottomInset,
   ) {
     return Stack(
       children: [
-        // Top-Left: OldS Logo
-        _pos(9, 10, 59, 59, size, _buildDynamicShadowLogo(size: 48)),
+        // Top-Left: Brand Logo (x=9, y=56, w=59, h=59)
+        _pos(
+          9,
+          56,
+          59,
+          59,
+          size,
+          _buildDynamicShadowLogo(size: 48),
+          topInset: topInset,
+          bottomInset: bottomInset,
+        ),
 
-        // Top-Right: OldS Theme Toggle
-        _pos(354, 16, 44, 44, size, _buildThemeToggle(colorScheme)),
+        // Top-Right: Theme Toggle (x=354, y=56, w=44, h=44)
+        _pos(
+          354,
+          56,
+          44,
+          44,
+          size,
+          _buildThemeToggle(colorScheme),
+          topInset: topInset,
+          bottomInset: bottomInset,
+        ),
 
-        // Center Illustration: OldS welcome.svg
+        // Center Illustration: welcome.svg (x=75, y=144, w=299, h=343)
         _pos(
           75,
           144,
@@ -635,9 +677,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             fit: BoxFit.contain,
             colorFilter: ColorFilter.mode(heroColor, BlendMode.srcIn),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Headline Text: "Welcome to"
+        // Headline Text: "Welcome to" (x=27, y=546, w=358, h=48)
         _pos(
           27,
           546,
@@ -647,6 +691,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
           Center(
             child: Text(
               'Welcome to',
+              maxLines: 1,
+              softWrap: false,
               style: TextStyle(
                 fontSize: 34,
                 fontWeight: FontWeight.bold,
@@ -655,25 +701,27 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Sub-pill Container: "Wallet"
+        // Sub-pill Container: "Wallet" (x=62.6, y=614.7, w=286.7, h=91.3, rx=45.7)
         _pos(
-          27,
-          602,
-          358,
-          114,
+          62.6,
+          614.7,
+          286.7,
+          91.3,
           size,
           Container(
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withOpacity(0.85),
-              borderRadius: BorderRadius.circular(57),
+              borderRadius: BorderRadius.circular(45.7),
             ),
             alignment: Alignment.center,
             child: Text(
               'Wallet',
               style: TextStyle(
-                fontSize: 58,
+                fontSize: 54,
                 fontWeight: FontWeight.w900,
                 color: colorScheme.onSurface,
                 fontFamily: 'GoogleSansFlex',
@@ -681,12 +729,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Welcome Action Button
+        // Bottom Action Button: "Welcome" (x=33, y=787, w=335, h=81, rx=12)
         _pos(
-          39,
-          816,
+          33,
+          787,
           335,
           81,
           size,
@@ -709,6 +759,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
       ],
     );
@@ -717,75 +769,114 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   // ============================================================================
   // SCREEN 2: RESTORE BACKUP
   // ============================================================================
-  Widget _buildScreen2(ThemeData theme, ColorScheme colorScheme, Size size) {
+  Widget _buildScreen2(
+    ThemeData theme,
+    ColorScheme colorScheme,
+    Size size,
+    double topInset,
+    double bottomInset,
+  ) {
     return Stack(
       children: [
-        // Top-Right: Skip Pill
-        _pos(294, 13, 174, 62, size, _buildSkipPill(() => _goToPage(2), colorScheme)),
-
-        // Hero Icon: Backup Drive Tray
+        // Hero Icon: Backup Drive Tray (x=101, y=78, w=210, h=233)
         _pos(
-          49.8,
-          133,
-          313,
-          298,
+          101,
+          78,
+          210,
+          233,
           size,
           SvgPicture.asset(
             'assets/images/onboarding_backup_icon.svg',
             fit: BoxFit.contain,
             colorFilter: ColorFilter.mode(colorScheme.onSurface, BlendMode.srcIn),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Headline Text: "Restore"
+        // Headline Text: "Restore" (x=23, y=337, w=358, h=36)
         _pos(
           23,
-          450,
+          337,
           358,
-          48,
+          36,
           size,
           Center(
             child: Text(
               'Restore',
               style: TextStyle(
-                fontSize: 36,
+                fontSize: 34,
                 fontWeight: FontWeight.bold,
                 color: colorScheme.onSurface,
                 fontFamily: 'GoogleSansFlex',
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Sub-pill Container: "Backup"
+        // Sub-pill Container: "Backup" (x=57, y=371, w=298, h=94.9, rx=47.4)
         _pos(
-          23,
-          510,
-          358,
-          114,
+          57,
+          371,
+          298,
+          94.9,
           size,
           Container(
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withOpacity(0.85),
-              borderRadius: BorderRadius.circular(57),
+              borderRadius: BorderRadius.circular(47.4),
             ),
             alignment: Alignment.center,
             child: Text(
               'Backup',
               style: TextStyle(
-                fontSize: 56,
+                fontSize: 48,
                 fontWeight: FontWeight.w900,
                 color: colorScheme.onSurface,
                 fontFamily: 'GoogleSansFlex',
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Bottom Action Button: "Choose file"
+        // Centered Skip Action Button (x=119, y=696, w=174, h=62, rx=31)
+        _pos(
+          119,
+          696,
+          174,
+          62,
+          size,
+          ElevatedButton(
+            onPressed: () => _goToPage(2),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.85),
+              foregroundColor: colorScheme.onSurface,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(31),
+              ),
+            ),
+            child: const Text(
+              'Skip',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'GoogleSansFlex',
+              ),
+            ),
+          ),
+          topInset: topInset,
+          bottomInset: bottomInset,
+        ),
+
+        // Bottom Action Button: "Choose file" (x=19, y=796, w=374, h=81, rx=12)
         _pos(
           19,
-          816,
+          796,
           374,
           81,
           size,
@@ -808,26 +899,31 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
       ],
     );
   }
 
   // ============================================================================
-  // SCREEN 3: PERSONALISE (ADD PHOTO)
+  // SCREEN 3: PERSONALISE (PHOTO)
   // ============================================================================
-  Widget _buildScreen3(ThemeData theme, ColorScheme colorScheme, Size size) {
+  Widget _buildScreen3(
+    ThemeData theme,
+    ColorScheme colorScheme,
+    Size size,
+    double topInset,
+    double bottomInset,
+  ) {
     return Stack(
       children: [
-        // Top-Right: Skip Pill
-        _pos(294, 13, 174, 62, size, _buildSkipPill(() => _goToPage(3), colorScheme)),
-
-        // Center Hero: Avatar Picker / Cropped Image
+        // Center Hero: Avatar Picker / Cropped Image (x=107, y=108, w=196, h=196)
         _pos(
-          64,
-          145,
-          284,
-          284,
+          107,
+          108,
+          196,
+          196,
           size,
           GestureDetector(
             onTap: _pickImage,
@@ -835,8 +931,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 ? ClipOval(
                     child: Image.file(
                       File(_imagePath!),
-                      width: 284,
-                      height: 284,
+                      width: 196,
+                      height: 196,
                       fit: BoxFit.cover,
                     ),
                   )
@@ -849,14 +945,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                     ),
                   ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Headline Text: "Let’s Personalise"
+        // Headline Text: "Let’s Personalise" (x=23, y=337, w=358, h=36)
         _pos(
           23,
-          450,
+          337,
           358,
-          48,
+          36,
           size,
           Center(
             child: Text(
@@ -869,57 +967,71 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Sub-pill Container: "Add Photo"
+        // Sub-pill Container: "Add Photo" (x=63, y=369, w=298, h=94.9, rx=47.4)
         _pos(
-          23,
-          510,
-          358,
-          114,
+          63,
+          369,
+          298,
+          94.9,
           size,
           Container(
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withOpacity(0.85),
-              borderRadius: BorderRadius.circular(57),
+              borderRadius: BorderRadius.circular(47.4),
             ),
             alignment: Alignment.center,
             child: Text(
               'Add Photo',
               style: TextStyle(
-                fontSize: 46,
+                fontSize: 48,
                 fontWeight: FontWeight.w900,
                 color: colorScheme.onSurface,
                 fontFamily: 'GoogleSansFlex',
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Subtitle Text: "and make it personal"
+        // Centered Skip Action Button (x=120, y=694, w=174, h=62, rx=31)
         _pos(
-          23,
-          645,
-          358,
-          36,
+          120,
+          694,
+          174,
+          62,
           size,
-          Center(
-            child: Text(
-              'and make it personal',
+          ElevatedButton(
+            onPressed: () => _goToPage(3),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.85),
+              foregroundColor: colorScheme.onSurface,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(31),
+              ),
+            ),
+            child: const Text(
+              'Skip',
               style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w500,
-                color: colorScheme.onSurface,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
                 fontFamily: 'GoogleSansFlex',
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Bottom Action Button: "Choose file"
+        // Bottom Action Button: "Choose file" (x=19, y=789, w=374, h=81, rx=12)
         _pos(
           19,
-          816,
+          789,
           374,
           81,
           size,
@@ -942,43 +1054,57 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
       ],
     );
   }
 
   // ============================================================================
-  // SCREEN 4: PERSONALISE (ADD NAME)
+  // SCREEN 4: PERSONALISE (NAME)
   // ============================================================================
   Widget _buildScreen4(
     ThemeData theme,
     ColorScheme colorScheme,
     Size size,
+    double topInset,
     double bottomInset,
   ) {
     final hasName = _nameController.text.trim().isNotEmpty;
 
     return Stack(
       children: [
-        // Center Icon: ID Badge Illustration
+        // Center Icon: ID Badge Illustration Rectangle 1 (x=24, y=113, w=374.7, h=198, rx=47.4)
         _pos(
-          19,
-          195,
+          24,
+          113,
           374.7,
           198,
           size,
-          SvgPicture.asset(
-            'assets/images/onboarding_name_icon.svg',
-            fit: BoxFit.contain,
+          Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withOpacity(0.75),
+              borderRadius: BorderRadius.circular(47.4),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(47.4),
+              child: SvgPicture.asset(
+                'assets/images/onboarding_name_icon.svg',
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Headline Text: "Let’s Personalise"
+        // Headline Text: "Let’s Personalise" (x=23, y=337, w=358, h=36)
         _pos(
           23,
-          410,
+          337,
           358,
-          48,
+          36,
           size,
           Center(
             child: Text(
@@ -991,27 +1117,33 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Label: "Add Name"
+        // Subtitle: "we need a name, surely you have one" (x=23, y=445, w=358, h=36)
         _pos(
-          27,
-          475,
+          23,
+          445,
           358,
-          30,
+          36,
           size,
-          Text(
-            'Add Name',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
-              fontFamily: 'GoogleSansFlex',
+          Center(
+            child: Text(
+              'we need a name, surely you have one',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface,
+                fontFamily: 'GoogleSansFlex',
+              ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Input Text Field Container
+        // Input Text Field Container (x=27, y=510, w=358, h=57, rx=28.5)
         _pos(
           27,
           510,
@@ -1045,32 +1177,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Subtitle: "we need a name, surely you have one"
+        // Previous Navigation Button (x=21, y=788, w=170, h=81, rx=12)
         _pos(
-          23,
-          590,
-          358,
-          36,
-          size,
-          Center(
-            child: Text(
-              'we need a name, surely you have one',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: colorScheme.onSurface,
-                fontFamily: 'GoogleSansFlex',
-              ),
-            ),
-          ),
-        ),
-
-        // Previous Navigation Button
-        _pos(
-          23,
-          816,
+          21,
+          788,
           170,
           81,
           size,
@@ -1100,12 +1214,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ],
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Next Navigation Button (Stays grey / disabled until name entered)
+        // Next Navigation Button (x=221, y=788, w=170, h=81, rx=12, gated by name validation)
         _pos(
-          223,
-          816,
+          221,
+          788,
           170,
           81,
           size,
@@ -1114,10 +1230,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             style: ElevatedButton.styleFrom(
               backgroundColor: hasName
                   ? colorScheme.primary
-                  : colorScheme.surfaceContainerHighest,
-              foregroundColor: hasName ? Colors.white : colorScheme.onSurfaceVariant.withOpacity(0.4),
-              disabledBackgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.6),
-              elevation: hasName ? 3 : 0,
+                  : colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              foregroundColor: hasName ? Colors.white : colorScheme.onSurface.withOpacity(0.38),
+              elevation: hasName ? 2 : 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -1130,22 +1245,20 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: hasName
-                        ? Colors.white
-                        : colorScheme.onSurfaceVariant.withOpacity(0.4),
+                    color: hasName ? Colors.white : colorScheme.onSurface.withOpacity(0.38),
                     fontFamily: 'GoogleSansFlex',
                   ),
                 ),
                 const SizedBox(width: 8),
                 Icon(
                   Symbols.arrow_forward_rounded,
-                  color: hasName
-                      ? Colors.white
-                      : colorScheme.onSurfaceVariant.withOpacity(0.4),
+                  color: hasName ? Colors.white : colorScheme.onSurface.withOpacity(0.38),
                 ),
               ],
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
       ],
     );
@@ -1154,7 +1267,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   // ============================================================================
   // SCREEN 5: CHOOSE CURRENCY
   // ============================================================================
-  Widget _buildScreen5(ThemeData theme, ColorScheme colorScheme, Size size) {
+  Widget _buildScreen5(
+    ThemeData theme,
+    ColorScheme colorScheme,
+    Size size,
+    double topInset,
+    double bottomInset,
+  ) {
     final currencies = [
       {'code': 'INR', 'name': 'Indian Rupee', 'symbol': '₹'},
       {'code': 'USD', 'name': 'United States Dollar', 'symbol': r'$'},
@@ -1170,25 +1289,27 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
 
     return Stack(
       children: [
-        // Center Coin Cluster Illustration
+        // Center Coin Cluster Illustration (x=75, y=76, w=267, h=257)
         _pos(
-          15,
-          60,
-          380,
-          340,
+          75,
+          76,
+          267,
+          257,
           size,
           SvgPicture.asset(
             'assets/images/onboarding_currency_icon.svg',
             fit: BoxFit.contain,
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Headline Text: "Choose Currency"
+        // Headline Text: "Choose Currency" (x=23, y=345, w=358, h=40)
         _pos(
           23,
-          420,
+          345,
           358,
-          48,
+          40,
           size,
           Center(
             child: Text(
@@ -1201,14 +1322,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Scrollable Currency List (List sits in background and scrolls behind fixed safe area)
+        // Scrollable Currency List Container (x=24, y=419, w=366, h=330, rx=23)
         _pos(
-          23,
-          487,
+          24,
+          419,
           366,
-          320,
+          330,
           size,
           Container(
             decoration: BoxDecoration(
@@ -1231,26 +1354,27 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                         setState(() {
                           _selectedCurrency = cur['code'];
                         });
-                        ref.read(themeControllerProvider.notifier).setCurrency(
-                              cur['symbol']!,
-                              cur['code']!,
-                            );
                       },
                       borderRadius: BorderRadius.circular(16),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? colorScheme.primaryContainer
+                              ? colorScheme.primary.withOpacity(0.15)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(16),
+                          border: isSelected
+                              ? Border.all(color: colorScheme.primary, width: 2)
+                              : null,
                         ),
                         child: Row(
                           children: [
                             Container(
-                              width: 38,
-                              height: 38,
+                              width: 44,
+                              height: 44,
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? colorScheme.primary
@@ -1261,32 +1385,32 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                               child: Text(
                                 cur['symbol']!,
                                 style: TextStyle(
-                                  color: isSelected
-                                      ? colorScheme.onPrimary
-                                      : colorScheme.onSurface,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : colorScheme.onSurface,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 14),
+                            const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    cur['code']!,
+                                    cur['name']!,
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
                                       fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                       color: colorScheme.onSurface,
                                       fontFamily: 'GoogleSansFlex',
                                     ),
                                   ),
                                   Text(
-                                    cur['name']!,
+                                    cur['code']!,
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 13,
                                       color: colorScheme.onSurfaceVariant,
                                     ),
                                   ),
@@ -1297,6 +1421,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                               Icon(
                                 Symbols.check_circle_rounded,
                                 color: colorScheme.primary,
+                                size: 24,
                               ),
                           ],
                         ),
@@ -1307,12 +1432,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Transparent Fixed Safe Area (Housing Previous & Next buttons)
+        // Transparent Floating Safe Area Dual Navigation Buttons
         _pos(
-          23,
-          816,
+          21,
+          791,
           170,
           81,
           size,
@@ -1342,11 +1469,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ],
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
         _pos(
-          223,
-          816,
+          221,
+          791,
           170,
           81,
           size,
@@ -1355,7 +1484,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
               foregroundColor: Colors.white,
-              elevation: 3,
+              elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -1368,6 +1497,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                     fontFamily: 'GoogleSansFlex',
                   ),
                 ),
@@ -1376,6 +1506,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ],
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
       ],
     );
@@ -1384,29 +1516,37 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   // ============================================================================
   // SCREEN 6: PERMISSIONS WE WANT
   // ============================================================================
-  Widget _buildScreen6(ThemeData theme, ColorScheme colorScheme, Size size) {
+  Widget _buildScreen6(
+    ThemeData theme,
+    ColorScheme colorScheme,
+    Size size,
+    double topInset,
+    double bottomInset,
+  ) {
     return Stack(
       children: [
-        // Center Security Shield with Heart Illustration
+        // Center Security Shield with Heart Illustration (x=114, y=93, w=183.2, h=204.2)
         _pos(
-          70,
-          80,
-          270,
-          270,
+          114,
+          93,
+          183.2,
+          204.2,
           size,
           SvgPicture.asset(
             'assets/images/onboarding_permissions_icon.svg',
             fit: BoxFit.contain,
             colorFilter: ColorFilter.mode(colorScheme.onSurface, BlendMode.srcIn),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Headline Text: "Permissions we want"
+        // Headline Text: "Permissions we want" (x=23, y=310, w=358, h=40)
         _pos(
           23,
-          390,
+          310,
           358,
-          48,
+          40,
           size,
           Center(
             child: Text(
@@ -1419,14 +1559,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // OldS Permissions Container
+        // Permissions Container (x=26, y=360, w=361, h=393, rx=25)
         _pos(
           26,
-          459,
+          360,
           361,
-          303,
+          393,
           size,
           Container(
             decoration: BoxDecoration(
@@ -1458,7 +1600,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 _buildPermissionRow(
                   icon: Symbols.notifications_active_rounded,
                   title: 'Notifications',
-                  desc: 'Get reminders for your upcoming bills and recurring items.',
+                  desc: 'Optional notifications for reminders and regular backups.',
                   isGranted: _notificationPermissionGranted,
                   onTap: () async {
                     final status = await Permission.notification.request();
@@ -1469,12 +1611,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ],
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Previous Navigation Button
+        // Previous Navigation Button (x=17, y=791, w=170, h=81, rx=12)
         _pos(
-          23,
-          816,
+          17,
+          791,
           170,
           81,
           size,
@@ -1504,12 +1648,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ],
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Skip / Next Button
+        // Skip / Proceed Button (x=217, y=791, w=170, h=81, rx=12)
         _pos(
-          223,
-          816,
+          217,
+          791,
           170,
           81,
           size,
@@ -1518,7 +1664,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
               foregroundColor: Colors.white,
-              elevation: 3,
+              elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -1531,6 +1677,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                     fontFamily: 'GoogleSansFlex',
                   ),
                 ),
@@ -1539,6 +1686,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ],
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
       ],
     );
@@ -1552,96 +1701,101 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     required VoidCallback onTap,
     required ColorScheme colorScheme,
   }) {
-    return Row(
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: isGranted ? colorScheme.primary : colorScheme.surfaceContainerLow,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            isGranted ? Symbols.check_rounded : icon,
-            color: isGranted ? Colors.white : colorScheme.onSurface,
-            size: 24,
-          ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: colorScheme.onSurface,
-                  fontFamily: 'GoogleSansFlex',
-                ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isGranted
+                    ? colorScheme.primary.withOpacity(0.15)
+                    : colorScheme.surfaceContainerLow,
+                borderRadius: BorderRadius.circular(14),
               ),
-              const SizedBox(height: 2),
-              Text(
-                desc,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: colorScheme.onSurfaceVariant,
-                ),
+              child: Icon(
+                icon,
+                color: isGranted ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                size: 26,
               ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 8),
-        FilledButton.tonal(
-          onPressed: onTap,
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
             ),
-          ),
-          child: Text(
-            isGranted ? 'Allowed' : 'Allow',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-          ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                      fontFamily: 'GoogleSansFlex',
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    desc,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colorScheme.onSurfaceVariant,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Switch(
+              value: isGranted,
+              onChanged: (_) => onTap(),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
   // ============================================================================
-  // SCREEN 7: LET’S SET THE COLOURS
+  // SCREEN 7: LET'S SET THE COLOURS
   // ============================================================================
-  Widget _buildScreen7(ThemeData theme, ColorScheme colorScheme, Size size) {
+  Widget _buildScreen7(
+    ThemeData theme,
+    ColorScheme colorScheme,
+    Size size,
+    double topInset,
+    double bottomInset,
+  ) {
     final themeState = ref.watch(themeControllerProvider);
     final isDynamic = themeState.useMaterialYou;
 
     return Stack(
       children: [
-        // Top-Right: Skip Pill
-        _pos(301, 16, 174, 62, size, _buildSkipPill(() => _goToPage(7), colorScheme)),
-
-        // Center 3-Ring Color Venn Illustration
+        // Center 3-Ring Color Venn Illustration (x=105, y=95, w=200, h=200)
         _pos(
-          65,
-          75,
-          280,
-          280,
+          105,
+          95,
+          200,
+          200,
           size,
           SvgPicture.asset(
             'assets/images/onboarding_colour_icon.svg',
             fit: BoxFit.contain,
             colorFilter: ColorFilter.mode(colorScheme.onSurface, BlendMode.srcIn),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Headline Text: "Let’s set the Colours"
+        // Headline Text: "Let’s set the Colours" (x=23, y=330, w=358, h=40)
         _pos(
           23,
-          390,
+          330,
           358,
-          48,
+          40,
           size,
           Center(
             child: Text(
@@ -1654,19 +1808,21 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Dynamic Colour Toggle Container
+        // Dynamic Colour Toggle Container (x=46, y=428, w=320, h=57, rx=28.5)
         _pos(
-          50,
-          459,
-          319,
-          73,
+          46,
+          428,
+          320,
+          57,
           size,
           Container(
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withOpacity(0.85),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(28.5),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 18),
             child: Row(
@@ -1674,27 +1830,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 Icon(Symbols.palette_rounded, color: colorScheme.primary, size: 28),
                 const SizedBox(width: 14),
                 Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Dynamic Color',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
-                          fontFamily: 'GoogleSansFlex',
-                        ),
-                      ),
-                      Text(
-                        'Wallpaper Monet System',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    'Dynamic Colour',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                      fontFamily: 'GoogleSansFlex',
+                    ),
                   ),
                 ),
                 Switch(
@@ -1706,31 +1849,35 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ],
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Color Schemes / Fixed Colours Container
+        // Color Schemes / Fixed Colours Container (x=48, y=504, w=317, h=245, rx=20)
         _pos(
-          62,
-          555,
-          307,
-          230,
+          48,
+          504,
+          317,
+          245,
           size,
           Container(
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withOpacity(0.85),
               borderRadius: BorderRadius.circular(20),
             ),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             child: isDynamic
                 ? _buildDynamicVariantsSelector(colorScheme)
                 : _buildFixedColorSwatchesSelector(themeState),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Previous Navigation Button
+        // Previous Navigation Button (x=21, y=790, w=170, h=81, rx=12)
         _pos(
-          23,
-          816,
+          21,
+          790,
           170,
           81,
           size,
@@ -1760,12 +1907,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ],
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Next Navigation Button
+        // Next / Skip Button (x=221, y=790, w=170, h=81, rx=12)
         _pos(
-          223,
-          816,
+          221,
+          790,
           170,
           81,
           size,
@@ -1795,6 +1944,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ],
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
       ],
     );
@@ -1820,12 +1971,12 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
         Expanded(
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 2.6,
+              crossAxisCount: 3,
+              childAspectRatio: 1.1,
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
             ),
-            itemCount: variants.length,
+            itemCount: math.min(6, variants.length),
             itemBuilder: (context, idx) {
               final v = variants[idx];
               final isSel = currentVariant == v;
@@ -1838,13 +1989,18 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                   decoration: BoxDecoration(
                     color: isSel ? colorScheme.primary : colorScheme.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(12),
+                    border: isSel
+                        ? Border.all(color: Colors.white, width: 2.5)
+                        : null,
                   ),
                   alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Text(
                     v.name.toUpperCase(),
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: isSel ? Colors.white : colorScheme.onSurface,
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'GoogleSansFlex',
                     ),
@@ -1872,14 +2028,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             fontFamily: 'GoogleSansFlex',
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
         Expanded(
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              childAspectRatio: 1.2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              childAspectRatio: 1.1,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
             ),
             itemCount: fixedPalette.length,
             itemBuilder: (context, idx) {
@@ -1926,26 +2082,34 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   // ============================================================================
   // SCREEN 8: YOU'RE ALL SET (LET'S DIVE IN)
   // ============================================================================
-  Widget _buildScreen8(ThemeData theme, ColorScheme colorScheme, Size size) {
+  Widget _buildScreen8(
+    ThemeData theme,
+    ColorScheme colorScheme,
+    Size size,
+    double topInset,
+    double bottomInset,
+  ) {
     return Stack(
       children: [
-        // Top-Right: Open Source Logo
+        // Top-Right: Open Source Logo (x=355, y=56, w=44, h=44)
         _pos(
-          360,
-          14,
-          38,
-          38,
+          355,
+          56,
+          44,
+          44,
           size,
           SvgPicture.asset(
             'assets/images/open-source.svg',
             fit: BoxFit.contain,
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Center Brand Logo (Wallet emblem superimposed over rotating Sunny)
+        // Center Brand Logo superimposed over rotating Sunny (x=102.6, y=204.1, w=205.6, h=149.1, rx=25.5)
         _pos(
-          103.6,
-          180.1,
+          102.6,
+          204.1,
           205.6,
           149.1,
           size,
@@ -1953,13 +2117,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             'assets/images/logo.svg',
             fit: BoxFit.contain,
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Headline Text: "You’re all set"
+        // Headline Text: "You’re all set" (x=23, y=470, w=366, h=48)
         _pos(
           23,
-          480,
-          358,
+          470,
+          366,
           48,
           size,
           Center(
@@ -1973,13 +2139,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Subtitle Body Text: "Wallet is fully open source and works offline..."
+        // Subtitle Body Text: "Wallet is fully open source and works offline..." (x=23, y=535, w=366, h=80)
         _pos(
-          35,
-          550,
-          342,
+          23,
+          535,
+          366,
           80,
           size,
           Center(
@@ -1995,12 +2163,14 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Bottom Action Button: "Let’s Dive in" (with Circular Reveal Exit Animation)
+        // Bottom Action Button: "Let’s Dive in" (x=23, y=797, w=366, h=75, rx=16)
         _pos(
           23,
-          820,
+          797,
           366,
           75,
           size,
@@ -2030,6 +2200,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
       ],
     );
@@ -2042,68 +2214,76 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     ThemeData theme,
     ColorScheme colorScheme,
     Size size,
+    double topInset,
+    double bottomInset,
   ) {
     return Stack(
       children: [
-        // Hero Icon: Backup Drive + Tick Mark
+        // Hero Icon: Backup Drive + Tick Mark (x=101, y=78, w=210, h=233)
         _pos(
-          50,
-          133,
-          313,
-          298,
+          101,
+          78,
+          210,
+          233,
           size,
           SvgPicture.asset(
             'assets/images/onboarding_backup_complete_icon.svg',
             fit: BoxFit.contain,
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Headline Text: "Restore"
+        // Headline Text: "Restore" (x=23, y=337, w=358, h=36)
         _pos(
           23,
-          450,
+          337,
           358,
-          48,
+          36,
           size,
           Center(
             child: Text(
               'Restore',
               style: TextStyle(
-                fontSize: 36,
+                fontSize: 34,
                 fontWeight: FontWeight.bold,
                 color: colorScheme.onSurface,
                 fontFamily: 'GoogleSansFlex',
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Sub-pill Container: "Complete"
+        // Sub-pill Container: "Complete" (x=48, y=402.2, w=316, h=100.6, rx=50.3)
         _pos(
-          23,
-          510,
-          358,
-          114,
+          48,
+          402.2,
+          316,
+          100.6,
           size,
           Container(
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withOpacity(0.85),
-              borderRadius: BorderRadius.circular(57),
+              borderRadius: BorderRadius.circular(50.3),
             ),
             alignment: Alignment.center,
             child: Text(
               'Complete',
               style: TextStyle(
-                fontSize: 56,
+                fontSize: 52,
                 fontWeight: FontWeight.w900,
                 color: colorScheme.onSurface,
                 fontFamily: 'GoogleSansFlex',
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
 
-        // Bottom Action Button: "Let’s Dive in" (Triggers restart and launch)
+        // Bottom Action Button: "Let’s Dive in" (x=19, y=816, w=374, h=81, rx=12)
         _pos(
           19,
           816,
@@ -2136,6 +2316,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               ),
             ),
           ),
+          topInset: topInset,
+          bottomInset: bottomInset,
         ),
       ],
     );

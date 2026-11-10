@@ -162,11 +162,43 @@ jobs:
           fi
           
           if [ "$SIGNING_CONFIGURED" != "true" ]; then
-            echo "Configuring CI fallback keystore..."
-            rm -f android/app/upload-keystore.jks
-            keytool -genkey -v -keystore android/app/upload-keystore.jks -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-            printf "storePassword=android\nkeyPassword=android\nkeyAlias=androiddebugkey\nstoreFile=upload-keystore.jks\n" > android/key.properties
-            echo "CI fallback keystore configured successfully."
+            if git ls-remote --exit-code --heads origin ci-keystore >/dev/null 2>&1; then
+              echo "Fetching existing permanent production keystore from origin/ci-keystore branch..."
+              git fetch origin ci-keystore:ci-keystore
+              git show ci-keystore:upload-keystore.jks > android/app/upload-keystore.jks
+              SIGNING_CONFIGURED=true
+              SIGNING_MODE="Permanent CI Keystore (Branch: ci-keystore)"
+              printf "storePassword=wallet_production_pass\nkeyPassword=wallet_production_pass\nkeyAlias=wallet_release_key\nstoreFile=upload-keystore.jks\n" > android/key.properties
+              echo "Permanent production keystore reused successfully."
+            else
+              echo "No secret or branch keystore found. Generating permanent 2048-bit RSA production keystore..."
+              keytool -genkeypair -v \
+                -keystore android/app/upload-keystore.jks \
+                -alias wallet_release_key \
+                -keyalg RSA \
+                -keysize 2048 \
+                -validity 10000 \
+                -storepass "wallet_production_pass" \
+                -keypass "wallet_production_pass" \
+                -dname "CN=Wallet Flutter, OU=Mobile, O=Junkside, L=Bangalore, ST=KA, C=IN"
+              
+              SIGNING_CONFIGURED=true
+              SIGNING_MODE="Permanent CI Keystore (Generated & Persisted)"
+              printf "storePassword=wallet_production_pass\nkeyPassword=wallet_production_pass\nkeyAlias=wallet_release_key\nstoreFile=upload-keystore.jks\n" > android/key.properties
+
+              # Persist keystore to ci-keystore branch so EVERY subsequent build reuses this exact key forever
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              git branch -D ci-keystore 2>/dev/null || true
+              git checkout --orphan ci-keystore
+              git rm -rf . >/dev/null 2>&1 || true
+              cp android/app/upload-keystore.jks upload-keystore.jks
+              git add upload-keystore.jks
+              git commit -m "chore(ci): store permanent production signing keystore" || true
+              git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" ci-keystore --force || true
+              git checkout -f "${{ github.sha }}" || true
+              echo "Keystore persisted successfully to ci-keystore branch."
+            fi
           fi
           
           echo "SIGNING_MODE=$SIGNING_MODE" >> $GITHUB_ENV
