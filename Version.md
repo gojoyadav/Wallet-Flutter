@@ -1772,3 +1772,16 @@ ont_awesome_flutter\ v11 APIs.
   - `lib/features/auth/pages/onboarding_page.dart`
   - `Version.md`
 - **Status**: 100% (Completed & Verified)
+
+## [2026-11-10 20:32:00 IST] - Pre-Release Publication: v6.0.0-dev16 on Fork Repository
+- **Action**: Verified successful execution of remote GitHub Actions build run `#42838731911` on branch `Improv` and confirmed official publication of automated pre-release `v6.0.0-dev16` on GitHub Releases under `gojoyadav/Wallet-Flutter`.
+- **Published Deliverables**:
+  - Release URL: `https://github.com/gojoyadav/Wallet-Flutter/releases/tag/v6.0.0-dev16`
+  - Release Tag: `v6.0.0-dev16`
+  - Commit SHA: `ff457206b0d9129522d0ea80c2fdb8cb6e08c4f9`
+  - Binary Assets:
+    - `wallet-arm64-v8a.apk` (ARM64-v8a standalone 64-bit binary) & `.sha256`
+    - `wallet-universal.apk` (Fat universal binary) & `.sha256`
+    - `wallet-arm-v7a.apk` (32-bit ARMv7a) & `.sha256`
+    - `wallet-x86_64.apk` (64-bit x86 architecture) & `.sha256`
+- **Status**: 100% (Completed & Published Live)
