@@ -30,7 +30,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
 
   final _nameController = TextEditingController();
   final _focusNode = FocusNode();
-  String? _selectedCurrency = 'INR';
+  String? _selectedCurrency;
   String? _imagePath;
 
   bool _showBlueScreen = false;
@@ -1202,16 +1202,19 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   // SCREEN 5: CHOOSE CURRENCY
   // ============================================================================
   Widget _buildScreen5(ThemeData theme, ColorScheme colorScheme) {
+    final hasCurrency = _selectedCurrency != null && _selectedCurrency!.isNotEmpty;
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Column(
           children: [
-            // Center Coin Cluster Illustration
+            // Center Coin Cluster Illustration (Dynamic contrast for Light/Dark)
             SvgPicture.asset(
               'assets/images/onboarding_currency_icon.svg',
               height: 120,
               fit: BoxFit.contain,
+              colorFilter: ColorFilter.mode(colorScheme.onSurface, BlendMode.srcIn),
             ),
             const SizedBox(height: 16),
 
@@ -1227,11 +1230,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             ),
             const SizedBox(height: 16),
 
-            // Scrollable Currency List Container
+            // Scrollable Currency List Container (M3 Expressive)
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                  color: colorScheme.surfaceContainerHighest.withOpacity(0.35),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: ClipRRect(
@@ -1251,8 +1254,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                               _selectedCurrency = cur['code'];
                             });
                           },
-                          borderRadius: BorderRadius.circular(16),
-                          child: Container(
+                          borderRadius: BorderRadius.circular(18),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
@@ -1260,8 +1264,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? colorScheme.primaryContainer
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(16),
+                                  : colorScheme.surfaceContainerLow.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(18),
                               border: Border.all(
                                 color: isSelected
                                     ? colorScheme.primary
@@ -1302,7 +1306,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: colorScheme.onSurface,
+                                          color: isSelected
+                                              ? colorScheme.onPrimaryContainer
+                                              : colorScheme.onSurface,
                                           fontFamily: 'GoogleSansFlex',
                                         ),
                                       ),
@@ -1310,7 +1316,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                                         cur['code']!,
                                         style: TextStyle(
                                           fontSize: 13,
-                                          color: colorScheme.onSurfaceVariant,
+                                          color: isSelected
+                                              ? colorScheme.onPrimaryContainer.withOpacity(0.8)
+                                              : colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                     ],
@@ -1334,7 +1342,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             ),
             const SizedBox(height: 16),
 
-            // Fixed Previous and Next Buttons
+            // Fixed Previous and Next Buttons (Gated until currency is chosen)
             Row(
               children: [
                 Expanded(
@@ -1365,7 +1373,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                   child: SizedBox(
                     height: 58,
                     child: FilledButton.icon(
-                      onPressed: _nextPage,
+                      onPressed: hasCurrency ? _nextPage : null,
                       icon: const Icon(Symbols.arrow_forward_rounded),
                       label: const Text(
                         'Next',
@@ -1401,11 +1409,12 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Column(
           children: [
-            // Center Security Shield with Heart Illustration
+            // Center Security Shield with Heart Illustration (Dynamic contrast for Light/Dark)
             SvgPicture.asset(
               'assets/images/onboarding_permissions_icon.svg',
               height: 130,
               fit: BoxFit.contain,
+              colorFilter: ColorFilter.mode(colorScheme.onSurface, BlendMode.srcIn),
             ),
             const SizedBox(height: 20),
 
@@ -1432,11 +1441,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
             ),
             const SizedBox(height: 24),
 
-            // Permissions Container
+            // Permissions Container (M3 Expressive)
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                  color: colorScheme.surfaceContainerHighest.withOpacity(0.35),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 padding: const EdgeInsets.all(16),
@@ -1458,7 +1467,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                       colorScheme: colorScheme,
                     ),
 
-                    Divider(color: colorScheme.outline.withOpacity(0.2)),
+                    Divider(color: colorScheme.outline.withOpacity(0.15)),
 
                     // Permission 2: Notifications
                     _buildPermissionRow(
@@ -1544,8 +1553,18 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     required VoidCallback onTap,
     required ColorScheme colorScheme,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: isGranted
+            ? colorScheme.primaryContainer.withOpacity(0.3)
+            : colorScheme.surfaceContainerLow.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isGranted ? colorScheme.primary.withOpacity(0.5) : Colors.transparent,
+          width: 1.5,
+        ),
+      ),
       child: Row(
         children: [
           Container(
@@ -1563,7 +1582,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
               size: 24,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1616,11 +1635,12 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Column(
           children: [
-            // Center 3-Ring Color Venn Illustration
+            // Center 3-Ring Color Venn Illustration (Dynamic contrast for Light/Dark)
             SvgPicture.asset(
               'assets/images/onboarding_colour_icon.svg',
               height: 120,
               fit: BoxFit.contain,
+              colorFilter: ColorFilter.mode(colorScheme.onSurface, BlendMode.srcIn),
             ),
             const SizedBox(height: 16),
 

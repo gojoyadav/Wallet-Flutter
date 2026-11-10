@@ -1719,3 +1719,18 @@ ont_awesome_flutter\ v11 APIs.
   - `lib/features/auth/pages/onboarding_page.dart`
   - `Version.md`
 - **Status**: 100% (Completed & Verified)
+
+## [2026-11-10 19:28:00 IST] - Currency Icon Stroke Removal, M3 Expressive Card Lists & Navigation Gating
+- **Action**: Removed 22px knockout stroke from the currency logo, aligned permissions & currency SVG icons to dynamic `onSurface` color in dark mode, and strictly gated navigation on user input for Name and Currency selection stages.
+- **Changes**:
+  - **`assets/images/onboarding_currency_icon.svg`**: Removed 22px stroke, broken `<use>`, and mask elements from the Rupee coin logo, rendering it as a clean vector graphic.
+  - **Dynamic Dark Mode Icon Contrast**: Added `colorFilter: ColorFilter.mode(colorScheme.onSurface, BlendMode.srcIn)` to `onboarding_permissions_icon.svg`, `onboarding_currency_icon.svg`, and `onboarding_colour_icon.svg`, ensuring icons render in high-contrast white in dark mode rather than black.
+  - **Material 3 Expressive List & Cards**: Refined currency catalog items and permission rows into Material 3 Expressive cards with `surfaceContainerLow` base, `primaryContainer` active selection, smooth animations, and clear contrast.
+  - **Navigation Progression Gating**:
+    - **Name Stage (Screen 4)**: Next button is disabled until the user types a non-empty name (`hasName ? _nextPage : null`).
+    - **Currency Stage (Screen 5)**: Currency is no longer preselected (`_selectedCurrency` is null initially); Next button is disabled until the user explicitly selects a currency from the catalog (`hasCurrency ? _nextPage : null`).
+- **Files Modified**:
+  - `assets/images/onboarding_currency_icon.svg`
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `Version.md`
+- **Status**: 100% (Completed & Verified)
