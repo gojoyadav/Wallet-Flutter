@@ -1661,3 +1661,10 @@ ont_awesome_flutter\ v11 APIs.
   - `lib/features/auth/pages/onboarding_page.dart`
   - `Version.md`
 - **Status**: 100% (Completed & Verified)
+
+## [2026-11-10 18:12:00 IST] - Onboarding Backup Service Provider Alignment
+- **Action**: Aligned `_restoreBackup()` invocation in `lib/features/auth/pages/onboarding_page.dart` to directly call `ref.read(backupServiceProvider).restoreBackup()`, resolving the compilation error detected by remote GitHub Actions CI.
+- **Files Modified**:
+  - `lib/features/auth/pages/onboarding_page.dart`
+  - `Version.md`
+- **Status**: 100% (Completed & Verified)

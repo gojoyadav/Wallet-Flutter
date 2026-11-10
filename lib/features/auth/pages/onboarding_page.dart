@@ -178,11 +178,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   }
 
   Future<void> _restoreBackup() async {
-    final isarService = ref.read(isarServiceProvider);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     try {
-      final success = await isarService.restoreDatabase();
+      final success = await ref.read(backupServiceProvider).restoreBackup();
       if (success) {
         if (mounted) {
           setState(() {
